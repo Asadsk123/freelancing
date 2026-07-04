@@ -1,0 +1,98 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Try again",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "close": "Close",
+    "viewAll": "View all",
+    "learnMore": "Learn more",
+    "getStarted": "Get started",
+    "noResults": "No results found"
+  },
+  "nav": {
+    "services": "Services",
+    "portfolio": "Portfolio",
+    "blog": "Blog",
+    "about": "About",
+    "contact": "Contact",
+    "getQuote": "Get a Quote",
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "notifications": "Notifications",
+    "settings": "Settings",
+    "skipToContent": "Skip to main content"
+  },
+  "home": {
+    "hero": {
+      "title": "Digital solutions that grow your business",
+      "subtitle": "We design, build, and scale digital products for businesses worldwide.",
+      "cta": "Request a Quote"
+    },
+    "howWeWork": {
+      "title": "How We Work",
+      "step1Title": "Discovery",
+      "step1Desc": "Tell us about your project and goals.",
+      "step2Title": "Proposal",
+      "step2Desc": "We send a detailed plan within 48 hours.",
+      "step3Title": "Execution",
+      "step3Desc": "Track every milestone in your client portal.",
+      "step4Title": "Delivery",
+      "step4Desc": "Download final files securely and leave a review."
+    }
+  },
+  "contact": {
+    "title": "Get in Touch",
+    "name": "Your name",
+    "namePlaceholder": "How should we address you?",
+    "email": "Email address",
+    "emailPlaceholder": "name@company.com",
+    "message": "Message",
+    "messagePlaceholder": "Tell us about your project...",
+    "submit": "Send Message",
+    "sending": "Sending...",
+    "quoteTitle": "Request a Quote",
+    "service": "Service",
+    "servicePlaceholder": "Select a service",
+    "description": "Project description",
+    "descriptionPlaceholder": "Describe what you need in a few sentences...",
+    "timeline": "Timeline",
+    "timelinePlaceholder": "Select a timeline",
+    "urgent": "Within 2 weeks",
+    "standard": "Within 1 month",
+    "relaxed": "Within 3 months",
+    "flexible": "No rush",
+    "budget": "Budget range (optional)",
+    "budgetPlaceholder": "Not sure yet",
+    "submitQuote": "Request Quote",
+    "successTitle": "Message received",
+    "successDesc": "We will respond within 24 business hours.",
+    "another": "Submit another inquiry"
+  },
+  "errors": {
+    "required": "Please fill in this field",
+    "invalidEmail": "Please enter your email address, like name@company.com",
+    "serverError": "Something went wrong on our end. Please try again.",
+    "notFoundTitle": "Page not found",
+    "notFoundDesc": "The page you are looking for does not exist or has been moved.",
+    "goHome": "Go to homepage"
+  },
+  "auth": {
+    "loginTitle": "Sign in to your portal",
+    "email": "Email address",
+    "sendCode": "Send verification code",
+    "verifyTitle": "Enter verification code",
+    "verifyDesc": "We sent a 6-digit code to your email.",
+    "code": "Verification code",
+    "verify": "Verify",
+    "resend": "Send again"
+  }
+}
