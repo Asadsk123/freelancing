@@ -11,6 +11,7 @@ import { FormSuccess } from "@/components/shared/form-success";
 import { FormError } from "@/components/shared/form-error";
 import { Spinner } from "@/components/ui/spinner";
 import { Send } from "lucide-react";
+import { inquiryFormSchema } from "@/lib/validations/inquiry";
 
 type FormState = "idle" | "submitting" | "success" | "error";
 
@@ -24,12 +25,20 @@ export function ContactForm() {
     setErrorMessage("");
 
     const formData = new FormData(e.currentTarget);
-    const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
-    const message = formData.get("message") as string;
+    const raw = {
+      name: formData.get("name") as string,
+      email: formData.get("email") as string,
+      phone: formData.get("phone") as string,
+      company: formData.get("company") as string,
+      service: formData.get("service") as string,
+      budget: formData.get("budget") as string,
+      message: formData.get("message") as string,
+    };
 
-    if (!name.trim() || !email.trim() || !message.trim()) {
-      setErrorMessage("Please fill in all required fields.");
+    const result = inquiryFormSchema.safeParse(raw);
+    if (!result.success) {
+      const firstError = Object.values(result.error.flatten().fieldErrors)[0];
+      setErrorMessage(firstError?.[0] ?? "Please check your input.");
       setFormState("error");
       return;
     }
@@ -69,6 +78,7 @@ export function ContactForm() {
               <Input
                 id="contact-name"
                 name="name"
+                autoComplete="name"
                 placeholder="How should we address you?"
                 required
               />
@@ -81,6 +91,7 @@ export function ContactForm() {
                 id="contact-email"
                 name="email"
                 type="email"
+                autoComplete="email"
                 placeholder="name@company.com"
                 required
               />
@@ -94,6 +105,7 @@ export function ContactForm() {
                 id="contact-phone"
                 name="phone"
                 type="tel"
+                autoComplete="tel"
                 placeholder="+1 (555) 000-0000"
               />
             </div>
@@ -102,6 +114,7 @@ export function ContactForm() {
               <Input
                 id="contact-company"
                 name="company"
+                autoComplete="organization"
                 placeholder="Your company name"
               />
             </div>
