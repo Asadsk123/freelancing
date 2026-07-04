@@ -1,21 +1,22 @@
 import { brand } from "@/config/brand";
+import { DesignSystemShowcase } from "./design-showcase";
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-8">
-      <h1 className="text-4xl font-bold tracking-tight text-[var(--foreground)]">
-        {brand.name}
-      </h1>
-      <p className="mt-4 text-lg text-[var(--muted-foreground)]">
-        {brand.tagline}
-      </p>
-      <div className="mt-8 flex gap-4">
-        <span className="rounded-md bg-[var(--primary)] px-4 py-2 text-sm font-medium text-[var(--primary-foreground)]">
-          Platform v2.0
-        </span>
-        <span className="rounded-md bg-[var(--secondary)] px-4 py-2 text-sm font-medium text-[var(--secondary-foreground)]">
-          Phase 1A
-        </span>
+    <main className="min-h-screen p-8">
+      <div className="mx-auto max-w-4xl">
+        <div className="mb-12 text-center">
+          <h1 className="text-4xl font-bold tracking-tight text-[var(--foreground)]">
+            {brand.name}
+          </h1>
+          <p className="mt-2 text-lg text-[var(--muted-foreground)]">
+            {brand.tagline}
+          </p>
+          <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+            Design System — Phase 1A Module 2
+          </p>
+        </div>
+        <DesignSystemShowcase />
       </div>
     </main>
   );
