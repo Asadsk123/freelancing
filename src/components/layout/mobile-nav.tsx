@@ -23,23 +23,23 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
   }, [pathname, onClose]);
 
   useEffect(() => {
-    if (open) {
-      triggerRef.current = document.activeElement as HTMLElement | null;
-      document.body.style.overflow = "hidden";
+    if (!open) return;
 
-      const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === "Escape") {
-          onClose();
-        }
-      };
-      document.addEventListener("keydown", handleKeyDown);
+    triggerRef.current = document.activeElement as HTMLElement | null;
+    document.body.style.overflow = "hidden";
 
-      return () => {
-        document.body.style.overflow = "";
-        document.removeEventListener("keydown", handleKeyDown);
-        triggerRef.current?.focus();
-      };
-    }
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = "";
+      document.removeEventListener("keydown", handleKeyDown);
+      triggerRef.current?.focus();
+    };
   }, [open, onClose]);
 
   return (

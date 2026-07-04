@@ -1,7 +1,7 @@
-import { File, FileImage, FileText, FileVideo, FileArchive, FileCode } from "lucide-react";
+import { File, FileImage, FileText, FileVideo, FileArchive, FileCode, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
-const iconMap: Record<string, typeof File> = {
+const iconMap: Record<string, LucideIcon> = {
   "image/png": FileImage,
   "image/jpeg": FileImage,
   "image/jpg": FileImage,
@@ -27,6 +27,6 @@ type FileIconProps = {
 };
 
 export function FileIcon({ mimeType, className }: FileIconProps) {
-  const Icon = (mimeType && iconMap[mimeType]) ?? File;
+  const Icon: LucideIcon = (mimeType ? iconMap[mimeType] : undefined) ?? File;
   return <Icon className={cn("h-4 w-4 text-[var(--muted-foreground)]", className)} />;
 }
