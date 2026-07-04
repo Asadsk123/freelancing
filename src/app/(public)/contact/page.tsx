@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/shared/page-header";
+import { ContactForm } from "@/components/sections/contact-form";
+import { Card, CardContent } from "@/components/ui/card";
+import { brand } from "@/config/brand";
+import { Mail, Clock } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Get in touch with Royal Asad — we'd love to hear from you.",
+  description: "Get in touch with Royal Asad — we'd love to hear about your project.",
 };
 
 export default function ContactPage() {
@@ -13,6 +17,45 @@ export default function ContactPage() {
         title="Contact Us"
         description="Have a project in mind? Let's talk about how we can help."
       />
+
+      <div className="mt-10 grid gap-8 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <ContactForm />
+        </div>
+
+        <div className="space-y-6">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-3">
+                <Mail className="mt-0.5 h-5 w-5 text-[var(--primary)]" />
+                <div>
+                  <h3 className="font-semibold text-[var(--foreground)]">Email us directly</h3>
+                  <a
+                    href={`mailto:${brand.contact.email}`}
+                    className="mt-1 block text-sm text-[var(--primary)] hover:underline"
+                  >
+                    {brand.contact.email}
+                  </a>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-3">
+                <Clock className="mt-0.5 h-5 w-5 text-[var(--primary)]" />
+                <div>
+                  <h3 className="font-semibold text-[var(--foreground)]">Response time</h3>
+                  <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+                    We respond to all inquiries within 24 business hours.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }
