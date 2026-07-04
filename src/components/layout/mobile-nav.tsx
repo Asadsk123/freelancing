@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
@@ -16,6 +16,7 @@ type MobileNavProps = {
 
 export function MobileNav({ open, onClose }: MobileNavProps) {
   const pathname = usePathname();
+  const triggerRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     onClose();
@@ -23,12 +24,23 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
 
   useEffect(() => {
     if (open) {
+      triggerRef.current = document.activeElement as HTMLElement | null;
       document.body.style.overflow = "hidden";
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          onClose();
+        }
+      };
+      document.addEventListener("keydown", handleKeyDown);
+
       return () => {
         document.body.style.overflow = "";
+        document.removeEventListener("keydown", handleKeyDown);
+        triggerRef.current?.focus();
       };
     }
-  }, [open]);
+  }, [open, onClose]);
 
   return (
     <>

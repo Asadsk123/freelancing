@@ -2,7 +2,6 @@
 
 import { useState, useCallback } from "react";
 import { Header } from "./header";
-import { Footer } from "./footer";
 import { MobileNav } from "./mobile-nav";
 
 export function PublicShell({ children }: { children: React.ReactNode }) {
@@ -20,8 +19,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
     <>
       <Header onMobileMenuOpen={handleMobileMenuOpen} />
       <MobileNav open={mobileNavOpen} onClose={handleMobileMenuClose} />
-      <main className="min-h-[calc(100vh-64px)]">{children}</main>
-      <Footer />
+      {children}
     </>
   );
 }
