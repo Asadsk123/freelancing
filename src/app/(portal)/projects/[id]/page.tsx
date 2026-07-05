@@ -1,37 +1,30 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect, notFound } from "next/navigation";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { TrackingId } from "@/components/shared/tracking-id";
 import { EmptyState } from "@/components/shared/empty-state";
-import { ArrowLeft, FileText, MessageSquare } from "lucide-react";
+import { ArrowLeft, FileText, MessageSquare, FolderOpen } from "lucide-react";
+import { getSession } from "@/lib/auth/session";
+import { hasDatabase } from "@/db";
+import { projectRepository } from "@/lib/repositories/project";
+import { formatDate } from "@/lib/utils/formatting";
 
 export const metadata: Metadata = {
   title: "Project Details",
   description: "View project details, files, and conversation.",
 };
 
-const mockProject = {
-  id: "1",
-  trackingId: "RA-2026-000034",
-  title: "Brand Identity Design",
-  service: "Graphic Design",
-  status: "in_progress",
-  progress: 60,
-  description: "Complete brand identity package including logo, color palette, typography, and brand guidelines document.",
-  startDate: "May 15, 2026",
-  targetDate: "Aug 15, 2026",
-  milestones: [
-    { id: "1", title: "Discovery & Research", status: "completed" },
-    { id: "2", title: "Concept Development", status: "completed" },
-    { id: "3", title: "Logo Design", status: "completed" },
-    { id: "4", title: "Brand Collateral", status: "in_progress" },
-    { id: "5", title: "Final Delivery", status: "upcoming" },
-  ],
+const statusBadge: Record<string, { label: string; variant: "success" | "warning" | "secondary" | "default" }> = {
+  pending: { label: "Pending", variant: "secondary" },
+  in_progress: { label: "In Progress", variant: "warning" },
+  completed: { label: "Completed", variant: "success" },
+  on_hold: { label: "On Hold", variant: "default" },
+  cancelled: { label: "Cancelled", variant: "default" },
 };
 
 const milestoneStatusBadge: Record<string, { label: string; variant: "success" | "warning" | "secondary" }> = {
@@ -40,7 +33,43 @@ const milestoneStatusBadge: Record<string, { label: string; variant: "success" |
   upcoming: { label: "Upcoming", variant: "secondary" },
 };
 
-export default function ProjectDetailPage() {
+export default async function ProjectDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const session = await getSession();
+  if (!session) redirect("/login");
+
+  const { id } = await params;
+
+  if (!hasDatabase()) {
+    return (
+      <div className="mx-auto max-w-[1280px]">
+        <Card>
+          <CardContent className="py-12">
+            <EmptyState
+              icon={FolderOpen}
+              title="Database not connected"
+              description="Set DATABASE_URL to view project details."
+            />
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const project = await projectRepository.findByIdWithDetails(id);
+  if (!project) notFound();
+
+  if (session.role === "client" && project.clientId !== session.userId) {
+    notFound();
+  }
+
+  const badge = statusBadge[project.status] ?? { label: "Pending", variant: "secondary" as const };
+  const completedMilestones = project.milestones.filter((m) => m.status === "completed").length;
+  const totalMilestones = project.milestones.length;
+
   return (
     <div className="mx-auto max-w-[1280px]">
       <div className="mb-6">
@@ -52,48 +81,65 @@ export default function ProjectDetailPage() {
         </Button>
       </div>
 
-      <PageHeader title={mockProject.title}>
-        <Badge variant="warning">In Progress</Badge>
+      <PageHeader title={project.title}>
+        <Badge variant={badge.variant}>{badge.label}</Badge>
       </PageHeader>
 
       <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-[var(--muted-foreground)]">
-        <TrackingId id={mockProject.trackingId} />
-        <span>{mockProject.service}</span>
-        <span>Started {mockProject.startDate}</span>
-        <span>Target {mockProject.targetDate}</span>
+        <TrackingId id={project.trackingId} />
+        {project.startDate && <span>Started {formatDate(project.startDate)}</span>}
+        {project.targetDate && <span>Target {formatDate(project.targetDate)}</span>}
       </div>
 
-      <div className="mt-6">
-        <Progress value={mockProject.progress} />
-        <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-          {mockProject.progress}% complete
-        </p>
-      </div>
+      {project.description && (
+        <p className="mt-4 text-sm text-[var(--muted-foreground)]">{project.description}</p>
+      )}
 
       <div className="mt-8">
         <Tabs defaultValue="milestones">
           <TabsList>
-            <TabsTrigger value="milestones">Milestones</TabsTrigger>
+            <TabsTrigger value="milestones">
+              Milestones{totalMilestones > 0 ? ` (${completedMilestones}/${totalMilestones})` : ""}
+            </TabsTrigger>
             <TabsTrigger value="files">Files</TabsTrigger>
             <TabsTrigger value="conversation">Conversation</TabsTrigger>
           </TabsList>
 
           <TabsContent value="milestones" className="mt-4">
-            <div className="space-y-3">
-              {mockProject.milestones.map((milestone) => {
-                const badge = milestoneStatusBadge[milestone.status] ?? { label: "Upcoming", variant: "secondary" as const };
-                return (
-                  <Card key={milestone.id}>
-                    <CardContent className="flex items-center justify-between py-4">
-                      <span className="text-sm font-medium text-[var(--foreground)]">
-                        {milestone.title}
-                      </span>
-                      <Badge variant={badge.variant}>{badge.label}</Badge>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
+            {project.milestones.length === 0 ? (
+              <Card>
+                <CardContent className="py-12">
+                  <EmptyState
+                    icon={FolderOpen}
+                    title="No milestones yet"
+                    description="Milestones will appear here once added to the project."
+                  />
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="space-y-3">
+                {project.milestones.map((milestone) => {
+                  const mBadge = milestoneStatusBadge[milestone.status] ?? { label: "Upcoming", variant: "secondary" as const };
+                  return (
+                    <Card key={milestone.id}>
+                      <CardContent className="flex items-center justify-between py-4">
+                        <div>
+                          <span className="text-sm font-medium text-[var(--foreground)]">
+                            {milestone.title}
+                          </span>
+                          {milestone.dueDate && (
+                            <p className="text-xs text-[var(--muted-foreground)]">
+                              Due {formatDate(milestone.dueDate)}
+                            </p>
+                          )}
+                        </div>
+                        <Badge variant={mBadge.variant}>{mBadge.label}</Badge>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="files" className="mt-4">

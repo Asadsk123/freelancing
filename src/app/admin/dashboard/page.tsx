@@ -15,18 +15,13 @@ import {
 import { hasDatabase } from "@/db";
 import { inquiryRepository } from "@/lib/repositories/inquiry";
 import { userRepository } from "@/lib/repositories/user";
+import { projectRepository } from "@/lib/repositories/project";
 import { formatRelativeTime } from "@/lib/utils/formatting";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard",
   description: "Admin overview and statistics.",
 };
-
-const recentProjects = [
-  { id: "1", title: "Brand Identity Design", client: "Acme Corp", status: "in_progress" },
-  { id: "2", title: "E-commerce Website", client: "TechStart Inc", status: "pending" },
-  { id: "3", title: "Marketing Campaign", client: "Global Retail", status: "in_progress" },
-];
 
 const inquiryStatusBadge: Record<string, { label: string; variant: "success" | "warning" | "secondary" | "default" }> = {
   new: { label: "New", variant: "default" },
@@ -39,20 +34,33 @@ const projectStatusBadge: Record<string, { label: string; variant: "success" | "
   pending: { label: "Pending", variant: "secondary" },
   in_progress: { label: "In Progress", variant: "warning" },
   completed: { label: "Completed", variant: "success" },
+  on_hold: { label: "On Hold", variant: "default" },
 };
 
 export default async function AdminDashboardPage() {
   const dbAvailable = hasDatabase();
+
   const recentInquiries = dbAvailable
     ? (await inquiryRepository.findAll()).slice(0, 5)
     : [];
   const newInquiryCount = recentInquiries.filter((i) => i.status === "new").length;
+
   const clientCount = dbAvailable
     ? await userRepository.countByRole("client")
     : 0;
 
+  const recentProjects = dbAvailable
+    ? (await projectRepository.findAll()).slice(0, 5)
+    : [];
+  const activeProjectCount = dbAvailable
+    ? await projectRepository.countByStatus("in_progress")
+    : 0;
+  const pendingProjectCount = dbAvailable
+    ? await projectRepository.countByStatus("pending")
+    : 0;
+
   const stats = [
-    { label: "Active Projects", value: "—", icon: FolderOpen, change: "Connect database to track" },
+    { label: "Active Projects", value: dbAvailable ? String(activeProjectCount + pendingProjectCount) : "—", icon: FolderOpen, change: dbAvailable ? `${activeProjectCount} in progress` : "Connect database to track" },
     { label: "Total Clients", value: dbAvailable ? String(clientCount) : "—", icon: Users, change: dbAvailable ? "registered clients" : "Connect database to track" },
     { label: "New Inquiries", value: dbAvailable ? String(newInquiryCount) : "—", icon: Inbox, change: dbAvailable ? `${recentInquiries.length} total` : "Connect database to track" },
     { label: "Revenue (MTD)", value: "—", icon: DollarSign, change: "Coming soon" },
@@ -135,20 +143,32 @@ export default async function AdminDashboardPage() {
             </Button>
           </div>
           <div className="mt-4 space-y-3">
-            {recentProjects.map((project) => {
-              const badge = projectStatusBadge[project.status] ?? { label: "Pending", variant: "secondary" as const };
-              return (
-                <Card key={project.id}>
-                  <CardContent className="flex items-center justify-between py-4">
-                    <div>
-                      <p className="text-sm font-medium text-[var(--foreground)]">{project.title}</p>
-                      <p className="text-xs text-[var(--muted-foreground)]">{project.client}</p>
-                    </div>
-                    <Badge variant={badge.variant}>{badge.label}</Badge>
-                  </CardContent>
-                </Card>
-              );
-            })}
+            {recentProjects.length === 0 ? (
+              <Card>
+                <CardContent className="py-8">
+                  <EmptyState
+                    icon={FolderOpen}
+                    title={dbAvailable ? "No projects yet" : "Database not connected"}
+                    description={dbAvailable ? "Projects will appear here once created." : "Set DATABASE_URL to see real data."}
+                  />
+                </CardContent>
+              </Card>
+            ) : (
+              recentProjects.map((project) => {
+                const badge = projectStatusBadge[project.status] ?? { label: "Pending", variant: "secondary" as const };
+                return (
+                  <Card key={project.id}>
+                    <CardContent className="flex items-center justify-between py-4">
+                      <div>
+                        <p className="text-sm font-medium text-[var(--foreground)]">{project.title}</p>
+                        <p className="text-xs text-[var(--muted-foreground)]">{project.clientName}</p>
+                      </div>
+                      <Badge variant={badge.variant}>{badge.label}</Badge>
+                    </CardContent>
+                  </Card>
+                );
+              })
+            )}
           </div>
         </div>
       </div>
