@@ -9,13 +9,19 @@ import {
   FolderOpen,
   Users,
   Inbox,
-  DollarSign,
+  Star,
+  FileText,
+  Layers,
   ArrowRight,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { hasDatabase } from "@/db";
 import { inquiryRepository } from "@/lib/repositories/inquiry";
 import { userRepository } from "@/lib/repositories/user";
 import { projectRepository } from "@/lib/repositories/project";
+import { reviewRepository } from "@/lib/repositories/review";
+import { blogPostRepository } from "@/lib/repositories/blog-post";
+import { serviceRepository } from "@/lib/repositories/service";
 import { formatRelativeTime } from "@/lib/utils/formatting";
 
 export const metadata: Metadata = {
@@ -60,18 +66,43 @@ export default async function AdminDashboardPage() {
     ? await projectRepository.countByStatus("pending")
     : 0;
 
-  const stats = [
-    { label: "Active Projects", value: dbAvailable ? String(activeProjectCount + pendingProjectCount) : "—", icon: FolderOpen, change: dbAvailable ? `${activeProjectCount} in progress` : "Connect database to track" },
-    { label: "Total Clients", value: dbAvailable ? String(clientCount) : "—", icon: Users, change: dbAvailable ? "registered clients" : "Connect database to track" },
-    { label: "New Inquiries", value: dbAvailable ? String(newInquiryCount) : "—", icon: Inbox, change: dbAvailable ? `${allInquiries.length} total` : "Connect database to track" },
-    { label: "Revenue (MTD)", value: "—", icon: DollarSign, change: "Coming soon" },
+  const publishedReviewCount = dbAvailable
+    ? await reviewRepository.countPublished()
+    : 0;
+  const totalReviewCount = dbAvailable
+    ? await reviewRepository.count()
+    : 0;
+
+  const blogPostCount = dbAvailable
+    ? await blogPostRepository.count()
+    : 0;
+  const publishedPostCount = dbAvailable
+    ? await blogPostRepository.countByStatus("published")
+    : 0;
+
+  const activeServiceCount = dbAvailable
+    ? await serviceRepository.countActive()
+    : 0;
+  const totalServiceCount = dbAvailable
+    ? await serviceRepository.count()
+    : 0;
+
+  const noDb = "Connect database to track";
+
+  const stats: { label: string; value: string; icon: LucideIcon; change: string }[] = [
+    { label: "Active Projects", value: dbAvailable ? String(activeProjectCount + pendingProjectCount) : "—", icon: FolderOpen, change: dbAvailable ? `${activeProjectCount} in progress` : noDb },
+    { label: "Total Clients", value: dbAvailable ? String(clientCount) : "—", icon: Users, change: dbAvailable ? "registered clients" : noDb },
+    { label: "New Inquiries", value: dbAvailable ? String(newInquiryCount) : "—", icon: Inbox, change: dbAvailable ? `${allInquiries.length} total` : noDb },
+    { label: "Published Reviews", value: dbAvailable ? String(publishedReviewCount) : "—", icon: Star, change: dbAvailable ? `${totalReviewCount} total` : noDb },
+    { label: "Blog Posts", value: dbAvailable ? String(blogPostCount) : "—", icon: FileText, change: dbAvailable ? `${publishedPostCount} published` : noDb },
+    { label: "Active Services", value: dbAvailable ? String(activeServiceCount) : "—", icon: Layers, change: dbAvailable ? `${totalServiceCount} total` : noDb },
   ];
 
   return (
     <div className="mx-auto max-w-[1280px]">
       <PageHeader title="Admin Dashboard" description="Overview of your agency." />
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {stats.map((stat) => (
           <Card key={stat.label}>
             <CardContent className="flex items-center gap-3 pt-6">
