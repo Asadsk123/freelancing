@@ -40,10 +40,11 @@ const projectStatusBadge: Record<string, { label: string; variant: "success" | "
 export default async function AdminDashboardPage() {
   const dbAvailable = hasDatabase();
 
-  const recentInquiries = dbAvailable
-    ? (await inquiryRepository.findAll()).slice(0, 5)
+  const allInquiries = dbAvailable
+    ? await inquiryRepository.findAll()
     : [];
-  const newInquiryCount = recentInquiries.filter((i) => i.status === "new").length;
+  const newInquiryCount = allInquiries.filter((i) => i.status === "new").length;
+  const recentInquiries = allInquiries.slice(0, 5);
 
   const clientCount = dbAvailable
     ? await userRepository.countByRole("client")
@@ -62,7 +63,7 @@ export default async function AdminDashboardPage() {
   const stats = [
     { label: "Active Projects", value: dbAvailable ? String(activeProjectCount + pendingProjectCount) : "—", icon: FolderOpen, change: dbAvailable ? `${activeProjectCount} in progress` : "Connect database to track" },
     { label: "Total Clients", value: dbAvailable ? String(clientCount) : "—", icon: Users, change: dbAvailable ? "registered clients" : "Connect database to track" },
-    { label: "New Inquiries", value: dbAvailable ? String(newInquiryCount) : "—", icon: Inbox, change: dbAvailable ? `${recentInquiries.length} total` : "Connect database to track" },
+    { label: "New Inquiries", value: dbAvailable ? String(newInquiryCount) : "—", icon: Inbox, change: dbAvailable ? `${allInquiries.length} total` : "Connect database to track" },
     { label: "Revenue (MTD)", value: "—", icon: DollarSign, change: "Coming soon" },
   ];
 

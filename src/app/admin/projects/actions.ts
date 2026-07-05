@@ -53,6 +53,8 @@ export async function createProject(formData: FormData): Promise<ActionResult> {
 
     revalidatePath("/admin/projects");
     revalidatePath("/admin/dashboard");
+    revalidatePath("/projects");
+    revalidatePath("/dashboard");
     return { success: true };
   } catch (err) {
     console.error("Failed to create project:", err);
@@ -110,6 +112,8 @@ export async function deleteProject(formData: FormData): Promise<ActionResult> {
 
     revalidatePath("/admin/projects");
     revalidatePath("/admin/dashboard");
+    revalidatePath("/projects");
+    revalidatePath("/dashboard");
     return { success: true };
   } catch (err) {
     console.error("Failed to delete project:", err);
