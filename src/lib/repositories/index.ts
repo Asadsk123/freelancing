@@ -8,3 +8,5 @@ export type { ProjectWithClient, ProjectWithDetails } from "./project";
 export { ServiceRepository, serviceRepository } from "./service";
 export type { ServiceWithCategory } from "./service";
 export { ServiceCategoryRepository, serviceCategoryRepository } from "./service-category";
+export { ReviewRepository, reviewRepository } from "./review";
+export type { ReviewWithDetails } from "./review";

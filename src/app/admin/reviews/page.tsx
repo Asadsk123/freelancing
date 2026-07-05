@@ -5,53 +5,24 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Star } from "lucide-react";
 import { EmptyState } from "@/components/shared/empty-state";
+import { hasDatabase } from "@/db";
+import { reviewRepository } from "@/lib/repositories/review";
+import { formatDate } from "@/lib/utils/formatting";
 
 export const metadata: Metadata = {
   title: "Manage Reviews",
   description: "View and manage client reviews.",
 };
 
-const mockReviews = [
-  {
-    id: "1",
-    clientName: "Sarah Johnson",
-    clientInitials: "SJ",
-    company: "Acme Corp",
-    project: "Brand Identity Design",
-    rating: 5,
-    comment: "Exceptional work on our brand identity. The team understood our vision perfectly and delivered beyond expectations.",
-    status: "published",
-    date: "Jun 20, 2026",
-  },
-  {
-    id: "2",
-    clientName: "David Park",
-    clientInitials: "DP",
-    company: "FinTech Solutions",
-    project: "Company Website Redesign",
-    rating: 5,
-    comment: "Professional team with excellent communication throughout the project. The new website has significantly improved our conversion rates.",
-    status: "published",
-    date: "Apr 15, 2025",
-  },
-  {
-    id: "3",
-    clientName: "Emma Wilson",
-    clientInitials: "EW",
-    company: "Global Retail",
-    project: "Marketing Campaign",
-    rating: 4,
-    comment: "Great results from the digital marketing campaign. Would love to see even more detailed analytics reporting.",
-    status: "pending",
-    date: "Jul 1, 2026",
-  },
-];
-
-const statusBadge: Record<string, { label: string; variant: "success" | "warning" | "secondary" }> = {
-  published: { label: "Published", variant: "success" },
-  pending: { label: "Pending Review", variant: "warning" },
-  hidden: { label: "Hidden", variant: "secondary" },
-};
+function getInitials(name: string): string {
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+}
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -70,12 +41,23 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
-export default function AdminReviewsPage() {
+export default async function AdminReviewsPage() {
+  const dbAvailable = hasDatabase();
+  const reviews = dbAvailable ? await reviewRepository.findAll() : [];
+
   return (
     <div className="mx-auto max-w-[1280px]">
       <PageHeader title="Reviews" description="Manage client reviews and testimonials." />
 
-      {mockReviews.length === 0 ? (
+      {!dbAvailable && (
+        <div className="mt-4 rounded-[var(--radius-md)] border border-[var(--warning)] bg-[var(--warning)]/10 px-4 py-3">
+          <p className="text-sm text-[var(--foreground)]">
+            Database not connected. Set <code className="rounded bg-[var(--muted)] px-1 py-0.5 text-xs">DATABASE_URL</code> in <code className="rounded bg-[var(--muted)] px-1 py-0.5 text-xs">.env.local</code> to manage reviews.
+          </p>
+        </div>
+      )}
+
+      {dbAvailable && reviews.length === 0 ? (
         <div className="mt-8">
           <Card>
             <CardContent className="py-12">
@@ -89,36 +71,39 @@ export default function AdminReviewsPage() {
         </div>
       ) : (
         <div className="mt-8 space-y-4">
-          {mockReviews.map((review) => {
-            const badge = statusBadge[review.status] ?? { label: "Pending", variant: "warning" as const };
-            return (
-              <Card key={review.id}>
-                <CardContent className="py-5">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start gap-3">
-                      <Avatar className="h-10 w-10">
-                        <AvatarFallback className="text-xs">{review.clientInitials}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-medium text-[var(--foreground)]">{review.clientName}</p>
-                        <p className="text-xs text-[var(--muted-foreground)]">
-                          {review.company} &middot; {review.project}
-                        </p>
-                        <div className="mt-1">
-                          <StarRating rating={review.rating} />
-                        </div>
+          {reviews.map((review) => (
+            <Card key={review.id}>
+              <CardContent className="py-5">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start gap-3">
+                    <Avatar className="h-10 w-10">
+                      <AvatarFallback className="text-xs">{getInitials(review.clientName)}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-medium text-[var(--foreground)]">{review.clientName}</p>
+                      <p className="text-xs text-[var(--muted-foreground)]">
+                        {review.projectTitle}
+                      </p>
+                      <div className="mt-1">
+                        <StarRating rating={review.rating} />
                       </div>
                     </div>
-                    <div className="flex flex-col items-end gap-1">
-                      <Badge variant={badge.variant}>{badge.label}</Badge>
-                      <span className="text-xs text-[var(--muted-foreground)]">{review.date}</span>
-                    </div>
                   </div>
-                  <p className="mt-3 text-sm text-[var(--muted-foreground)]">{review.comment}</p>
-                </CardContent>
-              </Card>
-            );
-          })}
+                  <div className="flex flex-col items-end gap-1">
+                    <Badge variant={review.isPublished ? "success" : "warning"}>
+                      {review.isPublished ? "Published" : "Pending"}
+                    </Badge>
+                    <span className="text-xs text-[var(--muted-foreground)]">
+                      {formatDate(review.createdAt)}
+                    </span>
+                  </div>
+                </div>
+                {review.testimonial && (
+                  <p className="mt-3 text-sm text-[var(--muted-foreground)]">{review.testimonial}</p>
+                )}
+              </CardContent>
+            </Card>
+          ))}
         </div>
       )}
     </div>
