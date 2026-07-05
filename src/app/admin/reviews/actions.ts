@@ -26,6 +26,7 @@ export async function toggleReviewPublished(formData: FormData): Promise<ActionR
     }
 
     revalidatePath("/admin/reviews");
+    revalidatePath("/");
     return { success: true };
   } catch (err) {
     console.error("Failed to toggle review:", err);
@@ -50,6 +51,7 @@ export async function deleteReview(formData: FormData): Promise<ActionResult> {
     }
 
     revalidatePath("/admin/reviews");
+    revalidatePath("/");
     return { success: true };
   } catch (err) {
     console.error("Failed to delete review:", err);
