@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { loginSchema, otpSchema } from "@/lib/validations/auth";
-import { createSession, destroySession, SESSION_DURATION_MS } from "./session";
+import { createSession, getSession, destroySession, SESSION_DURATION_MS } from "./session";
 import { hasDatabase } from "@/db";
 import { userRepository } from "@/lib/repositories/user";
 import { otpRepository } from "@/lib/repositories/otp";
@@ -102,6 +102,7 @@ export async function verifyOtp(
 
     const user = await userRepository.findOrCreate(email);
 
+    await sessionRepository.deleteByUserId(user.id);
     const expiresAt = new Date(Date.now() + SESSION_DURATION_MS);
     await sessionRepository.create(user.id, expiresAt);
 
@@ -125,6 +126,12 @@ export async function verifyOtp(
 }
 
 export async function logout(): Promise<never> {
+  if (hasDatabase()) {
+    const session = await getSession();
+    if (session) {
+      await sessionRepository.deleteByUserId(session.userId);
+    }
+  }
   await destroySession();
   redirect("/login");
 }

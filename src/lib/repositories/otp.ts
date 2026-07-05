@@ -13,6 +13,11 @@ function generateOtpCode(): string {
 
 export class OtpRepository extends BaseRepository {
   async create(email: string): Promise<string> {
+    await this.db
+      .update(otpCodes)
+      .set({ usedAt: new Date() })
+      .where(and(eq(otpCodes.email, email), isNull(otpCodes.usedAt)));
+
     const code = generateOtpCode();
     const expiresAt = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000);
 
