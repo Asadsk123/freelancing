@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { Logo } from "./logo";
 import { cn } from "@/lib/utils/cn";
+import { logout } from "@/lib/auth/actions";
 import type { LucideIcon } from "lucide-react";
 
 const mobileNavItems = [
@@ -49,11 +50,11 @@ export function PortalHeader({ userName, userInitials }: PortalHeaderProps) {
               <span className="hidden text-sm font-medium text-[var(--foreground)] sm:block">
                 {userName}
               </span>
-              <Button variant="ghost" size="icon" asChild>
-                <Link href="/login" aria-label="Sign out">
+              <form action={logout}>
+                <Button variant="ghost" size="icon" type="submit" aria-label="Sign out">
                   <LogOut className="h-4 w-4" />
-                </Link>
-              </Button>
+                </Button>
+              </form>
             </div>
           </div>
         </div>

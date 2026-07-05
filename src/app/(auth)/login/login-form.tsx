@@ -10,6 +10,7 @@ import { FormError } from "@/components/shared/form-error";
 import { Spinner } from "@/components/ui/spinner";
 import { Mail } from "lucide-react";
 import { loginSchema } from "@/lib/validations/auth";
+import { requestOtp } from "@/lib/auth/actions";
 
 type FormState = "idle" | "submitting" | "error";
 
@@ -24,10 +25,9 @@ export function LoginForm() {
     setErrorMessage("");
 
     const formData = new FormData(e.currentTarget);
-    const result = loginSchema.safeParse({
-      email: formData.get("email") as string,
-    });
+    const email = formData.get("email") as string;
 
+    const result = loginSchema.safeParse({ email });
     if (!result.success) {
       const firstError = Object.values(result.error.flatten().fieldErrors)[0];
       setErrorMessage(firstError?.[0] ?? "Please check your input.");
@@ -35,8 +35,12 @@ export function LoginForm() {
       return;
     }
 
-    // Mock: simulate OTP send delay, then navigate to verify page
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    const response = await requestOtp(formData);
+    if (!response.success) {
+      setErrorMessage(response.error ?? "Something went wrong.");
+      setFormState("error");
+      return;
+    }
 
     const params = new URLSearchParams({ email: result.data.email });
     router.push(`/login/verify?${params.toString()}`);

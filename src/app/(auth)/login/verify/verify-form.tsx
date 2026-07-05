@@ -9,6 +9,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { OtpInput } from "@/components/auth/otp-input";
 import { ShieldCheck } from "lucide-react";
 import { otpSchema } from "@/lib/validations/auth";
+import { verifyOtp, requestOtp } from "@/lib/auth/actions";
 
 type FormState = "idle" | "verifying" | "resending" | "error";
 
@@ -51,18 +52,16 @@ export function VerifyForm() {
 
     setFormState("verifying");
 
-    // Mock: simulate verification delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // Mock: accept code "123456" for testing, reject others
-    if (code === "123456") {
-      router.push("/dashboard");
+    const response = await verifyOtp(email, code);
+    if (response.success) {
+      router.push(response.redirectTo ?? "/dashboard");
+      router.refresh();
     } else {
-      setErrorMessage("Invalid code. Please try again or request a new one.");
+      setErrorMessage(response.error ?? "Verification failed.");
       setFormState("error");
       setCode("");
     }
-  }, [code, router]);
+  }, [code, email, router]);
 
   useEffect(() => {
     if (code.length === 6) {
@@ -75,8 +74,9 @@ export function VerifyForm() {
     setErrorMessage("");
     setCode("");
 
-    // Mock: simulate resend delay
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    const formData = new FormData();
+    formData.set("email", email);
+    await requestOtp(formData);
 
     setCooldown(RESEND_COOLDOWN_SECONDS);
     setFormState("idle");

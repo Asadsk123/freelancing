@@ -1,18 +1,27 @@
+import { redirect } from "next/navigation";
+import { getSession } from "@/lib/auth/session";
 import { PortalShell } from "@/components/layout/portal-shell";
 
-export default function PortalLayout({
+export default async function PortalLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Mock user data — will be replaced by real session lookup
-  const mockUser = {
-    name: "Demo User",
-    initials: "DU",
-  };
+  const session = await getSession();
+
+  if (!session) {
+    redirect("/login");
+  }
+
+  const initials = session.name
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
 
   return (
-    <PortalShell userName={mockUser.name} userInitials={mockUser.initials}>
+    <PortalShell userName={session.name} userInitials={initials}>
       {children}
     </PortalShell>
   );
