@@ -13,3 +13,4 @@ export type { ReviewWithDetails } from "./review";
 export { BlogPostRepository, blogPostRepository } from "./blog-post";
 export type { BlogPostWithDetails } from "./blog-post";
 export { BlogCategoryRepository, blogCategoryRepository } from "./blog-category";
+export { NotificationRepository, notificationRepository } from "./notification";
