@@ -10,3 +10,6 @@ export type { ServiceWithCategory } from "./service";
 export { ServiceCategoryRepository, serviceCategoryRepository } from "./service-category";
 export { ReviewRepository, reviewRepository } from "./review";
 export type { ReviewWithDetails } from "./review";
+export { BlogPostRepository, blogPostRepository } from "./blog-post";
+export type { BlogPostWithDetails } from "./blog-post";
+export { BlogCategoryRepository, blogCategoryRepository } from "./blog-category";
