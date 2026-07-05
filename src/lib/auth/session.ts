@@ -2,7 +2,7 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
 const SESSION_COOKIE = "ra_session";
-const SESSION_DURATION_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+export const SESSION_DURATION_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 export type SessionPayload = {
   userId: string;

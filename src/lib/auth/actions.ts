@@ -2,7 +2,11 @@
 
 import { redirect } from "next/navigation";
 import { loginSchema, otpSchema } from "@/lib/validations/auth";
-import { createSession, destroySession } from "./session";
+import { createSession, destroySession, SESSION_DURATION_MS } from "./session";
+import { hasDatabase } from "@/db";
+import { userRepository } from "@/lib/repositories/user";
+import { otpRepository } from "@/lib/repositories/otp";
+import { sessionRepository } from "@/lib/repositories/session";
 
 type ActionResult = {
   success: boolean;
@@ -10,22 +14,18 @@ type ActionResult = {
   redirectTo?: string;
 };
 
-const MOCK_USERS: Record<string, { name: string; role: "admin" | "client" }> = {
-  "admin@royalasad.com": { name: "Admin", role: "admin" },
-};
+const DEV_OTP = "123456";
+const isDev = process.env.NODE_ENV !== "production";
 
-function getMockUser(email: string): { name: string; role: "admin" | "client" } {
-  const known = MOCK_USERS[email];
-  if (known) return known;
+function deriveNameFromEmail(email: string): string {
   const namePart = email.split("@")[0] ?? "User";
-  const name = namePart
+  return namePart
     .replace(/[._-]/g, " ")
     .replace(/\b\w/g, (c) => c.toUpperCase());
-  return { name, role: "client" };
 }
 
 export async function requestOtp(formData: FormData): Promise<ActionResult> {
-  const raw = { email: formData.get("email") as string };
+  const raw = { email: (formData.get("email") ?? "") as string };
   const result = loginSchema.safeParse(raw);
 
   if (!result.success) {
@@ -33,11 +33,24 @@ export async function requestOtp(formData: FormData): Promise<ActionResult> {
     return { success: false, error: firstError?.[0] ?? "Invalid input." };
   }
 
-  // Mock: In production this would generate an OTP, store it in the database,
-  // and send it via email. For now we accept any email and skip sending.
-  await new Promise((resolve) => setTimeout(resolve, 300));
+  if (!hasDatabase()) {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return { success: true };
+  }
 
-  return { success: true };
+  try {
+    await userRepository.findOrCreate(result.data.email);
+    const code = await otpRepository.create(result.data.email);
+
+    if (isDev) {
+      console.log(`[DEV OTP] ${result.data.email}: ${code}`);
+    }
+
+    return { success: true };
+  } catch (err) {
+    console.error("Failed to create OTP:", err);
+    return { success: false, error: "Something went wrong. Please try again." };
+  }
 }
 
 export async function verifyOtp(
@@ -55,25 +68,60 @@ export async function verifyOtp(
     return { success: false, error: "Invalid email." };
   }
 
-  // Mock: accept "123456" as the valid OTP for any email
-  if (code !== "123456") {
+  if (!hasDatabase()) {
+    if (code !== DEV_OTP) {
+      return {
+        success: false,
+        error: "Invalid code. Please try again or request a new one.",
+      };
+    }
+    const isAdmin = email === "admin@royalasad.com";
+    await createSession({
+      userId: email,
+      email,
+      name: deriveNameFromEmail(email),
+      role: isAdmin ? "admin" : "client",
+    });
     return {
-      success: false,
-      error: "Invalid code. Please try again or request a new one.",
+      success: true,
+      redirectTo: isAdmin ? "/admin/dashboard" : "/dashboard",
     };
   }
 
-  const user = getMockUser(email);
+  try {
+    const isValidOtp =
+      (isDev && code === DEV_OTP) ||
+      (await otpRepository.verify(email, code));
 
-  await createSession({
-    userId: email,
-    email,
-    name: user.name,
-    role: user.role,
-  });
+    if (!isValidOtp) {
+      return {
+        success: false,
+        error: "Invalid code. Please try again or request a new one.",
+      };
+    }
 
-  const redirectTo = user.role === "admin" ? "/admin/dashboard" : "/dashboard";
-  return { success: true, redirectTo };
+    const user = await userRepository.findOrCreate(email);
+
+    const expiresAt = new Date(Date.now() + SESSION_DURATION_MS);
+    await sessionRepository.create(user.id, expiresAt);
+
+    await createSession({
+      userId: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+    });
+
+    const redirectTo =
+      user.role === "admin" ? "/admin/dashboard" : "/dashboard";
+    return { success: true, redirectTo };
+  } catch (err) {
+    console.error("Failed to verify OTP:", err);
+    return {
+      success: false,
+      error: "Something went wrong. Please try again.",
+    };
+  }
 }
 
 export async function logout(): Promise<never> {

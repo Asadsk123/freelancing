@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { hasDatabase } from "@/db";
 import { inquiryRepository } from "@/lib/repositories/inquiry";
+import { userRepository } from "@/lib/repositories/user";
 import { formatRelativeTime } from "@/lib/utils/formatting";
 
 export const metadata: Metadata = {
@@ -46,10 +47,13 @@ export default async function AdminDashboardPage() {
     ? (await inquiryRepository.findAll()).slice(0, 5)
     : [];
   const newInquiryCount = recentInquiries.filter((i) => i.status === "new").length;
+  const clientCount = dbAvailable
+    ? await userRepository.countByRole("client")
+    : 0;
 
   const stats = [
     { label: "Active Projects", value: "—", icon: FolderOpen, change: "Connect database to track" },
-    { label: "Total Clients", value: "—", icon: Users, change: "Connect database to track" },
+    { label: "Total Clients", value: dbAvailable ? String(clientCount) : "—", icon: Users, change: dbAvailable ? "registered clients" : "Connect database to track" },
     { label: "New Inquiries", value: dbAvailable ? String(newInquiryCount) : "—", icon: Inbox, change: dbAvailable ? `${recentInquiries.length} total` : "Connect database to track" },
     { label: "Revenue (MTD)", value: "—", icon: DollarSign, change: "Coming soon" },
   ];
