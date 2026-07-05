@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/shared/empty-state";
 import {
   FolderOpen,
   Users,
@@ -11,24 +12,14 @@ import {
   DollarSign,
   ArrowRight,
 } from "lucide-react";
+import { hasDatabase } from "@/db";
+import { inquiryRepository } from "@/lib/repositories/inquiry";
+import { formatRelativeTime } from "@/lib/utils/formatting";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard",
   description: "Admin overview and statistics.",
 };
-
-const stats = [
-  { label: "Active Projects", value: "8", icon: FolderOpen, change: "+2 this month" },
-  { label: "Total Clients", value: "23", icon: Users, change: "+3 this month" },
-  { label: "New Inquiries", value: "5", icon: Inbox, change: "2 unread" },
-  { label: "Revenue (MTD)", value: "$12,450", icon: DollarSign, change: "+18% vs last month" },
-];
-
-const recentInquiries = [
-  { id: "1", name: "Sarah Johnson", email: "sarah@example.com", service: "Web Development", status: "new", date: "2 hours ago" },
-  { id: "2", name: "Michael Chen", email: "michael@example.com", service: "Graphic Design", status: "responded", date: "1 day ago" },
-  { id: "3", name: "Emma Wilson", email: "emma@example.com", service: "Digital Marketing", status: "in_discussion", date: "2 days ago" },
-];
 
 const recentProjects = [
   { id: "1", title: "Brand Identity Design", client: "Acme Corp", status: "in_progress" },
@@ -40,6 +31,7 @@ const inquiryStatusBadge: Record<string, { label: string; variant: "success" | "
   new: { label: "New", variant: "default" },
   responded: { label: "Responded", variant: "secondary" },
   in_discussion: { label: "In Discussion", variant: "warning" },
+  accepted: { label: "Accepted", variant: "success" },
 };
 
 const projectStatusBadge: Record<string, { label: string; variant: "success" | "warning" | "secondary" | "default" }> = {
@@ -48,7 +40,20 @@ const projectStatusBadge: Record<string, { label: string; variant: "success" | "
   completed: { label: "Completed", variant: "success" },
 };
 
-export default function AdminDashboardPage() {
+export default async function AdminDashboardPage() {
+  const dbAvailable = hasDatabase();
+  const recentInquiries = dbAvailable
+    ? (await inquiryRepository.findAll()).slice(0, 5)
+    : [];
+  const newInquiryCount = recentInquiries.filter((i) => i.status === "new").length;
+
+  const stats = [
+    { label: "Active Projects", value: "—", icon: FolderOpen, change: "Connect database to track" },
+    { label: "Total Clients", value: "—", icon: Users, change: "Connect database to track" },
+    { label: "New Inquiries", value: dbAvailable ? String(newInquiryCount) : "—", icon: Inbox, change: dbAvailable ? `${recentInquiries.length} total` : "Connect database to track" },
+    { label: "Revenue (MTD)", value: "—", icon: DollarSign, change: "Coming soon" },
+  ];
+
   return (
     <div className="mx-auto max-w-[1280px]">
       <PageHeader title="Admin Dashboard" description="Overview of your agency." />
@@ -84,22 +89,34 @@ export default function AdminDashboardPage() {
             </Button>
           </div>
           <div className="mt-4 space-y-3">
-            {recentInquiries.map((inquiry) => {
-              const badge = inquiryStatusBadge[inquiry.status] ?? { label: "New", variant: "default" as const };
-              return (
-                <Card key={inquiry.id}>
-                  <CardContent className="flex items-center justify-between py-4">
-                    <div>
-                      <p className="text-sm font-medium text-[var(--foreground)]">{inquiry.name}</p>
-                      <p className="text-xs text-[var(--muted-foreground)]">
-                        {inquiry.service} &middot; {inquiry.date}
-                      </p>
-                    </div>
-                    <Badge variant={badge.variant}>{badge.label}</Badge>
-                  </CardContent>
-                </Card>
-              );
-            })}
+            {recentInquiries.length === 0 ? (
+              <Card>
+                <CardContent className="py-8">
+                  <EmptyState
+                    icon={Inbox}
+                    title={dbAvailable ? "No inquiries yet" : "Database not connected"}
+                    description={dbAvailable ? "Inquiries from the contact form will appear here." : "Set DATABASE_URL to see real data."}
+                  />
+                </CardContent>
+              </Card>
+            ) : (
+              recentInquiries.map((inquiry) => {
+                const badge = inquiryStatusBadge[inquiry.status] ?? { label: "New", variant: "default" as const };
+                return (
+                  <Card key={inquiry.id}>
+                    <CardContent className="flex items-center justify-between py-4">
+                      <div>
+                        <p className="text-sm font-medium text-[var(--foreground)]">{inquiry.name}</p>
+                        <p className="text-xs text-[var(--muted-foreground)]">
+                          {inquiry.serviceInterest ?? "General"} &middot; {formatRelativeTime(inquiry.createdAt)}
+                        </p>
+                      </div>
+                      <Badge variant={badge.variant}>{badge.label}</Badge>
+                    </CardContent>
+                  </Card>
+                );
+              })
+            )}
           </div>
         </div>
 

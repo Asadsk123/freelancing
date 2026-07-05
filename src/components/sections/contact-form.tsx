@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useRef, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,14 +10,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { FormSuccess } from "@/components/shared/form-success";
 import { FormError } from "@/components/shared/form-error";
 import { Spinner } from "@/components/ui/spinner";
+import { TrackingId } from "@/components/shared/tracking-id";
 import { Send } from "lucide-react";
 import { inquiryFormSchema } from "@/lib/validations/inquiry";
+import { submitInquiry } from "@/app/(public)/contact/actions";
 
 type FormState = "idle" | "submitting" | "success" | "error";
 
 export function ContactForm() {
   const [formState, setFormState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [trackingId, setTrackingId] = useState("");
+  const formRef = useRef<HTMLFormElement>(null);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -25,26 +29,34 @@ export function ContactForm() {
     setErrorMessage("");
 
     const formData = new FormData(e.currentTarget);
+    const field = (name: string) => (formData.get(name) ?? "") as string;
     const raw = {
-      name: formData.get("name") as string,
-      email: formData.get("email") as string,
-      phone: formData.get("phone") as string,
-      company: formData.get("company") as string,
-      service: formData.get("service") as string,
-      budget: formData.get("budget") as string,
-      message: formData.get("message") as string,
+      name: field("name"),
+      email: field("email"),
+      phone: field("phone"),
+      company: field("company"),
+      service: field("service"),
+      budget: field("budget"),
+      message: field("message"),
     };
 
-    const result = inquiryFormSchema.safeParse(raw);
-    if (!result.success) {
-      const firstError = Object.values(result.error.flatten().fieldErrors)[0];
+    const clientResult = inquiryFormSchema.safeParse(raw);
+    if (!clientResult.success) {
+      const firstError = Object.values(clientResult.error.flatten().fieldErrors)[0];
       setErrorMessage(firstError?.[0] ?? "Please check your input.");
       setFormState("error");
       return;
     }
 
-    // API endpoint will be connected in a future module
-    setFormState("success");
+    const result = await submitInquiry(formData);
+    if (result.success) {
+      setTrackingId(result.trackingId ?? "");
+      setFormState("success");
+      formRef.current?.reset();
+    } else {
+      setErrorMessage(result.error ?? "Something went wrong.");
+      setFormState("error");
+    }
   }
 
   if (formState === "success") {
@@ -55,7 +67,12 @@ export function ContactForm() {
             title="Message received"
             description="Thank you for reaching out. We'll respond within 24 business hours."
           >
-            <Button variant="link" onClick={() => setFormState("idle")}>
+            {trackingId && (
+              <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+                Your reference: <TrackingId id={trackingId} />
+              </p>
+            )}
+            <Button variant="link" onClick={() => setFormState("idle")} className="mt-2">
               Send another message
             </Button>
           </FormSuccess>
@@ -67,7 +84,7 @@ export function ContactForm() {
   return (
     <Card>
       <CardContent className="pt-6">
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
           {formState === "error" && <FormError message={errorMessage} />}
 
           <div className="grid gap-6 sm:grid-cols-2">

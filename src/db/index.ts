@@ -15,6 +15,10 @@ function createDb() {
   return drizzle(sql, { schema });
 }
 
+export function hasDatabase(): boolean {
+  return !!process.env.DATABASE_URL;
+}
+
 export function getDb() {
   if (!_db) {
     _db = createDb();
