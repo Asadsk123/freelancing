@@ -1,8 +1,12 @@
-import { eq, sql } from "drizzle-orm";
+import { eq, desc, sql } from "drizzle-orm";
 import { BaseRepository } from "@/db/repository";
-import { users } from "@/db/schema";
+import { users, projects } from "@/db/schema";
 
 type UserRow = typeof users.$inferSelect;
+
+export type ClientWithProjectCount = UserRow & {
+  projectCount: number;
+};
 
 const ADMIN_EMAIL = "admin@royalasad.com";
 
@@ -37,6 +41,63 @@ export class UserRepository extends BaseRepository {
       .from(users)
       .where(eq(users.role, role));
     return result?.count ?? 0;
+  }
+
+  async findAllClients(): Promise<ClientWithProjectCount[]> {
+    const rows = await this.db
+      .select({
+        id: users.id,
+        email: users.email,
+        name: users.name,
+        phone: users.phone,
+        company: users.company,
+        role: users.role,
+        notificationPreference: users.notificationPreference,
+        avatarUrl: users.avatarUrl,
+        isActive: users.isActive,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt,
+        projectCount: sql<number>`count(${projects.id})::int`,
+      })
+      .from(users)
+      .leftJoin(projects, eq(users.id, projects.clientId))
+      .where(eq(users.role, "client"))
+      .groupBy(users.id)
+      .orderBy(desc(users.createdAt));
+    return rows;
+  }
+
+  async findById(id: string): Promise<UserRow | undefined> {
+    const [row] = await this.db
+      .select()
+      .from(users)
+      .where(eq(users.id, id))
+      .limit(1);
+    return row;
+  }
+
+  async updateProfile(
+    id: string,
+    data: { name?: string; phone?: string | null; company?: string | null },
+  ): Promise<UserRow | undefined> {
+    const [row] = await this.db
+      .update(users)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(users.id, id))
+      .returning();
+    return row;
+  }
+
+  async toggleActive(id: string): Promise<UserRow | undefined> {
+    const existing = await this.findById(id);
+    if (!existing) return undefined;
+
+    const [row] = await this.db
+      .update(users)
+      .set({ isActive: !existing.isActive, updatedAt: new Date() })
+      .where(eq(users.id, id))
+      .returning();
+    return row;
   }
 }
 
