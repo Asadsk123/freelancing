@@ -1,6 +1,6 @@
 import { eq, desc, sql, and } from "drizzle-orm";
 import { BaseRepository } from "@/db/repository";
-import { projects, milestones, users } from "@/db/schema";
+import { projects, milestones, users, services } from "@/db/schema";
 
 type ProjectRow = typeof projects.$inferSelect;
 type MilestoneRow = typeof milestones.$inferSelect;
@@ -8,6 +8,10 @@ type MilestoneRow = typeof milestones.$inferSelect;
 export type ProjectWithClient = ProjectRow & {
   clientName: string;
   clientEmail: string;
+};
+
+export type ProjectForPortfolio = ProjectRow & {
+  serviceName: string | null;
 };
 
 export type ProjectWithDetails = ProjectRow & {
@@ -64,6 +68,29 @@ export class ProjectRepository extends BaseRepository {
       .innerJoin(users, eq(projects.clientId, users.id))
       .orderBy(desc(projects.createdAt));
     return rows;
+  }
+
+  async findCompleted(): Promise<ProjectForPortfolio[]> {
+    return this.db
+      .select({
+        id: projects.id,
+        trackingId: projects.trackingId,
+        clientId: projects.clientId,
+        serviceId: projects.serviceId,
+        title: projects.title,
+        description: projects.description,
+        status: projects.status,
+        startDate: projects.startDate,
+        targetDate: projects.targetDate,
+        completedDate: projects.completedDate,
+        createdAt: projects.createdAt,
+        updatedAt: projects.updatedAt,
+        serviceName: services.name,
+      })
+      .from(projects)
+      .leftJoin(services, eq(projects.serviceId, services.id))
+      .where(eq(projects.status, "completed"))
+      .orderBy(desc(projects.completedDate));
   }
 
   async findByClientId(clientId: string): Promise<ProjectRow[]> {

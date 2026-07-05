@@ -4,7 +4,7 @@ export type { ClientWithProjectCount } from "./user";
 export { OtpRepository, otpRepository } from "./otp";
 export { SessionRepository, sessionRepository } from "./session";
 export { ProjectRepository, projectRepository } from "./project";
-export type { ProjectWithClient, ProjectWithDetails } from "./project";
+export type { ProjectWithClient, ProjectWithDetails, ProjectForPortfolio } from "./project";
 export { ServiceRepository, serviceRepository } from "./service";
 export type { ServiceWithCategory } from "./service";
 export { ServiceCategoryRepository, serviceCategoryRepository } from "./service-category";
