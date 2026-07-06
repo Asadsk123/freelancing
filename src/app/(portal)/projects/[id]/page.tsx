@@ -13,7 +13,9 @@ import { getSession } from "@/lib/auth/session";
 import { hasDatabase } from "@/db";
 import { projectRepository } from "@/lib/repositories/project";
 import { fileRepository } from "@/lib/repositories/file";
-import { formatDate, formatFileSize } from "@/lib/utils/formatting";
+import { conversationRepository } from "@/lib/repositories/conversation";
+import { formatDate, formatFileSize, formatRelativeTime } from "@/lib/utils/formatting";
+import { MessageForm } from "./message-form";
 
 export const metadata: Metadata = {
   title: "Project Details",
@@ -76,6 +78,7 @@ export default async function ProjectDetailPage({
   }
 
   const projectFiles = await fileRepository.findByProjectId(id);
+  const messages = await conversationRepository.findMessagesByProjectId(id);
 
   const badge = statusBadge[project.status] ?? { label: "Pending", variant: "secondary" as const };
   const completedMilestones = project.milestones.filter((m) => m.status === "completed").length;
@@ -194,15 +197,53 @@ export default async function ProjectDetailPage({
           </TabsContent>
 
           <TabsContent value="conversation" className="mt-4">
-            <Card>
-              <CardContent className="py-12">
-                <EmptyState
-                  icon={MessageSquare}
-                  title="Start a conversation"
-                  description="All messages for this project live in one thread. Ask questions, share feedback, or request updates."
-                />
-              </CardContent>
-            </Card>
+            <div className="space-y-4">
+              {messages.length === 0 ? (
+                <Card>
+                  <CardContent className="py-12">
+                    <EmptyState
+                      icon={MessageSquare}
+                      title="Start a conversation"
+                      description="All messages for this project live in one thread. Ask questions, share feedback, or request updates."
+                    />
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="space-y-3">
+                  {messages.map((message) => {
+                    const isOwn = message.senderId === session.userId;
+                    return (
+                      <Card key={message.id} className={isOwn ? "border-[var(--primary)]/30" : ""}>
+                        <CardContent className="py-4">
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-[var(--foreground)]">
+                                {message.senderName}
+                              </span>
+                              {message.senderRole === "admin" && (
+                                <Badge variant="secondary">Team</Badge>
+                              )}
+                            </div>
+                            <span className="text-xs text-[var(--muted-foreground)]">
+                              {formatRelativeTime(message.createdAt)}
+                            </span>
+                          </div>
+                          <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--muted-foreground)]">
+                            {message.content}
+                          </p>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )}
+
+              <Card>
+                <CardContent className="py-5">
+                  <MessageForm projectId={project.id} />
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

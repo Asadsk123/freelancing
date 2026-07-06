@@ -16,3 +16,5 @@ export { BlogCategoryRepository, blogCategoryRepository } from "./blog-category"
 export { NotificationRepository, notificationRepository } from "./notification";
 export { FileRepository, fileRepository } from "./file";
 export type { FileWithUploader } from "./file";
+export { ConversationRepository, conversationRepository } from "./conversation";
+export type { MessageWithSender } from "./conversation";
