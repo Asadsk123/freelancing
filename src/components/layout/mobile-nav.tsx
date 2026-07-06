@@ -6,6 +6,11 @@ import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { publicNavigation } from "@/config/navigation";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Logo } from "./logo";
 import { cn } from "@/lib/utils/cn";
 
@@ -63,14 +68,19 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
       >
         <div className="flex h-16 items-center justify-between border-b border-[var(--border)] px-4">
           <Logo />
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onClose}
-            aria-label="Close menu"
-          >
-            <X className="h-5 w-5" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onClose}
+                aria-label="Close menu"
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Close menu</TooltipContent>
+          </Tooltip>
         </div>
 
         <nav className="flex flex-col gap-1 p-4" aria-label="Mobile navigation">

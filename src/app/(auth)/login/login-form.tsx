@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, type FormEvent } from "react";
+import { useState, useEffect, useRef, useCallback, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,18 +15,33 @@ import { requestOtp } from "@/lib/auth/actions";
 type FormState = "idle" | "submitting" | "error";
 
 const LAST_EMAIL_KEY = "ra_last_email";
+const AUTO_SEND_SECONDS = 4;
+const SUGGESTION_DOMAINS = ["gmail.com", "outlook.com", "yahoo.com"];
+
+function isValidEmail(value: string): boolean {
+  return loginSchema.safeParse({ email: value }).success;
+}
+
+/** A bare username with no domain, e.g. "john" — used to offer domain suggestions. */
+function getUsernameOnly(value: string): string | null {
+  const trimmed = value.trim();
+  if (!trimmed || trimmed.includes("@")) return null;
+  return /^[a-zA-Z0-9._%+-]+$/.test(trimmed) ? trimmed : null;
+}
 
 export function LoginForm() {
   const router = useRouter();
   const [formState, setFormState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [email, setEmail] = useState("");
+  const [autoSendIn, setAutoSendIn] = useState<number | null>(null);
   const submitButtonRef = useRef<HTMLButtonElement>(null);
+  // Guards against ever sending more than one OTP request from this form.
+  const sentRef = useRef(false);
 
   // Remember the previous email so returning users don't have to retype it.
-  // The email input carries the native `autoFocus` attribute for new users;
-  // when an email is remembered we instead move focus to the submit button so
-  // signing in is effectively a single click.
+  // New users focus the email field (native autofocus); returning users focus
+  // the submit button so signing in is effectively one click.
   useEffect(() => {
     const stored = localStorage.getItem(LAST_EMAIL_KEY);
     if (stored) {
@@ -35,11 +50,8 @@ export function LoginForm() {
     }
   }, []);
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (formState === "submitting") return; // prevent duplicate submissions
-    setFormState("submitting");
-    setErrorMessage("");
+  const sendOtp = useCallback(async () => {
+    if (sentRef.current) return; // never send twice
 
     const result = loginSchema.safeParse({ email });
     if (!result.success) {
@@ -48,6 +60,11 @@ export function LoginForm() {
       setFormState("error");
       return;
     }
+
+    sentRef.current = true;
+    setAutoSendIn(null);
+    setFormState("submitting");
+    setErrorMessage("");
 
     const formData = new FormData();
     formData.set("email", result.data.email);
@@ -62,9 +79,59 @@ export function LoginForm() {
       return;
     }
 
+    // Genuine failure — allow the user to try again.
+    sentRef.current = false;
     setErrorMessage(response.error ?? "Something went wrong.");
     setFormState("error");
+  }, [email, router]);
+
+  // Auto-send: once the email is valid and the user has stopped typing for a
+  // few seconds, send the code automatically. Any keystroke resets the timer
+  // (the effect re-runs on `email` change), and a manual submit cancels it.
+  useEffect(() => {
+    if (sentRef.current || formState === "submitting") {
+      setAutoSendIn(null);
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setAutoSendIn(null);
+      return;
+    }
+
+    let remaining = AUTO_SEND_SECONDS;
+    setAutoSendIn(remaining);
+    const interval = setInterval(() => {
+      remaining -= 1;
+      if (remaining <= 0) {
+        clearInterval(interval);
+        setAutoSendIn(null);
+        void sendOtp();
+      } else {
+        setAutoSendIn(remaining);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [email, formState, sendOtp]);
+
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (formState === "submitting" || sentRef.current) return; // prevent duplicates
+    void sendOtp(); // cancels the auto-send timer and sends immediately
   }
+
+  function applySuggestion(suggestion: string) {
+    setEmail(suggestion);
+    setFormState("idle");
+    setErrorMessage("");
+    requestAnimationFrame(() => submitButtonRef.current?.focus());
+  }
+
+  const username = getUsernameOnly(email);
+  const suggestions =
+    username && formState !== "submitting"
+      ? SUGGESTION_DOMAINS.map((domain) => `${username}@${domain}`)
+      : [];
 
   return (
     <Card>
@@ -95,7 +162,23 @@ export function LoginForm() {
               required
               autoFocus
               disabled={formState === "submitting"}
+              aria-describedby={autoSendIn !== null ? "auto-send-status" : undefined}
             />
+
+            {suggestions.length > 0 && (
+              <div className="flex flex-wrap gap-2 pt-1" role="group" aria-label="Email suggestions">
+                {suggestions.map((suggestion) => (
+                  <button
+                    key={suggestion}
+                    type="button"
+                    onClick={() => applySuggestion(suggestion)}
+                    className="rounded-full border border-[var(--border)] bg-[var(--muted)] px-3 py-1 text-xs font-medium text-[var(--foreground)] transition-colors hover:border-[var(--primary)] hover:bg-[var(--accent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ring)]"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           <Button
@@ -113,6 +196,16 @@ export function LoginForm() {
               "Continue with Email"
             )}
           </Button>
+
+          {autoSendIn !== null && (
+            <p
+              id="auto-send-status"
+              aria-live="polite"
+              className="text-center text-xs text-[var(--muted-foreground)]"
+            >
+              Sending your code automatically in {autoSendIn}s — or press Continue now.
+            </p>
+          )}
         </form>
 
         <p className="mt-4 flex items-center justify-center gap-1.5 text-center text-xs text-[var(--muted-foreground)]">

@@ -6,6 +6,11 @@ import { Menu } from "lucide-react";
 import { publicNavigation } from "@/config/navigation";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Logo } from "./logo";
 import { cn } from "@/lib/utils/cn";
 
@@ -45,15 +50,20 @@ export function Header({ onMobileMenuOpen }: HeaderProps) {
               {publicNavigation.cta.label}
             </Link>
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            onClick={onMobileMenuOpen}
-            aria-label="Open menu"
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden"
+                onClick={onMobileMenuOpen}
+                aria-label="Open menu"
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Open menu</TooltipContent>
+          </Tooltip>
         </div>
       </div>
     </header>
