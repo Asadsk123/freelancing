@@ -1,8 +1,10 @@
-import { eq, and, gt, isNull } from "drizzle-orm";
+import { eq, and, gt, isNull, desc } from "drizzle-orm";
 import { BaseRepository } from "@/db/repository";
 import { otpCodes } from "@/db/schema";
 
 const OTP_EXPIRY_MINUTES = 10;
+/** Minimum seconds between OTP requests for the same email (rate limiting). */
+export const OTP_RESEND_COOLDOWN_SECONDS = 30;
 
 function generateOtpCode(): string {
   const array = new Uint32Array(1);
@@ -12,6 +14,28 @@ function generateOtpCode(): string {
 }
 
 export class OtpRepository extends BaseRepository {
+  /**
+   * Returns the number of seconds the caller must wait before another OTP can be
+   * requested for this email, or 0 if a new code may be sent now. Used for
+   * server-side rate limiting so clients cannot spam OTP requests.
+   */
+  async secondsUntilResend(email: string): Promise<number> {
+    const [latest] = await this.db
+      .select({ createdAt: otpCodes.createdAt })
+      .from(otpCodes)
+      .where(eq(otpCodes.email, email))
+      .orderBy(desc(otpCodes.createdAt))
+      .limit(1);
+
+    if (!latest) return 0;
+
+    const elapsedSeconds = Math.floor(
+      (Date.now() - latest.createdAt.getTime()) / 1000,
+    );
+    const remaining = OTP_RESEND_COOLDOWN_SECONDS - elapsedSeconds;
+    return remaining > 0 ? remaining : 0;
+  }
+
   async create(email: string): Promise<string> {
     await this.db
       .update(otpCodes)

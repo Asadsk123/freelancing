@@ -6,6 +6,11 @@ import { Bell, LogOut, Home, FolderOpen, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Logo } from "./logo";
 import { cn } from "@/lib/utils/cn";
 import { logout } from "@/lib/auth/actions";
@@ -38,11 +43,16 @@ export function PortalHeader({ userName, userInitials }: PortalHeaderProps) {
 
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <Button asChild variant="ghost" size="icon" className="relative">
-              <Link href="/notifications" aria-label="Notifications">
-                <Bell className="h-5 w-5" />
-              </Link>
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button asChild variant="ghost" size="icon" className="relative">
+                  <Link href="/notifications" aria-label="Notifications">
+                    <Bell className="h-5 w-5" />
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Notifications</TooltipContent>
+            </Tooltip>
             <div className="flex items-center gap-2 border-l border-[var(--border)] pl-3 ml-1">
               <Avatar className="h-8 w-8">
                 <AvatarFallback className="text-xs">{userInitials}</AvatarFallback>
@@ -51,9 +61,14 @@ export function PortalHeader({ userName, userInitials }: PortalHeaderProps) {
                 {userName}
               </span>
               <form action={logout}>
-                <Button variant="ghost" size="icon" type="submit" aria-label="Sign out">
-                  <LogOut className="h-4 w-4" />
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" type="submit" aria-label="Sign out">
+                      <LogOut className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Sign out</TooltipContent>
+                </Tooltip>
               </form>
             </div>
           </div>

@@ -31,6 +31,7 @@ export function MessageForm({ projectId }: { projectId: string }) {
           rows={3}
           maxLength={5000}
           required
+          autoResize
           placeholder="Ask a question, share feedback, or request an update..."
           disabled={isPending}
         />

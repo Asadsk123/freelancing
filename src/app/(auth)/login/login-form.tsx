@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, useRef, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,24 +8,38 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormError } from "@/components/shared/form-error";
 import { Spinner } from "@/components/ui/spinner";
-import { Mail } from "lucide-react";
+import { Mail, ShieldCheck } from "lucide-react";
 import { loginSchema } from "@/lib/validations/auth";
 import { requestOtp } from "@/lib/auth/actions";
 
 type FormState = "idle" | "submitting" | "error";
 
+const LAST_EMAIL_KEY = "ra_last_email";
+
 export function LoginForm() {
   const router = useRouter();
   const [formState, setFormState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [email, setEmail] = useState("");
+  const submitButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Remember the previous email so returning users don't have to retype it.
+  // The email input carries the native `autoFocus` attribute for new users;
+  // when an email is remembered we instead move focus to the submit button so
+  // signing in is effectively a single click.
+  useEffect(() => {
+    const stored = localStorage.getItem(LAST_EMAIL_KEY);
+    if (stored) {
+      setEmail(stored);
+      requestAnimationFrame(() => submitButtonRef.current?.focus());
+    }
+  }, []);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (formState === "submitting") return; // prevent duplicate submissions
     setFormState("submitting");
     setErrorMessage("");
-
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("email") as string;
 
     const result = loginSchema.safeParse({ email });
     if (!result.success) {
@@ -35,15 +49,21 @@ export function LoginForm() {
       return;
     }
 
+    const formData = new FormData();
+    formData.set("email", result.data.email);
     const response = await requestOtp(formData);
-    if (!response.success) {
-      setErrorMessage(response.error ?? "Something went wrong.");
-      setFormState("error");
+
+    // A fresh code was sent, or a recent one is still valid (rate-limited):
+    // either way the user should continue to the verification step.
+    if (response.success || response.retryAfter) {
+      localStorage.setItem(LAST_EMAIL_KEY, result.data.email);
+      const params = new URLSearchParams({ email: result.data.email });
+      router.push(`/login/verify?${params.toString()}`);
       return;
     }
 
-    const params = new URLSearchParams({ email: result.data.email });
-    router.push(`/login/verify?${params.toString()}`);
+    setErrorMessage(response.error ?? "Something went wrong.");
+    setFormState("error");
   }
 
   return (
@@ -68,14 +88,18 @@ export function LoginForm() {
               name="email"
               type="email"
               autoComplete="email"
+              inputMode="email"
               placeholder="name@company.com"
-              autoFocus
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
+              autoFocus
               disabled={formState === "submitting"}
             />
           </div>
 
           <Button
+            ref={submitButtonRef}
             type="submit"
             className="w-full"
             disabled={formState === "submitting"}
@@ -91,7 +115,12 @@ export function LoginForm() {
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-[var(--muted-foreground)]">
+        <p className="mt-4 flex items-center justify-center gap-1.5 text-center text-xs text-[var(--muted-foreground)]">
+          <ShieldCheck className="h-3.5 w-3.5 text-[var(--success,#16a34a)]" aria-hidden="true" />
+          Secure passwordless sign-in
+        </p>
+
+        <p className="mt-4 text-center text-sm text-[var(--muted-foreground)]">
           No account needed for your first inquiry.{" "}
           <a
             href="/contact"

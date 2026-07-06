@@ -70,15 +70,23 @@ export function VerifyForm() {
   }, [code, handleVerify]);
 
   async function handleResend() {
+    if (formState === "resending" || cooldown > 0) return; // prevent duplicate requests
     setFormState("resending");
     setErrorMessage("");
     setCode("");
 
     const formData = new FormData();
     formData.set("email", email);
-    await requestOtp(formData);
+    const response = await requestOtp(formData);
 
-    setCooldown(RESEND_COOLDOWN_SECONDS);
+    if (!response.success && !response.retryAfter) {
+      setErrorMessage(response.error ?? "Could not resend the code. Please try again.");
+      setFormState("error");
+      return;
+    }
+
+    // Honour the server's rate-limit window when it is longer than our default.
+    setCooldown(Math.max(RESEND_COOLDOWN_SECONDS, response.retryAfter ?? 0));
     setFormState("idle");
   }
 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { brand } from "@/config/brand";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -33,7 +34,9 @@ export default function RootLayout({
         <a href="#main-content" className="skip-nav">
           Skip to main content
         </a>
-        <div id="main-content">{children}</div>
+        <TooltipProvider delayDuration={200} skipDelayDuration={300}>
+          <div id="main-content">{children}</div>
+        </TooltipProvider>
       </body>
     </html>
   );

@@ -21,6 +21,11 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Logo } from "./logo";
 import { cn } from "@/lib/utils/cn";
 import { logout } from "@/lib/auth/actions";
@@ -93,9 +98,14 @@ export function AdminHeader({ userName, userInitials }: AdminHeaderProps) {
                 {userName}
               </span>
               <form action={logout}>
-                <Button variant="ghost" size="icon" type="submit" aria-label="Sign out">
-                  <LogOut className="h-4 w-4" />
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" type="submit" aria-label="Sign out">
+                      <LogOut className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Sign out</TooltipContent>
+                </Tooltip>
               </form>
             </div>
           </div>

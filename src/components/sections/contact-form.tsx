@@ -172,6 +172,7 @@ export function ContactForm() {
               name="message"
               placeholder="Tell us about your project, goals, and timeline..."
               className="min-h-[120px]"
+              autoResize
               required
             />
           </div>

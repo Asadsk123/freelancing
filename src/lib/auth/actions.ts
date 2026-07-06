@@ -12,6 +12,7 @@ type ActionResult = {
   success: boolean;
   error?: string;
   redirectTo?: string;
+  retryAfter?: number;
 };
 
 const DEV_OTP = "123456";
@@ -39,6 +40,15 @@ export async function requestOtp(formData: FormData): Promise<ActionResult> {
   }
 
   try {
+    const retryAfter = await otpRepository.secondsUntilResend(result.data.email);
+    if (retryAfter > 0) {
+      return {
+        success: false,
+        error: `Please wait ${retryAfter}s before requesting another code.`,
+        retryAfter,
+      };
+    }
+
     await userRepository.findOrCreate(result.data.email);
     const code = await otpRepository.create(result.data.email);
 

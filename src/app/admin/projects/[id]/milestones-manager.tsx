@@ -11,6 +11,11 @@ import { Select } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { EmptyState } from "@/components/shared/empty-state";
 import { toast, Toaster } from "@/components/ui/toast";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Flag, Plus, Pencil, Trash2 } from "lucide-react";
 import {
   createMilestone,
@@ -256,12 +261,22 @@ export function MilestonesManager({
                         <option value="in_progress">In Progress</option>
                         <option value="completed">Completed</option>
                       </Select>
-                      <Button variant="ghost" size="sm" aria-label="Edit milestone" onClick={() => setEditingId(milestone.id)} disabled={isPending}>
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" aria-label="Delete milestone" onClick={() => handleDelete(milestone.id)} disabled={isPending}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button variant="ghost" size="sm" aria-label="Edit milestone" onClick={() => setEditingId(milestone.id)} disabled={isPending}>
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Edit milestone</TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button variant="ghost" size="sm" aria-label="Delete milestone" onClick={() => handleDelete(milestone.id)} disabled={isPending}>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Delete milestone</TooltipContent>
+                      </Tooltip>
                     </div>
                   </div>
                 </CardContent>

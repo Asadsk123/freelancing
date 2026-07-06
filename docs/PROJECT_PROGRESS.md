@@ -3,8 +3,8 @@
 > **Single source of truth for project progress.** Updated after every completed module and committed together with the module. If chat history is lost, resume from this file.
 
 **Last updated:** 2026-07-06
-**Current module completed:** Module 24 — Admin Project Milestones Management
-**Latest commit:** committed with this file (see `git log -1`); previous: `90e124c`
+**Current module completed:** Module 25A — Login/OTP Automation & UX Polish
+**Latest commit:** committed with this file (see `git log -1`); previous: `a3b4956`
 
 ---
 
@@ -35,10 +35,15 @@
 | 21 | Public Testimonials Section (published reviews on home) | `f3723a7` |
 | 22 | Project Files Display (portal detail Files tab) | `4571eb7` |
 | 23 | Project Conversations (message thread + send form) | `90e124c` |
-| 24 | Admin Project Milestones Management (CRUD, admin-guarded) | this commit |
+| 24 | Admin Project Milestones Management (CRUD, admin-guarded) | `a3b4956` |
+| 25A | Login/OTP automation, copy buttons, tooltips, smart defaults, error boundary | this commit |
 
 ## Remaining Modules (planned)
 
+- **Module 25 (Premium UX) — remaining sub-modules**, approved sequence:
+  - **25B** — Internationalization (18 languages) + globe language switcher (auto-detect, manual override, remember choice, English fallback, unlimited-language architecture via translation files)
+  - **25C** — Theme/appearance system (Light/Dark/System + premium visual mode) + app-wide accessibility audit + performance (memoization, lazy loading, code splitting)
+  - **25D** — SEO metadata, Open Graph, structured data, hreflang, trust indicators, notification badge, unsaved-changes warning, session-expiry warning, micro-interactions, skeletons
 - **File upload pipeline** — actual upload with storage backend, watermarking, revision requests (schema exists, display-only implemented)
 - **Client review submission** — client-side flow to submit a review after project completion
 - **Blog post editor UI** — admin form to create/edit posts (server actions exist; UI forms pending)
@@ -73,6 +78,7 @@
 - Admin: dashboard (6 live stat cards + recent inquiries/projects), projects (list + detail page with full milestone CRUD, status/delete actions), clients (list + activate toggle), services (full CRUD + active toggle), blog (list; actions for CRUD), inquiries (status management), reviews (publish/unpublish, delete), settings
 - Admin milestones: create/edit/delete + inline status change on `/admin/projects/[id]`; every action guarded by `session.role === "admin"` (defense in depth); revalidates admin + portal project routes; clients see updates in their portal detail page
 - Cross-cutting: dark mode, responsive design, accessibility (aria labels, skip links), empty states everywhere, DB-not-connected warnings, `revalidatePath` after every mutation (admin + affected public/portal paths)
+- 25A UX polish: passwordless login remembers previous email (localStorage) with smart focus (new users → email field via native autofocus; returning users → Continue button, one-click); OTP flow has auto-advance/paste/auto-submit/resend countdown (pre-existing) plus server-side OTP rate limiting (30s cooldown via `otpRepository.secondsUntilResend`, friendly `retryAfter` messaging); secure-login trust indicator; reusable `CopyButton` (clipboard + fallback, tooltip, accessible live region) on tracking IDs; app-wide `TooltipProvider` with tooltips on every icon-only button (theme toggle, notifications, sign out, milestone edit/delete, copy); auto-resize `Textarea` (message + contact forms); global reduced-motion CSS; root error boundary (`src/app/error.tsx`); duplicate-submit guards on login/resend
 
 ## Features Still Pending
 
@@ -117,8 +123,10 @@
 
 ## Next Module to Implement
 
-**Module 25 — to be selected with Product Owner.** Strongest candidates, in rough priority order:
-1. **Blog editor UI** — admin forms for creating/editing posts (server actions already exist)
-2. **Client review submission** — client flow to submit a review on completed projects (admin publish flow already exists)
-3. **Real settings persistence** — wire portal settings form to `userRepository.updateProfile` (form is currently cosmetic)
-4. **Admin Management / Security Hardening** — implement the technical-debt items below with real server-side enforcement
+**Module 25B — Internationalization + language switcher.** Build a scalable i18n architecture: translation files per locale (start with the 18 required languages, English fallback, unlimited-language-ready), auto-detect from browser/`Accept-Language`, manual override persisted (cookie/localStorage), and a globe-icon-only language switcher (animated, tooltip, keyboard accessible, mobile friendly). Never hardcode translations.
+
+Deferred (outside Module 25, revisit after 25 completes):
+- Blog editor UI (admin forms; server actions exist)
+- Client review submission flow
+- Real settings persistence (wire portal settings form to `userRepository.updateProfile`)
+- Admin Management / Security Hardening (implement the technical-debt items below with real server-side enforcement)
