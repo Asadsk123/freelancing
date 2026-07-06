@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
+import { NetworkStatus } from "@/components/shared/network-status";
 import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
@@ -95,6 +96,7 @@ export function AdminHeader({ userName, userInitials }: AdminHeaderProps) {
           </div>
 
           <div className="flex items-center gap-2">
+            <NetworkStatus />
             <LanguageSwitcher />
             <ThemeToggle />
             <div className="flex items-center gap-2 border-l border-[var(--border)] pl-3 ml-1">

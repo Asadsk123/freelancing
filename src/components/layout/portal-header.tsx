@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
+import { NetworkStatus } from "@/components/shared/network-status";
 import {
   Tooltip,
   TooltipContent,
@@ -43,6 +44,7 @@ export function PortalHeader({ userName, userInitials }: PortalHeaderProps) {
           <div className="hidden lg:block" />
 
           <div className="flex items-center gap-2">
+            <NetworkStatus />
             <LanguageSwitcher />
             <ThemeToggle />
             <Tooltip>

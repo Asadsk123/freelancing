@@ -3,8 +3,8 @@
 > **Single source of truth for project progress.** Updated after every completed module and committed together with the module. If chat history is lost, resume from this file.
 
 **Last updated:** 2026-07-06
-**Current module completed:** Module 25B — Internationalization + globe language switcher
-**Latest commit:** committed with this file (see `git log -1`); previous: `e1336aa`
+**Current module completed:** Module 25 UX+ — Email autocomplete, Network status, Session/Premium touches
+**Latest commit:** committed with this file (see `git log -1`); previous: `847a6f9`
 
 ---
 
@@ -39,7 +39,8 @@
 | 25A | Login/OTP automation, copy buttons, tooltips, smart defaults, error boundary | `ec20d87` |
 | 25A+ | OTP auto-send (debounced, cancellable, single-shot), Gmail domain suggestions, tooltip consistency | `0246587` |
 | 25C | Theme/Appearance: Light/Dark/System + premium visuals, no-FOUC, elevation tokens | `e1336aa` |
-| 25B | Internationalization (14 languages) + globe language switcher, RTL, auto-detect, persist | this commit |
+| 25B | Internationalization (14 languages) + globe language switcher, RTL, auto-detect, persist | `847a6f9` |
+| 25 UX+ | Inline email autocomplete, network quality indicator, unsaved-changes warning, auto-scroll to first error | this commit |
 
 ## Remaining Modules (planned)
 
@@ -82,6 +83,12 @@
 - Admin milestones: create/edit/delete + inline status change on `/admin/projects/[id]`; every action guarded by `session.role === "admin"` (defense in depth); revalidates admin + portal project routes; clients see updates in their portal detail page
 - Cross-cutting: dark mode, responsive design, accessibility (aria labels, skip links), empty states everywhere, DB-not-connected warnings, `revalidatePath` after every mutation (admin + affected public/portal paths)
 - 25A UX polish: passwordless login remembers previous email (localStorage) with smart focus (new users → email field via native autofocus; returning users → Continue button, one-click); OTP flow has auto-advance/paste/auto-submit/resend countdown (pre-existing) plus server-side OTP rate limiting (30s cooldown via `otpRepository.secondsUntilResend`, friendly `retryAfter` messaging); secure-login trust indicator; reusable `CopyButton` (clipboard + fallback, tooltip, accessible live region) on tracking IDs; app-wide `TooltipProvider` with tooltips on every icon-only button (theme toggle, notifications, sign out, milestone edit/delete, copy); auto-resize `Textarea` (message + contact forms); global reduced-motion CSS; root error boundary (`src/app/error.tsx`); duplicate-submit guards on login/resend
+- 25 UX+ improvements:
+  - **Inline email autocomplete** ([email-input.tsx](../src/components/shared/email-input.tsx)): ghost-text completion of common domains matched by prefix after `@` (`abc@g`→`gmail.com`, `@y`→`yahoo.com`, `@o`→`outlook.com`, `@i`→`icloud.com`, `@p`→`proton.me`, plus more). Accept with **Tab**, **Right Arrow** (caret at end), or **click** the suggestion. Never overwrites typed text, never suggests for custom domains, pure string work (no network, no location/permissions). Replaces the old chip suggestions in the login form. Uses `type="text"` + `inputMode="email"` so caret APIs work for Right-Arrow accept; email validity stays enforced by Zod.
+  - **Network quality indicator** ([network-status.tsx](../src/components/shared/network-status.tsx)) in public/portal/admin headers: Wi-Fi icon + tooltip showing Excellent / Good / Slow / Offline from the Network Information API (`effectiveType`) + `online`/`offline` events. Informational only; when slow it politely notes "Your connection may be affecting loading" (never blames the site); no location/permissions; renders after mount to avoid hydration mismatch.
+  - **Unsaved-changes warning** ([use-unsaved-changes-warning.ts](../src/lib/hooks/use-unsaved-changes-warning.ts)): reusable hook (native `beforeunload`), applied to the contact form while a message is in progress and unsent.
+  - **Auto-scroll to first validation error**: on submit failure the contact form focuses the first invalid field and smooth-scrolls the error into view.
+  - OTP UX (auto-focus next, backspace-left, full-paste, auto-submit, countdown, friendly resend, loading, duplicate-submit prevention) confirmed complete from 25A/25A+ — no changes needed.
 - 25B Internationalization: scalable, file-based i18n architecture under `src/lib/i18n/` — `config.ts` (locale list + native names + `dir`, `matchAcceptLanguage`), per-locale JSON dictionaries in `dictionaries/`, `dictionary.ts` (loader + deep-merge English fallback per key), `translator.ts` (dot-path `t()`), `server.ts` (`getI18n()` resolves locale from cookie → `Accept-Language` → English; server components call it), `provider.tsx` (`I18nProvider` + `useTranslations`/`useLocale` for client components). Root layout resolves the locale and sets `<html lang dir>` + wraps the tree in `I18nProvider`. **14 languages**: English, Urdu, Arabic, Hindi, Bengali, French, German, Spanish, Portuguese, Russian, Turkish, Chinese (Simplified), Japanese, Korean — **unlimited-language-ready** (add a JSON file + one loader line). **RTL** for Urdu + Arabic. Globe-icon-only `LanguageSwitcher` (native names, localized "Language" tooltip, keyboard accessible) in public/portal/admin headers; selection persisted in the `ra_locale` cookie (1 year) and applied via `router.refresh()`. Wired surfaces: public header nav + CTA + mobile nav, footer, home hero. **New features stay translatable by construction** — add the string to `en.json` and render it via `t()`/`getI18n().t`; missing translations fall back to English automatically. Verified: cookie persistence (Arabic survives reload, RTL), Accept-Language auto-detect (French with no cookie → `lang="fr"`), English fallback for unsupported languages, all 14 native names in the switcher, live language switch with no console errors.
 - 25C Theme/Appearance: three-way theme (Light / Dark / **System** — System follows `prefers-color-scheme` live via matchMedia), replacing the old 2-way toggle; choice persisted in `localStorage.theme` (System = key removed, governed by CSS media query); **no-FOUC** inline script in `<head>` applies theme + premium before first paint; **premium visual mode** (opt-in, persisted `ra_premium`) adds tasteful depth — richer elevation shadows + a subtle radial depth wash — with no RGB/gaming effects and readability preserved; new elevation tokens (`--shadow-sm/md/lg`) defined for light/dark/premium (cards/dropdowns previously referenced these but they were undefined → now render proper depth); appearance control is a keyboard-accessible dropdown (Sun/Moon/Monitor + Sparkles) with a tooltip on the icon-only trigger
 - 25A+ refinements: OTP **auto-send** on login — once the email is valid and the user stops typing for 4s, the code sends automatically with a visible countdown ("Sending your code automatically in Ns — or press Continue now"); any keystroke resets the timer, clicking Continue cancels it and sends immediately, and a single-shot `sentRef` guard guarantees exactly one OTP request (verified: auto-send=1 OTP, manual-cancel=1 OTP). **Gmail domain suggestions**: typing a bare username (e.g. `john`) offers one-click chips `john@gmail.com` / `@outlook.com` / `@yahoo.com` (never auto-applied — user must choose). **Tooltip consistency**: every icon-only button in the app now has a tooltip (added public-header Open menu, mobile-nav Close menu, admin mobile menu toggle to the earlier set)
@@ -118,6 +125,37 @@
 2. Ensure at least one active admin remains (count check in same transaction as update)
 3. Perform these checks inside server action/repository layer
 4. Add explicit `session.role === "admin"` check inside every admin server action (defense in depth beyond middleware)
+
+## Future Architecture — AI Assistant / Website Mascot (documentation only, NOT implemented)
+
+Planned assistant that becomes the site mascot. **Voice is deferred**; build the non-voice architecture first.
+
+- **Component shape**: a top-level client `AssistantProvider` (mounted once in the root layout, after `I18nProvider`) exposing context — `open()/close()`, `guideTo(path)`, `explain(pageKey)`, `position`, `state` (`idle | talking | guiding | listening`). A portal-rendered `<AssistantMascot />` (fixed-position, `pointer-events` on the character only) + `<AssistantChat />` panel.
+- **Movable character**: absolutely-positioned, draggable (pointer events), position persisted in `localStorage` (`ra_assistant_pos`). Respects `prefers-reduced-motion` (idle animations pause). Lazy-loaded (`next/dynamic`, `ssr:false`) so it adds zero JS to first paint.
+- **Idle animations**: CSS/SVG keyframe loops gated behind reduced-motion; no heavy runtime.
+- **Guides users**: `guideTo(path)` uses the App Router to navigate and can highlight a target via a data-attribute (`[data-assistant-target="..."]`) + scroll-into-view.
+- **Explains pages**: per-route explanation keys resolved through the existing i18n system (`assistant.<pageKey>.*` in the dictionaries) so the assistant **automatically speaks the current website language** — reuses `useTranslations()`; no separate translation mechanism.
+- **Opens chat / helps complete actions**: chat panel dispatches intents to typed handlers; actions reuse existing server actions (never new privileged paths).
+- **Voice (later)**: a `useAssistantVoice()` hook behind a feature flag will add speech-synthesis (output) and speech-recognition (input), keyed to the active locale; the text architecture above is voice-agnostic so voice is additive.
+- **Performance**: entire subsystem lazy-loaded and idle-deferred; no impact on initial bundle or SSR.
+
+## Future Architecture — Theme Packs (documentation only, NOT implemented)
+
+The current theme system (Light / Dark / System via `data-theme` + premium via `data-premium`, all token-based in `globals.css`) is designed to extend to named theme packs **without breaking existing behavior**:
+
+- Add `data-pack="business | luxury | dark | minimal | creative | high-contrast"` on `<html>`, persisted in `localStorage` (`ra_pack`), applied by the same no-FOUC inline script.
+- Each pack is a CSS block overriding the semantic tokens (`--background`, `--foreground`, `--primary`, `--shadow-*`, etc.) — no component changes, since every component already reads tokens.
+- **High Contrast** pack pairs with accessibility (WCAG AAA contrast, stronger focus rings).
+- Packs compose with Light/Dark/System (a pack can define both light and dark token sets via `[data-pack="x"][data-theme="dark"]`).
+- The appearance dropdown gains a "Theme pack" group; default (no `data-pack`) keeps today's exact look, so current users are unaffected.
+
+## Deferred / Roadmap Items
+
+- **Session timeout warning before logout** — deferred (needs a product decision on idle policy). Current session is a 30-day httpOnly JWT with no idle logout. Planned approach: expose a non-sensitive `ra_session_exp` companion cookie (or a lightweight `/api/session` endpoint) so a client `useSessionExpiry()` hook can show a warning modal a few minutes before expiry with a "Stay signed in" refresh. Not built yet.
+- **Last-saved indicator** — add a "Saved • {relative time}" indicator to forms with real persistence (e.g., portal/admin settings once wired to `updateProfile`). The relative-time formatter (`formatRelativeTime`) already exists.
+- **Premium UX (ongoing)** — skeleton loaders, richer empty-state illustrations, and broader toast coverage roll out incrementally alongside the features they support.
+- **i18n string-coverage expansion** — migrate remaining hardcoded strings to `t()` (drop-in, English fallback).
+- **Performance pass** (25C follow-up) — memoization, code splitting, and revisiting the all-dynamic rendering introduced by cookie/header locale reads.
 
 ## Project Rules (standing)
 

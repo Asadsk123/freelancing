@@ -7,6 +7,7 @@ import { publicNavigation } from "@/config/navigation";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
+import { NetworkStatus } from "@/components/shared/network-status";
 import {
   Tooltip,
   TooltipContent,
@@ -48,6 +49,7 @@ export function Header({ onMobileMenuOpen }: HeaderProps) {
         </nav>
 
         <div className="flex items-center gap-2">
+          <NetworkStatus />
           <LanguageSwitcher />
           <ThemeToggle />
           <Button asChild size="sm" className="hidden sm:inline-flex">

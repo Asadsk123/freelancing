@@ -14,6 +14,7 @@ import { TrackingId } from "@/components/shared/tracking-id";
 import { Send } from "lucide-react";
 import { inquiryFormSchema } from "@/lib/validations/inquiry";
 import { submitInquiry } from "@/app/(public)/contact/actions";
+import { useUnsavedChangesWarning } from "@/lib/hooks/use-unsaved-changes-warning";
 
 type FormState = "idle" | "submitting" | "success" | "error";
 
@@ -21,7 +22,23 @@ export function ContactForm() {
   const [formState, setFormState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [trackingId, setTrackingId] = useState("");
+  const [dirty, setDirty] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+
+  // Warn before leaving with an unsent inquiry in progress.
+  useUnsavedChangesWarning(dirty && formState !== "submitting" && formState !== "success");
+
+  function scrollToFirstError() {
+    const form = formRef.current;
+    if (!form) return;
+    const firstInvalid = form.querySelector<HTMLElement>(
+      "input:invalid, textarea:invalid, select:invalid",
+    );
+    const target: HTMLElement | null =
+      firstInvalid ?? form.querySelector<HTMLElement>('[role="alert"]');
+    target?.scrollIntoView({ behavior: "smooth", block: "center" });
+    firstInvalid?.focus({ preventScroll: true });
+  }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -45,6 +62,7 @@ export function ContactForm() {
       const firstError = Object.values(clientResult.error.flatten().fieldErrors)[0];
       setErrorMessage(firstError?.[0] ?? "Please check your input.");
       setFormState("error");
+      requestAnimationFrame(scrollToFirstError);
       return;
     }
 
@@ -52,10 +70,12 @@ export function ContactForm() {
     if (result.success) {
       setTrackingId(result.trackingId ?? "");
       setFormState("success");
+      setDirty(false);
       formRef.current?.reset();
     } else {
       setErrorMessage(result.error ?? "Something went wrong.");
       setFormState("error");
+      requestAnimationFrame(scrollToFirstError);
     }
   }
 
@@ -84,7 +104,12 @@ export function ContactForm() {
   return (
     <Card>
       <CardContent className="pt-6">
-        <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
+        <form
+          ref={formRef}
+          onSubmit={handleSubmit}
+          onInput={() => setDirty(true)}
+          className="space-y-6"
+        >
           {formState === "error" && <FormError message={errorMessage} />}
 
           <div className="grid gap-6 sm:grid-cols-2">

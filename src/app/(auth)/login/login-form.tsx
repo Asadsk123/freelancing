@@ -4,8 +4,8 @@ import { useState, useEffect, useRef, useCallback, type FormEvent } from "react"
 import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { EmailInput } from "@/components/shared/email-input";
 import { FormError } from "@/components/shared/form-error";
 import { Spinner } from "@/components/ui/spinner";
 import { Mail, ShieldCheck } from "lucide-react";
@@ -16,17 +16,9 @@ type FormState = "idle" | "submitting" | "error";
 
 const LAST_EMAIL_KEY = "ra_last_email";
 const AUTO_SEND_SECONDS = 4;
-const SUGGESTION_DOMAINS = ["gmail.com", "outlook.com", "yahoo.com"];
 
 function isValidEmail(value: string): boolean {
   return loginSchema.safeParse({ email: value }).success;
-}
-
-/** A bare username with no domain, e.g. "john" — used to offer domain suggestions. */
-function getUsernameOnly(value: string): string | null {
-  const trimmed = value.trim();
-  if (!trimmed || trimmed.includes("@")) return null;
-  return /^[a-zA-Z0-9._%+-]+$/.test(trimmed) ? trimmed : null;
 }
 
 export function LoginForm() {
@@ -120,19 +112,6 @@ export function LoginForm() {
     void sendOtp(); // cancels the auto-send timer and sends immediately
   }
 
-  function applySuggestion(suggestion: string) {
-    setEmail(suggestion);
-    setFormState("idle");
-    setErrorMessage("");
-    requestAnimationFrame(() => submitButtonRef.current?.focus());
-  }
-
-  const username = getUsernameOnly(email);
-  const suggestions =
-    username && formState !== "submitting"
-      ? SUGGESTION_DOMAINS.map((domain) => `${username}@${domain}`)
-      : [];
-
   return (
     <Card>
       <CardHeader className="text-center">
@@ -150,35 +129,17 @@ export function LoginForm() {
 
           <div className="space-y-2">
             <Label htmlFor="login-email">Email address</Label>
-            <Input
+            <EmailInput
               id="login-email"
               name="email"
-              type="email"
-              autoComplete="email"
-              inputMode="email"
               placeholder="name@company.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={setEmail}
               required
               autoFocus
               disabled={formState === "submitting"}
               aria-describedby={autoSendIn !== null ? "auto-send-status" : undefined}
             />
-
-            {suggestions.length > 0 && (
-              <div className="flex flex-wrap gap-2 pt-1" role="group" aria-label="Email suggestions">
-                {suggestions.map((suggestion) => (
-                  <button
-                    key={suggestion}
-                    type="button"
-                    onClick={() => applySuggestion(suggestion)}
-                    className="rounded-full border border-[var(--border)] bg-[var(--muted)] px-3 py-1 text-xs font-medium text-[var(--foreground)] transition-colors hover:border-[var(--primary)] hover:bg-[var(--accent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ring)]"
-                  >
-                    {suggestion}
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
 
           <Button
