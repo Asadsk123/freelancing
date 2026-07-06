@@ -3,8 +3,8 @@
 > **Single source of truth for project progress.** Updated after every completed module and committed together with the module. If chat history is lost, resume from this file.
 
 **Last updated:** 2026-07-06
-**Current module completed:** Module 23 — Project Conversations
-**Latest commit:** committed with this file (see `git log -1`); previous: `4571eb7`
+**Current module completed:** Module 24 — Admin Project Milestones Management
+**Latest commit:** committed with this file (see `git log -1`); previous: `90e124c`
 
 ---
 
@@ -34,11 +34,11 @@
 | 20 | Public Portfolio Page (completed projects showcase) | `9266361` |
 | 21 | Public Testimonials Section (published reviews on home) | `f3723a7` |
 | 22 | Project Files Display (portal detail Files tab) | `4571eb7` |
-| 23 | Project Conversations (message thread + send form) | this commit |
+| 23 | Project Conversations (message thread + send form) | `90e124c` |
+| 24 | Admin Project Milestones Management (CRUD, admin-guarded) | this commit |
 
 ## Remaining Modules (planned)
 
-- **Milestones management (admin)** — create/edit/reorder milestones on projects
 - **File upload pipeline** — actual upload with storage backend, watermarking, revision requests (schema exists, display-only implemented)
 - **Client review submission** — client-side flow to submit a review after project completion
 - **Blog post editor UI** — admin form to create/edit posts (server actions exist; UI forms pending)
@@ -55,7 +55,7 @@
 - **Connection:** `DATABASE_URL` in `.env.local` (gitignored). `hasDatabase()` guard gives graceful degradation on every page when unset.
 - **Schema:** 19 tables, 8 enums, 20 FKs — users, sessions, otp_codes, inquiries, service_categories, services, projects, milestones, project_conversations, conversation_messages, files, reviews, blog_categories, blog_tags, blog_posts, blog_post_tags, notifications, email_queue, audit_log
 - **Delete rules:** cascade for child records (milestones, conversations, messages, files, reviews, post_tags, notifications); restrict for users referenced by projects/files/posts; set null for optional refs (service on project, category on post/file milestone)
-- **Repositories implemented:** inquiry, user, otp, session, project, service, service-category, review, blog-post, blog-category, notification, file, conversation (all extend `BaseRepository` with lazy `db` getter; barrel export in `src/lib/repositories/index.ts`)
+- **Repositories implemented:** inquiry, user, otp, session, project, service, service-category, review, blog-post, blog-category, notification, file, conversation, milestone (all extend `BaseRepository` with lazy `db` getter; barrel export in `src/lib/repositories/index.ts`)
 
 ## Authentication Status
 
@@ -70,13 +70,13 @@
 
 - Public site: home (hero, services overview, testimonials, CTA), services (active only), portfolio (completed projects), blog (published posts), about, contact (inquiry form with Zod validation + tracking ID)
 - Client portal: dashboard (project stats), projects list, project detail (milestones, files, and conversation tabs all real — one message thread per project with send form), notifications (user-scoped, mark-read actions), settings (profile update)
-- Admin: dashboard (6 live stat cards + recent inquiries/projects), projects (create/status/delete), clients (list + activate toggle), services (full CRUD + active toggle), blog (list; actions for CRUD), inquiries (status management), reviews (publish/unpublish, delete), settings
+- Admin: dashboard (6 live stat cards + recent inquiries/projects), projects (list + detail page with full milestone CRUD, status/delete actions), clients (list + activate toggle), services (full CRUD + active toggle), blog (list; actions for CRUD), inquiries (status management), reviews (publish/unpublish, delete), settings
+- Admin milestones: create/edit/delete + inline status change on `/admin/projects/[id]`; every action guarded by `session.role === "admin"` (defense in depth); revalidates admin + portal project routes; clients see updates in their portal detail page
 - Cross-cutting: dark mode, responsive design, accessibility (aria labels, skip links), empty states everywhere, DB-not-connected warnings, `revalidatePath` after every mutation (admin + affected public/portal paths)
 
 ## Features Still Pending
 
 - File upload/download/watermark pipeline (display done)
-- Milestone CRUD from admin
 - Client review submission flow
 - Blog editor forms (admin UI)
 - Email sending (queue processing)
@@ -117,8 +117,8 @@
 
 ## Next Module to Implement
 
-**Module 24 — to be selected with Product Owner.** Strongest candidates, in rough priority order:
-1. **Admin milestones management** — create/edit/reorder/complete milestones on projects (portal already displays them)
-2. **Blog editor UI** — admin forms for creating/editing posts (server actions already exist)
-3. **Client review submission** — client flow to submit a review on completed projects (admin publish flow already exists)
-4. **Real settings persistence** — wire portal settings form to `userRepository.updateProfile` (form is currently cosmetic)
+**Module 25 — to be selected with Product Owner.** Strongest candidates, in rough priority order:
+1. **Blog editor UI** — admin forms for creating/editing posts (server actions already exist)
+2. **Client review submission** — client flow to submit a review on completed projects (admin publish flow already exists)
+3. **Real settings persistence** — wire portal settings form to `userRepository.updateProfile` (form is currently cosmetic)
+4. **Admin Management / Security Hardening** — implement the technical-debt items below with real server-side enforcement

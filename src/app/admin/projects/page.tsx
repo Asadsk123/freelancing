@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -63,6 +64,7 @@ export default async function AdminProjectsPage() {
                   <th className="px-4 py-3 text-left font-medium text-[var(--muted-foreground)]">Status</th>
                   <th className="px-4 py-3 text-left font-medium text-[var(--muted-foreground)]">Started</th>
                   <th className="px-4 py-3 text-left font-medium text-[var(--muted-foreground)]">Target</th>
+                  <th className="px-4 py-3 text-right font-medium text-[var(--muted-foreground)]">Manage</th>
                 </tr>
               </thead>
               <tbody>
@@ -86,6 +88,14 @@ export default async function AdminProjectsPage() {
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap text-[var(--muted-foreground)]">
                         {project.targetDate ? formatDate(project.targetDate) : "—"}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-right">
+                        <Link
+                          href={`/admin/projects/${project.id}`}
+                          className="text-sm font-medium text-[var(--primary)] hover:underline"
+                        >
+                          Milestones
+                        </Link>
                       </td>
                     </tr>
                   );

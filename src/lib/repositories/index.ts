@@ -18,3 +18,4 @@ export { FileRepository, fileRepository } from "./file";
 export type { FileWithUploader } from "./file";
 export { ConversationRepository, conversationRepository } from "./conversation";
 export type { MessageWithSender } from "./conversation";
+export { MilestoneRepository, milestoneRepository } from "./milestone";
