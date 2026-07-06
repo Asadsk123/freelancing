@@ -12,7 +12,8 @@ import { ArrowLeft, FileText, MessageSquare, FolderOpen } from "lucide-react";
 import { getSession } from "@/lib/auth/session";
 import { hasDatabase } from "@/db";
 import { projectRepository } from "@/lib/repositories/project";
-import { formatDate } from "@/lib/utils/formatting";
+import { fileRepository } from "@/lib/repositories/file";
+import { formatDate, formatFileSize } from "@/lib/utils/formatting";
 
 export const metadata: Metadata = {
   title: "Project Details",
@@ -31,6 +32,14 @@ const milestoneStatusBadge: Record<string, { label: string; variant: "success" |
   completed: { label: "Completed", variant: "success" },
   in_progress: { label: "In Progress", variant: "warning" },
   upcoming: { label: "Upcoming", variant: "secondary" },
+};
+
+const fileStatusBadge: Record<string, { label: string; variant: "success" | "warning" | "secondary" | "default" }> = {
+  draft: { label: "Draft", variant: "secondary" },
+  preview: { label: "Preview", variant: "default" },
+  revision_requested: { label: "Revision Requested", variant: "warning" },
+  approved: { label: "Approved", variant: "success" },
+  final: { label: "Final", variant: "success" },
 };
 
 export default async function ProjectDetailPage({
@@ -65,6 +74,8 @@ export default async function ProjectDetailPage({
   if (session.role === "client" && project.clientId !== session.userId) {
     notFound();
   }
+
+  const projectFiles = await fileRepository.findByProjectId(id);
 
   const badge = statusBadge[project.status] ?? { label: "Pending", variant: "secondary" as const };
   const completedMilestones = project.milestones.filter((m) => m.status === "completed").length;
@@ -143,15 +154,43 @@ export default async function ProjectDetailPage({
           </TabsContent>
 
           <TabsContent value="files" className="mt-4">
-            <Card>
-              <CardContent className="py-12">
-                <EmptyState
-                  icon={FileText}
-                  title="No files yet"
-                  description="Files shared by the team will appear here. You can preview watermarked versions and request revisions."
-                />
-              </CardContent>
-            </Card>
+            {projectFiles.length === 0 ? (
+              <Card>
+                <CardContent className="py-12">
+                  <EmptyState
+                    icon={FileText}
+                    title="No files yet"
+                    description="Files shared by the team will appear here. You can preview watermarked versions and request revisions."
+                  />
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="space-y-3">
+                {projectFiles.map((file) => {
+                  const fBadge = fileStatusBadge[file.status] ?? { label: "Draft", variant: "secondary" as const };
+                  return (
+                    <Card key={file.id}>
+                      <CardContent className="flex items-center justify-between py-4">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--accent)]">
+                            <FileText className="h-4 w-4 text-[var(--primary)]" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium text-[var(--foreground)] truncate">
+                              {file.fileName}
+                            </p>
+                            <p className="text-xs text-[var(--muted-foreground)]">
+                              {formatFileSize(file.fileSize)} · v{file.version} · {file.uploaderName} · {formatDate(file.createdAt)}
+                            </p>
+                          </div>
+                        </div>
+                        <Badge variant={fBadge.variant} className="shrink-0 ml-2">{fBadge.label}</Badge>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="conversation" className="mt-4">

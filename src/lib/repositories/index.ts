@@ -14,3 +14,5 @@ export { BlogPostRepository, blogPostRepository } from "./blog-post";
 export type { BlogPostWithDetails } from "./blog-post";
 export { BlogCategoryRepository, blogCategoryRepository } from "./blog-category";
 export { NotificationRepository, notificationRepository } from "./notification";
+export { FileRepository, fileRepository } from "./file";
+export type { FileWithUploader } from "./file";
