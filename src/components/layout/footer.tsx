@@ -1,10 +1,17 @@
 import Link from "next/link";
 import { brand } from "@/config/brand";
-import { publicNavigation } from "@/config/navigation";
+import { publicNavigation, navKeyForHref } from "@/config/navigation";
 import { Separator } from "@/components/ui/separator";
+import { getI18n } from "@/lib/i18n/server";
 
-export function Footer() {
+export async function Footer() {
+  const { t } = await getI18n();
   const currentYear = new Date().getFullYear();
+
+  const legalKeyByHref: Record<string, string> = {
+    "/privacy": "footer.privacy",
+    "/security": "footer.security",
+  };
 
   return (
     <footer className="border-t border-[var(--border)] bg-[var(--card)]">
@@ -34,7 +41,7 @@ export function Footer() {
 
           <div>
             <h3 className="text-sm font-semibold text-[var(--foreground)]">
-              Company
+              {t("footer.companyHeading")}
             </h3>
             <ul className="mt-3 space-y-2">
               {publicNavigation.footer.company.map((item) => (
@@ -43,7 +50,7 @@ export function Footer() {
                     href={item.href}
                     className="text-sm text-[var(--muted-foreground)] transition-colors hover:text-[var(--foreground)]"
                   >
-                    {item.label}
+                    {t(navKeyForHref(item.href))}
                   </Link>
                 </li>
               ))}
@@ -52,7 +59,7 @@ export function Footer() {
 
           <div>
             <h3 className="text-sm font-semibold text-[var(--foreground)]">
-              Legal
+              {t("footer.legalHeading")}
             </h3>
             <ul className="mt-3 space-y-2">
               {publicNavigation.footer.legal.map((item) => (
@@ -61,7 +68,7 @@ export function Footer() {
                     href={item.href}
                     className="text-sm text-[var(--muted-foreground)] transition-colors hover:text-[var(--foreground)]"
                   >
-                    {item.label}
+                    {t(legalKeyByHref[item.href] ?? item.href)}
                   </Link>
                 </li>
               ))}
@@ -72,7 +79,7 @@ export function Footer() {
         <Separator className="my-8" />
 
         <p className="text-center text-sm text-[var(--muted-foreground)]">
-          &copy; {currentYear} {brand.legal.companyName}. All rights reserved.
+          &copy; {currentYear} {brand.legal.companyName}. {t("footer.rights")}
         </p>
       </div>
     </footer>

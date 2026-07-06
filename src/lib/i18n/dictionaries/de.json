@@ -1,0 +1,33 @@
+{
+  "nav": {
+    "services": "Leistungen",
+    "portfolio": "Portfolio",
+    "blog": "Blog",
+    "about": "Über uns",
+    "contact": "Kontakt",
+    "getQuote": "Angebot anfordern"
+  },
+  "common": {
+    "language": "Sprache",
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen"
+  },
+  "home": {
+    "hero": {
+      "title": "Digitale Lösungen, die Ihr Unternehmen wachsen lassen",
+      "subtitle": "Royal Asad ist eine erstklassige internationale Digitalagentur für Webentwicklung, Design und digitales Marketing – für echtes Wachstum.",
+      "ctaQuote": "Kostenloses Angebot erhalten",
+      "ctaServices": "Unsere Leistungen ansehen"
+    }
+  },
+  "footer": {
+    "companyHeading": "Unternehmen",
+    "legalHeading": "Rechtliches",
+    "about": "Über uns",
+    "contact": "Kontakt",
+    "blog": "Blog",
+    "privacy": "Datenschutzrichtlinie",
+    "security": "Sicherheit",
+    "rights": "Alle Rechte vorbehalten."
+  }
+}

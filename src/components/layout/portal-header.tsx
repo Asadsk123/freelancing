@@ -6,6 +6,7 @@ import { Bell, LogOut, Home, FolderOpen, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
+import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import {
   Tooltip,
   TooltipContent,
@@ -42,6 +43,7 @@ export function PortalHeader({ userName, userInitials }: PortalHeaderProps) {
           <div className="hidden lg:block" />
 
           <div className="flex items-center gap-2">
+            <LanguageSwitcher />
             <ThemeToggle />
             <Tooltip>
               <TooltipTrigger asChild>

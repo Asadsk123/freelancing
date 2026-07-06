@@ -4,13 +4,14 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
-import { publicNavigation } from "@/config/navigation";
+import { publicNavigation, navKeyForHref } from "@/config/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useTranslations } from "@/lib/i18n/provider";
 import { Logo } from "./logo";
 import { cn } from "@/lib/utils/cn";
 
@@ -21,6 +22,7 @@ type MobileNavProps = {
 
 export function MobileNav({ open, onClose }: MobileNavProps) {
   const pathname = usePathname();
+  const t = useTranslations();
   const triggerRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -74,12 +76,12 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
                 variant="ghost"
                 size="icon"
                 onClick={onClose}
-                aria-label="Close menu"
+                aria-label={t("common.closeMenu")}
               >
                 <X className="h-5 w-5" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Close menu</TooltipContent>
+            <TooltipContent>{t("common.closeMenu")}</TooltipContent>
           </Tooltip>
         </div>
 
@@ -95,7 +97,7 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
                   : "text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]",
               )}
             >
-              {item.label}
+              {t(navKeyForHref(item.href))}
             </Link>
           ))}
         </nav>
@@ -103,7 +105,7 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
         <div className="border-t border-[var(--border)] p-4">
           <Button asChild className="w-full">
             <Link href={publicNavigation.cta.href}>
-              {publicNavigation.cta.label}
+              {t("nav.getQuote")}
             </Link>
           </Button>
         </div>

@@ -1,0 +1,33 @@
+{
+  "nav": {
+    "services": "サービス",
+    "portfolio": "ポートフォリオ",
+    "blog": "ブログ",
+    "about": "会社概要",
+    "contact": "お問い合わせ",
+    "getQuote": "見積もりを取得"
+  },
+  "common": {
+    "language": "言語",
+    "openMenu": "メニューを開く",
+    "closeMenu": "メニューを閉じる"
+  },
+  "home": {
+    "hero": {
+      "title": "ビジネスを成長させるデジタルソリューション",
+      "subtitle": "Royal Asad は、Web開発・デザイン・デジタルマーケティングを提供し、真の成長を実現するプレミアムな国際デジタルエージェンシーです。",
+      "ctaQuote": "無料見積もりを取得",
+      "ctaServices": "サービスを見る"
+    }
+  },
+  "footer": {
+    "companyHeading": "会社",
+    "legalHeading": "法的情報",
+    "about": "会社概要",
+    "contact": "お問い合わせ",
+    "blog": "ブログ",
+    "privacy": "プライバシーポリシー",
+    "security": "セキュリティ",
+    "rights": "無断転載を禁じます。"
+  }
+}

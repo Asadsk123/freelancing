@@ -1,3 +1,19 @@
+/**
+ * Maps a public route href to its i18n key under the `nav` namespace, so nav
+ * labels are translated rather than hardcoded. New links only need an entry here.
+ */
+const NAV_KEY_BY_HREF: Record<string, string> = {
+  "/services": "nav.services",
+  "/portfolio": "nav.portfolio",
+  "/blog": "nav.blog",
+  "/about": "nav.about",
+  "/contact": "nav.contact",
+};
+
+export function navKeyForHref(href: string): string {
+  return NAV_KEY_BY_HREF[href] ?? href;
+}
+
 export const publicNavigation = {
   main: [
     { label: "Services", href: "/services" },

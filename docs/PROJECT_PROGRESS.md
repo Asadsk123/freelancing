@@ -3,10 +3,8 @@
 > **Single source of truth for project progress.** Updated after every completed module and committed together with the module. If chat history is lost, resume from this file.
 
 **Last updated:** 2026-07-06
-**Current module completed:** Module 25C — Theme/Appearance System (Light/Dark/System + premium visuals)
-**Latest commit:** committed with this file (see `git log -1`); previous: `0246587`
-
-> **⚠️ DEFERRED — Module 25B (Internationalization): NOT yet implemented.** The Product Owner chose to skip i18n for now and revisit it as a dedicated next step. When resumed, 25B must deliver: a scalable file-based i18n architecture (translation file per locale, English fallback per key, unlimited-language-ready), auto-detection from browser/`Accept-Language`, manual override persisted in a cookie, RTL support (Arabic/Urdu), and a globe-icon-only language switcher (animated, tooltip, keyboard accessible, mobile friendly) — for the 18 required languages: English, Arabic, Urdu, Hindi, French, German, Spanish, Portuguese, Italian, Turkish, Russian, Chinese, Japanese, Korean, Indonesian, Malay, Dutch, Bengali. A scaffold exists at `messages/en.json` (currently unused). **Do this before considering Module 25 complete.**
+**Current module completed:** Module 25B — Internationalization + globe language switcher
+**Latest commit:** committed with this file (see `git log -1`); previous: `e1336aa`
 
 ---
 
@@ -40,15 +38,15 @@
 | 24 | Admin Project Milestones Management (CRUD, admin-guarded) | `a3b4956` |
 | 25A | Login/OTP automation, copy buttons, tooltips, smart defaults, error boundary | `ec20d87` |
 | 25A+ | OTP auto-send (debounced, cancellable, single-shot), Gmail domain suggestions, tooltip consistency | `0246587` |
-| 25B | Internationalization + language switcher | **DEFERRED** (see note above) |
-| 25C | Theme/Appearance: Light/Dark/System + premium visuals, no-FOUC, elevation tokens | this commit |
+| 25C | Theme/Appearance: Light/Dark/System + premium visuals, no-FOUC, elevation tokens | `e1336aa` |
+| 25B | Internationalization (14 languages) + globe language switcher, RTL, auto-detect, persist | this commit |
 
 ## Remaining Modules (planned)
 
 - **Module 25 (Premium UX) — remaining sub-modules**:
-  - **25B** — Internationalization (18 languages) + globe language switcher — **DEFERRED, do next** (see the deferral note near the top). Auto-detect, manual override, remember choice, English fallback, RTL, unlimited-language architecture via translation files.
-  - **25C accessibility/performance follow-up** — the theme part of 25C is done; the app-wide accessibility audit + performance pass (memoization, lazy loading, code splitting) still remain.
-  - **25D** — SEO metadata, Open Graph, structured data, hreflang, trust indicators, notification badge, unsaved-changes warning, session-expiry warning, micro-interactions, skeletons
+  - **String-coverage expansion for i18n** — architecture is complete and wired into the public header, mobile nav, footer, and home hero; remaining hardcoded strings across the rest of the app migrate incrementally by wrapping them in `t()` + adding keys to `en.json` (English fallback until translated). Drop-in, no architecture changes.
+  - **25C accessibility/performance follow-up** — theme done; app-wide accessibility audit + performance pass (memoization, lazy loading, code splitting) remain. Note: the root layout now reads cookies/headers for locale, so all routes are dynamic (`ƒ`) — revisit static/ISR strategy during the perf pass if needed.
+  - **25D** — SEO metadata, Open Graph, structured data, hreflang (now feasible with locales), trust indicators, notification badge, unsaved-changes warning, session-expiry warning, micro-interactions, skeletons
 - **File upload pipeline** — actual upload with storage backend, watermarking, revision requests (schema exists, display-only implemented)
 - **Client review submission** — client-side flow to submit a review after project completion
 - **Blog post editor UI** — admin form to create/edit posts (server actions exist; UI forms pending)
@@ -84,6 +82,7 @@
 - Admin milestones: create/edit/delete + inline status change on `/admin/projects/[id]`; every action guarded by `session.role === "admin"` (defense in depth); revalidates admin + portal project routes; clients see updates in their portal detail page
 - Cross-cutting: dark mode, responsive design, accessibility (aria labels, skip links), empty states everywhere, DB-not-connected warnings, `revalidatePath` after every mutation (admin + affected public/portal paths)
 - 25A UX polish: passwordless login remembers previous email (localStorage) with smart focus (new users → email field via native autofocus; returning users → Continue button, one-click); OTP flow has auto-advance/paste/auto-submit/resend countdown (pre-existing) plus server-side OTP rate limiting (30s cooldown via `otpRepository.secondsUntilResend`, friendly `retryAfter` messaging); secure-login trust indicator; reusable `CopyButton` (clipboard + fallback, tooltip, accessible live region) on tracking IDs; app-wide `TooltipProvider` with tooltips on every icon-only button (theme toggle, notifications, sign out, milestone edit/delete, copy); auto-resize `Textarea` (message + contact forms); global reduced-motion CSS; root error boundary (`src/app/error.tsx`); duplicate-submit guards on login/resend
+- 25B Internationalization: scalable, file-based i18n architecture under `src/lib/i18n/` — `config.ts` (locale list + native names + `dir`, `matchAcceptLanguage`), per-locale JSON dictionaries in `dictionaries/`, `dictionary.ts` (loader + deep-merge English fallback per key), `translator.ts` (dot-path `t()`), `server.ts` (`getI18n()` resolves locale from cookie → `Accept-Language` → English; server components call it), `provider.tsx` (`I18nProvider` + `useTranslations`/`useLocale` for client components). Root layout resolves the locale and sets `<html lang dir>` + wraps the tree in `I18nProvider`. **14 languages**: English, Urdu, Arabic, Hindi, Bengali, French, German, Spanish, Portuguese, Russian, Turkish, Chinese (Simplified), Japanese, Korean — **unlimited-language-ready** (add a JSON file + one loader line). **RTL** for Urdu + Arabic. Globe-icon-only `LanguageSwitcher` (native names, localized "Language" tooltip, keyboard accessible) in public/portal/admin headers; selection persisted in the `ra_locale` cookie (1 year) and applied via `router.refresh()`. Wired surfaces: public header nav + CTA + mobile nav, footer, home hero. **New features stay translatable by construction** — add the string to `en.json` and render it via `t()`/`getI18n().t`; missing translations fall back to English automatically. Verified: cookie persistence (Arabic survives reload, RTL), Accept-Language auto-detect (French with no cookie → `lang="fr"`), English fallback for unsupported languages, all 14 native names in the switcher, live language switch with no console errors.
 - 25C Theme/Appearance: three-way theme (Light / Dark / **System** — System follows `prefers-color-scheme` live via matchMedia), replacing the old 2-way toggle; choice persisted in `localStorage.theme` (System = key removed, governed by CSS media query); **no-FOUC** inline script in `<head>` applies theme + premium before first paint; **premium visual mode** (opt-in, persisted `ra_premium`) adds tasteful depth — richer elevation shadows + a subtle radial depth wash — with no RGB/gaming effects and readability preserved; new elevation tokens (`--shadow-sm/md/lg`) defined for light/dark/premium (cards/dropdowns previously referenced these but they were undefined → now render proper depth); appearance control is a keyboard-accessible dropdown (Sun/Moon/Monitor + Sparkles) with a tooltip on the icon-only trigger
 - 25A+ refinements: OTP **auto-send** on login — once the email is valid and the user stops typing for 4s, the code sends automatically with a visible countdown ("Sending your code automatically in Ns — or press Continue now"); any keystroke resets the timer, clicking Continue cancels it and sends immediately, and a single-shot `sentRef` guard guarantees exactly one OTP request (verified: auto-send=1 OTP, manual-cancel=1 OTP). **Gmail domain suggestions**: typing a bare username (e.g. `john`) offers one-click chips `john@gmail.com` / `@outlook.com` / `@yahoo.com` (never auto-applied — user must choose). **Tooltip consistency**: every icon-only button in the app now has a tooltip (added public-header Open menu, mobile-nav Close menu, admin mobile menu toggle to the earlier set)
 
@@ -130,7 +129,7 @@
 
 ## Next Module to Implement
 
-**Module 25B — Internationalization + language switcher (DEFERRED, now the immediate next task).** Build a scalable i18n architecture: translation files per locale (the 18 required languages, English fallback per key, unlimited-language-ready), auto-detect from browser/`Accept-Language`, manual override persisted in a cookie, RTL support (Arabic/Urdu), and a globe-icon-only language switcher (animated, tooltip, keyboard accessible, mobile friendly). Never hardcode translations. A scaffold exists at `messages/en.json`.
+**Module 25D — SEO/trust/micro-interactions** (or the 25C accessibility/performance follow-up, Product Owner's choice): SEO metadata, Open Graph, structured data, hreflang (now feasible with the i18n locales), trust indicators, notification badge, unsaved-changes warning, session-expiry warning, better skeletons/loading, micro-interactions. Also open: incremental i18n string-coverage expansion across remaining pages (drop-in via `t()`).
 
 Deferred (outside Module 25, revisit after 25 completes):
 - Blog editor UI (admin forms; server actions exist)

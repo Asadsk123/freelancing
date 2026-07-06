@@ -1,0 +1,33 @@
+{
+  "nav": {
+    "services": "服务",
+    "portfolio": "作品集",
+    "blog": "博客",
+    "about": "关于我们",
+    "contact": "联系我们",
+    "getQuote": "获取报价"
+  },
+  "common": {
+    "language": "语言",
+    "openMenu": "打开菜单",
+    "closeMenu": "关闭菜单"
+  },
+  "home": {
+    "hero": {
+      "title": "助力业务增长的数字解决方案",
+      "subtitle": "Royal Asad 是一家高端国际数字机构，提供网站开发、设计和数字营销，助力实现真正的增长。",
+      "ctaQuote": "获取免费报价",
+      "ctaServices": "查看我们的服务"
+    }
+  },
+  "footer": {
+    "companyHeading": "公司",
+    "legalHeading": "法律",
+    "about": "关于我们",
+    "contact": "联系我们",
+    "blog": "博客",
+    "privacy": "隐私政策",
+    "security": "安全",
+    "rights": "版权所有。"
+  }
+}

@@ -6,11 +6,14 @@ import { Menu } from "lucide-react";
 import { publicNavigation } from "@/config/navigation";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
+import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useTranslations } from "@/lib/i18n/provider";
+import { navKeyForHref } from "@/config/navigation";
 import { Logo } from "./logo";
 import { cn } from "@/lib/utils/cn";
 
@@ -20,6 +23,7 @@ type HeaderProps = {
 
 export function Header({ onMobileMenuOpen }: HeaderProps) {
   const pathname = usePathname();
+  const t = useTranslations();
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-[var(--border)] bg-[var(--background)]/95 backdrop-blur-sm supports-[backdrop-filter]:bg-[var(--background)]/60">
@@ -38,16 +42,17 @@ export function Header({ onMobileMenuOpen }: HeaderProps) {
                   : "text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]",
               )}
             >
-              {item.label}
+              {t(navKeyForHref(item.href))}
             </Link>
           ))}
         </nav>
 
         <div className="flex items-center gap-2">
+          <LanguageSwitcher />
           <ThemeToggle />
           <Button asChild size="sm" className="hidden sm:inline-flex">
             <Link href={publicNavigation.cta.href}>
-              {publicNavigation.cta.label}
+              {t("nav.getQuote")}
             </Link>
           </Button>
           <Tooltip>
@@ -57,12 +62,12 @@ export function Header({ onMobileMenuOpen }: HeaderProps) {
                 size="icon"
                 className="md:hidden"
                 onClick={onMobileMenuOpen}
-                aria-label="Open menu"
+                aria-label={t("common.openMenu")}
               >
                 <Menu className="h-5 w-5" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Open menu</TooltipContent>
+            <TooltipContent>{t("common.openMenu")}</TooltipContent>
           </Tooltip>
         </div>
       </div>

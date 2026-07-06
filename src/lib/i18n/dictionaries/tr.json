@@ -1,0 +1,33 @@
+{
+  "nav": {
+    "services": "Hizmetler",
+    "portfolio": "Portföy",
+    "blog": "Blog",
+    "about": "Hakkımızda",
+    "contact": "İletişim",
+    "getQuote": "Teklif alın"
+  },
+  "common": {
+    "language": "Dil",
+    "openMenu": "Menüyü aç",
+    "closeMenu": "Menüyü kapat"
+  },
+  "home": {
+    "hero": {
+      "title": "İşletmenizi büyüten dijital çözümler",
+      "subtitle": "Royal Asad; web geliştirme, tasarım ve dijital pazarlama sunan, gerçek büyüme sağlayan üst düzey uluslararası bir dijital ajanstır.",
+      "ctaQuote": "Ücretsiz teklif alın",
+      "ctaServices": "Hizmetlerimizi görün"
+    }
+  },
+  "footer": {
+    "companyHeading": "Şirket",
+    "legalHeading": "Yasal",
+    "about": "Hakkımızda",
+    "contact": "İletişim",
+    "blog": "Blog",
+    "privacy": "Gizlilik Politikası",
+    "security": "Güvenlik",
+    "rights": "Tüm hakları saklıdır."
+  }
+}
