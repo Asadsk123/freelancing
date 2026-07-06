@@ -3,8 +3,8 @@
 > **Single source of truth for project progress.** Updated after every completed module and committed together with the module. If chat history is lost, resume from this file.
 
 **Last updated:** 2026-07-06
-**Current module completed:** Module 25 UX+ — Email autocomplete, Network status, Session/Premium touches
-**Latest commit:** committed with this file (see `git log -1`); previous: `847a6f9`
+**Current module completed:** Phase 26 — AI Helper + premium/trust/performance architecture
+**Latest commit:** committed with this file (see `git log -1`); previous: `4d1af5b`
 
 ---
 
@@ -40,7 +40,8 @@
 | 25A+ | OTP auto-send (debounced, cancellable, single-shot), Gmail domain suggestions, tooltip consistency | `0246587` |
 | 25C | Theme/Appearance: Light/Dark/System + premium visuals, no-FOUC, elevation tokens | `e1336aa` |
 | 25B | Internationalization (14 languages) + globe language switcher, RTL, auto-detect, persist | `847a6f9` |
-| 25 UX+ | Inline email autocomplete, network quality indicator, unsaved-changes warning, auto-scroll to first error | this commit |
+| 25 UX+ | Inline email autocomplete, network quality indicator, unsaved-changes warning, auto-scroll to first error | `4d1af5b` |
+| 26 | AI Helper (movable, i18n, lazy, reduced-motion, post-OTP welcome) + architecture docs | this commit |
 
 ## Remaining Modules (planned)
 
@@ -83,6 +84,7 @@
 - Admin milestones: create/edit/delete + inline status change on `/admin/projects/[id]`; every action guarded by `session.role === "admin"` (defense in depth); revalidates admin + portal project routes; clients see updates in their portal detail page
 - Cross-cutting: dark mode, responsive design, accessibility (aria labels, skip links), empty states everywhere, DB-not-connected warnings, `revalidatePath` after every mutation (admin + affected public/portal paths)
 - 25A UX polish: passwordless login remembers previous email (localStorage) with smart focus (new users → email field via native autofocus; returning users → Continue button, one-click); OTP flow has auto-advance/paste/auto-submit/resend countdown (pre-existing) plus server-side OTP rate limiting (30s cooldown via `otpRepository.secondsUntilResend`, friendly `retryAfter` messaging); secure-login trust indicator; reusable `CopyButton` (clipboard + fallback, tooltip, accessible live region) on tracking IDs; app-wide `TooltipProvider` with tooltips on every icon-only button (theme toggle, notifications, sign out, milestone edit/delete, copy); auto-resize `Textarea` (message + contact forms); global reduced-motion CSS; root error boundary (`src/app/error.tsx`); duplicate-submit guards on login/resend
+- Phase 26: **AI Helper (Aria)** implemented — movable/draggable mascot with persisted position, idle bob (pausable, reduced-motion-aware), hide/show launcher, panel with i18n-driven guides (Services/Contact/Dashboard navigation + milestones/uploads/page explanations), post-OTP welcome, lazy-loaded (zero first-paint JS), never blocks content, no tracking; voice is types-only (deferred). Existing language (14-lang auto-detect/cookie/RTL/fallback), email autocomplete, and network indicator confirmed working unchanged. Also documented architecture for theme packs (incl. Developer), performance, price comparison, portfolio trust, and admin analytics.
 - 25 UX+ improvements:
   - **Inline email autocomplete** ([email-input.tsx](../src/components/shared/email-input.tsx)): ghost-text completion of common domains matched by prefix after `@` (`abc@g`→`gmail.com`, `@y`→`yahoo.com`, `@o`→`outlook.com`, `@i`→`icloud.com`, `@p`→`proton.me`, plus more). Accept with **Tab**, **Right Arrow** (caret at end), or **click** the suggestion. Never overwrites typed text, never suggests for custom domains, pure string work (no network, no location/permissions). Replaces the old chip suggestions in the login form. Uses `type="text"` + `inputMode="email"` so caret APIs work for Right-Arrow accept; email validity stays enforced by Zod.
   - **Network quality indicator** ([network-status.tsx](../src/components/shared/network-status.tsx)) in public/portal/admin headers: Wi-Fi icon + tooltip showing Excellent / Good / Slow / Offline from the Network Information API (`effectiveType`) + `online`/`offline` events. Informational only; when slow it politely notes "Your connection may be affecting loading" (never blames the site); no location/permissions; renders after mount to avoid hydration mismatch.
@@ -126,28 +128,57 @@
 3. Perform these checks inside server action/repository layer
 4. Add explicit `session.role === "admin"` check inside every admin server action (defense in depth beyond middleware)
 
-## Future Architecture — AI Assistant / Website Mascot (documentation only, NOT implemented)
+## AI Assistant / Website Mascot — IMPLEMENTED (text; voice deferred)
 
-Planned assistant that becomes the site mascot. **Voice is deferred**; build the non-voice architecture first.
+Movable "Aria" helper, mounted once from the root layout (after `I18nProvider`).
 
-- **Component shape**: a top-level client `AssistantProvider` (mounted once in the root layout, after `I18nProvider`) exposing context — `open()/close()`, `guideTo(path)`, `explain(pageKey)`, `position`, `state` (`idle | talking | guiding | listening`). A portal-rendered `<AssistantMascot />` (fixed-position, `pointer-events` on the character only) + `<AssistantChat />` panel.
-- **Movable character**: absolutely-positioned, draggable (pointer events), position persisted in `localStorage` (`ra_assistant_pos`). Respects `prefers-reduced-motion` (idle animations pause). Lazy-loaded (`next/dynamic`, `ssr:false`) so it adds zero JS to first paint.
-- **Idle animations**: CSS/SVG keyframe loops gated behind reduced-motion; no heavy runtime.
-- **Guides users**: `guideTo(path)` uses the App Router to navigate and can highlight a target via a data-attribute (`[data-assistant-target="..."]`) + scroll-into-view.
-- **Explains pages**: per-route explanation keys resolved through the existing i18n system (`assistant.<pageKey>.*` in the dictionaries) so the assistant **automatically speaks the current website language** — reuses `useTranslations()`; no separate translation mechanism.
-- **Opens chat / helps complete actions**: chat panel dispatches intents to typed handlers; actions reuse existing server actions (never new privileged paths).
-- **Voice (later)**: a `useAssistantVoice()` hook behind a feature flag will add speech-synthesis (output) and speech-recognition (input), keyed to the active locale; the text architecture above is voice-agnostic so voice is additive.
-- **Performance**: entire subsystem lazy-loaded and idle-deferred; no impact on initial bundle or SSR.
+- **Files**: [assistant.tsx](../src/components/assistant/assistant.tsx) (behavior + UI), [assistant-mount.tsx](../src/components/assistant/assistant-mount.tsx) (lazy `next/dynamic`, `ssr:false` — zero first-paint JS), [voice.ts](../src/components/assistant/voice.ts) (voice types + `ASSISTANT_VOICE_ENABLED=false`, not implemented). Idle-bob keyframe in `globals.css`.
+- **Movable**: draggable via pointer events with a tap/drag threshold; position persisted in `localStorage` (`ra_assistant_pos`); re-clamped on resize so it never leaves the viewport.
+- **Never blocks content**: full-screen wrapper is `pointer-events-none`; only the mascot + panel are interactive.
+- **Idle animation / pause**: gentle bob, gated by a `paused` toggle (persisted `ra_assistant_paused`) **and** `prefers-reduced-motion` (auto-disabled).
+- **Hide/show**: hide (persisted `ra_assistant_hidden`) collapses to a small launcher that restores it.
+- **Guides + explains** (all via i18n `assistant.*`, so it **speaks the current website language**; English fallback): go to Services / Contact (quote) / Dashboard (App Router navigation), explain milestones, explain uploads, explain this page.
+- **Post-OTP welcome**: verify-form sets `ra_assistant_welcome`; the assistant opens once with a welcome after sign-in, then clears the flag.
+- **No spying**: purely local — no network calls, no analytics, no tracking.
+- **Voice (later)**: `useAssistantVoice()` will add `speechSynthesis` (output) + `SpeechRecognition` (input) keyed to the active locale, mic requested only on explicit tap; text architecture is voice-agnostic so voice is additive.
 
 ## Future Architecture — Theme Packs (documentation only, NOT implemented)
 
 The current theme system (Light / Dark / System via `data-theme` + premium via `data-premium`, all token-based in `globals.css`) is designed to extend to named theme packs **without breaking existing behavior**:
 
-- Add `data-pack="business | luxury | dark | minimal | creative | high-contrast"` on `<html>`, persisted in `localStorage` (`ra_pack`), applied by the same no-FOUC inline script.
+- Add `data-pack="business | luxury | creative | minimal | high-contrast | developer"` on `<html>`, persisted in `localStorage` (`ra_pack`), applied by the same no-FOUC inline script.
 - Each pack is a CSS block overriding the semantic tokens (`--background`, `--foreground`, `--primary`, `--shadow-*`, etc.) — no component changes, since every component already reads tokens.
-- **High Contrast** pack pairs with accessibility (WCAG AAA contrast, stronger focus rings).
+- **High Contrast** pairs with accessibility (WCAG AAA contrast, stronger focus rings); **Developer** favors dense spacing + monospace accents.
 - Packs compose with Light/Dark/System (a pack can define both light and dark token sets via `[data-pack="x"][data-theme="dark"]`).
-- The appearance dropdown gains a "Theme pack" group; default (no `data-pack`) keeps today's exact look, so current users are unaffected.
+- The appearance dropdown gains a "Theme pack" group; default (no `data-pack`) keeps today's exact look, so current users see **no visual regression**.
+
+## Future Architecture — Performance (documentation only; principles already applied to new code)
+
+Target: excellent Lighthouse scores. Roadmap, in the Next.js App Router idioms already in use:
+- **Images**: `next/image` with `formats: [avif, webp]` (already set), explicit width/height to avoid layout shift, `priority` on above-the-fold hero/LCP images, lazy by default elsewhere.
+- **Code splitting / dynamic imports**: heavy or below-the-fold client widgets via `next/dynamic` (the AI assistant already does `ssr:false`); keep server components server-only to ship less JS.
+- **Fonts**: `next/font` (self-hosted, `display: swap`, preloaded subset) to remove render-blocking font requests.
+- **Streaming + skeletons**: route-level `loading.tsx` + `<Suspense>` around slow data with skeleton fallbacks.
+- **Virtualization**: long lists (future large project/inquiry tables) via windowing.
+- **Caching / CDN / compression**: static assets immutable-cached; HTML/RSC cached per the dynamic/ISR strategy (revisit the current all-dynamic rendering from cookie-based i18n during the perf pass — consider moving locale to the URL or an edge-set header to restore static/ISR); gzip/brotli at the CDN edge.
+- **Prefetch/preload**: `next/link` prefetches in-viewport routes; preload critical assets.
+- **Rules for every new feature**: lazy-load when possible, avoid unnecessary client components, avoid hydration issues (mount-gate client-only signals — the network indicator already does this), avoid layout shift, no render-blocking work.
+
+## Future Architecture — Price Comparison (documentation only, NOT implemented)
+
+- A `PriceComparison` section driven **only** by real, admin-entered data in a future `price_benchmarks` table (source + date + amount, with an admin-managed provenance note).
+- **Never fabricate** competitor prices, discounts, or misleading comparisons. If no verified data exists, the component **renders nothing** (returns `null`) — no placeholders, no "was/now" theatrics.
+- Same repository + server-action pattern as the rest of the app; values shown with locale-aware currency formatting.
+
+## Future Architecture — Portfolio Trust ("This site is our work")
+
+- An admin-toggleable public section: "This website itself is a demonstration of our work." Controlled by a setting (future `site_settings` row) so it can be shown/hidden without a deploy.
+- Content authored through the existing i18n system; no fabricated claims.
+
+## Future Architecture — Admin Dashboard Analytics (real data only)
+
+- Extend the admin dashboard with **client engagement**, **conversion**, and **completion** metrics computed from existing tables — e.g. inquiry→project conversion rate (`inquiries` → `projects`), project completion rate (`projects.status='completed'`), average time-to-completion (`completedDate − createdAt`), active-client engagement (recent conversation messages / logins).
+- **Real statistics only** — every number derives from a repository query; no mock/estimated figures. Revenue stays out until real financial data exists (the placeholder was already removed in Module 19).
 
 ## Deferred / Roadmap Items
 

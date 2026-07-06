@@ -223,3 +223,13 @@ body {
 .ra-copied-pop {
   animation: ra-copied-pop 200ms ease-out;
 }
+
+/* AI assistant idle bob (auto-disabled by the reduced-motion rule above) */
+@keyframes ra-assistant-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.ra-assistant-bob {
+  animation: ra-assistant-bob 3s ease-in-out infinite;
+}

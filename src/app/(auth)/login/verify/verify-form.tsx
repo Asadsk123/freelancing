@@ -54,6 +54,12 @@ export function VerifyForm() {
 
     const response = await verifyOtp(email, code);
     if (response.success) {
+      // Cue the assistant to greet the user once after a successful sign-in.
+      try {
+        localStorage.setItem("ra_assistant_welcome", "1");
+      } catch {
+        // localStorage may be unavailable; the welcome cue is non-essential.
+      }
       router.push(response.redirectTo ?? "/dashboard");
       router.refresh();
     } else {

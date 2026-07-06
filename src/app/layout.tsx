@@ -3,6 +3,7 @@ import { brand } from "@/config/brand";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { getI18n } from "@/lib/i18n/server";
 import { I18nProvider } from "@/lib/i18n/provider";
+import { AssistantMount } from "@/components/assistant/assistant-mount";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -49,6 +50,7 @@ export default async function RootLayout({
         <I18nProvider locale={locale} dir={dir} dict={dict}>
           <TooltipProvider delayDuration={200} skipDelayDuration={300}>
             <div id="main-content">{children}</div>
+            <AssistantMount />
           </TooltipProvider>
         </I18nProvider>
       </body>
