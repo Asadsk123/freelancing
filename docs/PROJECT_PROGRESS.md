@@ -3,8 +3,10 @@
 > **Single source of truth for project progress.** Updated after every completed module and committed together with the module. If chat history is lost, resume from this file.
 
 **Last updated:** 2026-07-06
-**Current module completed:** Module 25A — Login/OTP Automation & UX Polish (+ refinements)
-**Latest commit:** committed with this file (see `git log -1`); 25A base: `ec20d87`; previous module: `a3b4956`
+**Current module completed:** Module 25C — Theme/Appearance System (Light/Dark/System + premium visuals)
+**Latest commit:** committed with this file (see `git log -1`); previous: `0246587`
+
+> **⚠️ DEFERRED — Module 25B (Internationalization): NOT yet implemented.** The Product Owner chose to skip i18n for now and revisit it as a dedicated next step. When resumed, 25B must deliver: a scalable file-based i18n architecture (translation file per locale, English fallback per key, unlimited-language-ready), auto-detection from browser/`Accept-Language`, manual override persisted in a cookie, RTL support (Arabic/Urdu), and a globe-icon-only language switcher (animated, tooltip, keyboard accessible, mobile friendly) — for the 18 required languages: English, Arabic, Urdu, Hindi, French, German, Spanish, Portuguese, Italian, Turkish, Russian, Chinese, Japanese, Korean, Indonesian, Malay, Dutch, Bengali. A scaffold exists at `messages/en.json` (currently unused). **Do this before considering Module 25 complete.**
 
 ---
 
@@ -37,13 +39,15 @@
 | 23 | Project Conversations (message thread + send form) | `90e124c` |
 | 24 | Admin Project Milestones Management (CRUD, admin-guarded) | `a3b4956` |
 | 25A | Login/OTP automation, copy buttons, tooltips, smart defaults, error boundary | `ec20d87` |
-| 25A+ | OTP auto-send (debounced, cancellable, single-shot), Gmail domain suggestions, tooltip consistency | this commit |
+| 25A+ | OTP auto-send (debounced, cancellable, single-shot), Gmail domain suggestions, tooltip consistency | `0246587` |
+| 25B | Internationalization + language switcher | **DEFERRED** (see note above) |
+| 25C | Theme/Appearance: Light/Dark/System + premium visuals, no-FOUC, elevation tokens | this commit |
 
 ## Remaining Modules (planned)
 
-- **Module 25 (Premium UX) — remaining sub-modules**, approved sequence:
-  - **25B** — Internationalization (18 languages) + globe language switcher (auto-detect, manual override, remember choice, English fallback, unlimited-language architecture via translation files)
-  - **25C** — Theme/appearance system (Light/Dark/System + premium visual mode) + app-wide accessibility audit + performance (memoization, lazy loading, code splitting)
+- **Module 25 (Premium UX) — remaining sub-modules**:
+  - **25B** — Internationalization (18 languages) + globe language switcher — **DEFERRED, do next** (see the deferral note near the top). Auto-detect, manual override, remember choice, English fallback, RTL, unlimited-language architecture via translation files.
+  - **25C accessibility/performance follow-up** — the theme part of 25C is done; the app-wide accessibility audit + performance pass (memoization, lazy loading, code splitting) still remain.
   - **25D** — SEO metadata, Open Graph, structured data, hreflang, trust indicators, notification badge, unsaved-changes warning, session-expiry warning, micro-interactions, skeletons
 - **File upload pipeline** — actual upload with storage backend, watermarking, revision requests (schema exists, display-only implemented)
 - **Client review submission** — client-side flow to submit a review after project completion
@@ -80,6 +84,7 @@
 - Admin milestones: create/edit/delete + inline status change on `/admin/projects/[id]`; every action guarded by `session.role === "admin"` (defense in depth); revalidates admin + portal project routes; clients see updates in their portal detail page
 - Cross-cutting: dark mode, responsive design, accessibility (aria labels, skip links), empty states everywhere, DB-not-connected warnings, `revalidatePath` after every mutation (admin + affected public/portal paths)
 - 25A UX polish: passwordless login remembers previous email (localStorage) with smart focus (new users → email field via native autofocus; returning users → Continue button, one-click); OTP flow has auto-advance/paste/auto-submit/resend countdown (pre-existing) plus server-side OTP rate limiting (30s cooldown via `otpRepository.secondsUntilResend`, friendly `retryAfter` messaging); secure-login trust indicator; reusable `CopyButton` (clipboard + fallback, tooltip, accessible live region) on tracking IDs; app-wide `TooltipProvider` with tooltips on every icon-only button (theme toggle, notifications, sign out, milestone edit/delete, copy); auto-resize `Textarea` (message + contact forms); global reduced-motion CSS; root error boundary (`src/app/error.tsx`); duplicate-submit guards on login/resend
+- 25C Theme/Appearance: three-way theme (Light / Dark / **System** — System follows `prefers-color-scheme` live via matchMedia), replacing the old 2-way toggle; choice persisted in `localStorage.theme` (System = key removed, governed by CSS media query); **no-FOUC** inline script in `<head>` applies theme + premium before first paint; **premium visual mode** (opt-in, persisted `ra_premium`) adds tasteful depth — richer elevation shadows + a subtle radial depth wash — with no RGB/gaming effects and readability preserved; new elevation tokens (`--shadow-sm/md/lg`) defined for light/dark/premium (cards/dropdowns previously referenced these but they were undefined → now render proper depth); appearance control is a keyboard-accessible dropdown (Sun/Moon/Monitor + Sparkles) with a tooltip on the icon-only trigger
 - 25A+ refinements: OTP **auto-send** on login — once the email is valid and the user stops typing for 4s, the code sends automatically with a visible countdown ("Sending your code automatically in Ns — or press Continue now"); any keystroke resets the timer, clicking Continue cancels it and sends immediately, and a single-shot `sentRef` guard guarantees exactly one OTP request (verified: auto-send=1 OTP, manual-cancel=1 OTP). **Gmail domain suggestions**: typing a bare username (e.g. `john`) offers one-click chips `john@gmail.com` / `@outlook.com` / `@yahoo.com` (never auto-applied — user must choose). **Tooltip consistency**: every icon-only button in the app now has a tooltip (added public-header Open menu, mobile-nav Close menu, admin mobile menu toggle to the earlier set)
 
 ## Features Still Pending
@@ -125,7 +130,7 @@
 
 ## Next Module to Implement
 
-**Module 25B — Internationalization + language switcher.** Build a scalable i18n architecture: translation files per locale (start with the 18 required languages, English fallback, unlimited-language-ready), auto-detect from browser/`Accept-Language`, manual override persisted (cookie/localStorage), and a globe-icon-only language switcher (animated, tooltip, keyboard accessible, mobile friendly). Never hardcode translations.
+**Module 25B — Internationalization + language switcher (DEFERRED, now the immediate next task).** Build a scalable i18n architecture: translation files per locale (the 18 required languages, English fallback per key, unlimited-language-ready), auto-detect from browser/`Accept-Language`, manual override persisted in a cookie, RTL support (Arabic/Urdu), and a globe-icon-only language switcher (animated, tooltip, keyboard accessible, mobile friendly). Never hardcode translations. A scaffold exists at `messages/en.json`.
 
 Deferred (outside Module 25, revisit after 25 completes):
 - Blog editor UI (admin forms; server actions exist)

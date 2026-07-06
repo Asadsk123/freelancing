@@ -30,6 +30,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
+      <head>
+        {/* Apply theme + premium visuals before first paint to prevent FOUC. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme'),d=document.documentElement;if(t==='dark'||t==='light'){d.setAttribute('data-theme',t);}else{d.removeAttribute('data-theme');}if(localStorage.getItem('ra_premium')==='on'){d.setAttribute('data-premium','on');}}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body>
         <a href="#main-content" className="skip-nav">
           Skip to main content
