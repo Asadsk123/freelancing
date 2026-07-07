@@ -3,6 +3,7 @@
 import { createServiceSchema, updateServiceSchema } from "@/lib/validations/service";
 import { hasDatabase } from "@/db";
 import { serviceRepository } from "@/lib/repositories/service";
+import { requireAdmin } from "@/lib/auth/guards";
 import { revalidatePath } from "next/cache";
 
 type ActionResult = {
@@ -19,6 +20,9 @@ function parseFeatures(raw: string): string[] {
 }
 
 export async function createService(formData: FormData): Promise<ActionResult> {
+  const auth = await requireAdmin();
+  if (!auth.ok) return { success: false, error: auth.error };
+
   const field = (name: string) => (formData.get(name) ?? "") as string;
   const raw = {
     categoryId: field("categoryId"),
@@ -66,6 +70,9 @@ export async function createService(formData: FormData): Promise<ActionResult> {
 }
 
 export async function updateService(formData: FormData): Promise<ActionResult> {
+  const auth = await requireAdmin();
+  if (!auth.ok) return { success: false, error: auth.error };
+
   const field = (name: string) => (formData.get(name) ?? "") as string;
   const raw: Record<string, string> = {
     serviceId: field("serviceId"),
@@ -115,6 +122,9 @@ export async function updateService(formData: FormData): Promise<ActionResult> {
 }
 
 export async function toggleServiceActive(formData: FormData): Promise<ActionResult> {
+  const auth = await requireAdmin();
+  if (!auth.ok) return { success: false, error: auth.error };
+
   const serviceId = (formData.get("serviceId") ?? "") as string;
   if (!serviceId) {
     return { success: false, error: "Service ID required." };
@@ -140,6 +150,9 @@ export async function toggleServiceActive(formData: FormData): Promise<ActionRes
 }
 
 export async function deleteService(formData: FormData): Promise<ActionResult> {
+  const auth = await requireAdmin();
+  if (!auth.ok) return { success: false, error: auth.error };
+
   const serviceId = (formData.get("serviceId") ?? "") as string;
   if (!serviceId) {
     return { success: false, error: "Service ID required." };

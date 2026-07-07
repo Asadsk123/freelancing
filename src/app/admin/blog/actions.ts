@@ -3,6 +3,7 @@
 import { createBlogPostSchema, updateBlogPostSchema } from "@/lib/validations/blog-post";
 import { hasDatabase } from "@/db";
 import { blogPostRepository } from "@/lib/repositories/blog-post";
+import { requireAdmin } from "@/lib/auth/guards";
 import { revalidatePath } from "next/cache";
 
 type ActionResult = {
@@ -11,6 +12,9 @@ type ActionResult = {
 };
 
 export async function createBlogPost(formData: FormData): Promise<ActionResult> {
+  const auth = await requireAdmin();
+  if (!auth.ok) return { success: false, error: auth.error };
+
   const field = (name: string) => (formData.get(name) ?? "") as string;
   const raw = {
     title: field("title"),
@@ -62,6 +66,9 @@ export async function createBlogPost(formData: FormData): Promise<ActionResult> 
 }
 
 export async function updateBlogPost(formData: FormData): Promise<ActionResult> {
+  const auth = await requireAdmin();
+  if (!auth.ok) return { success: false, error: auth.error };
+
   const field = (name: string) => (formData.get(name) ?? "") as string;
   const raw: Record<string, string> = {
     postId: field("postId"),
@@ -115,6 +122,9 @@ export async function updateBlogPost(formData: FormData): Promise<ActionResult> 
 }
 
 export async function deleteBlogPost(formData: FormData): Promise<ActionResult> {
+  const auth = await requireAdmin();
+  if (!auth.ok) return { success: false, error: auth.error };
+
   const postId = (formData.get("postId") ?? "") as string;
   if (!postId) {
     return { success: false, error: "Post ID required." };

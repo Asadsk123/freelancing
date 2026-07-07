@@ -4,6 +4,7 @@ import { createProjectSchema, updateProjectStatusSchema } from "@/lib/validation
 import { hasDatabase } from "@/db";
 import { projectRepository } from "@/lib/repositories/project";
 import { userRepository } from "@/lib/repositories/user";
+import { requireAdmin } from "@/lib/auth/guards";
 import { formatTrackingId } from "@/lib/utils/formatting";
 import { brand } from "@/config/brand";
 import { email as mailer } from "@/lib/email";
@@ -21,6 +22,9 @@ function generateTrackingId(): string {
 }
 
 export async function createProject(formData: FormData): Promise<ActionResult> {
+  const auth = await requireAdmin();
+  if (!auth.ok) return { success: false, error: auth.error };
+
   const field = (name: string) => (formData.get(name) ?? "") as string;
   const raw = {
     title: field("title"),
@@ -72,6 +76,9 @@ export async function createProject(formData: FormData): Promise<ActionResult> {
 }
 
 export async function updateProjectStatus(formData: FormData): Promise<ActionResult> {
+  const auth = await requireAdmin();
+  if (!auth.ok) return { success: false, error: auth.error };
+
   const raw = {
     projectId: (formData.get("projectId") ?? "") as string,
     status: (formData.get("status") ?? "") as string,
@@ -111,6 +118,9 @@ export async function updateProjectStatus(formData: FormData): Promise<ActionRes
 }
 
 export async function deleteProject(formData: FormData): Promise<ActionResult> {
+  const auth = await requireAdmin();
+  if (!auth.ok) return { success: false, error: auth.error };
+
   const projectId = (formData.get("projectId") ?? "") as string;
   if (!projectId) {
     return { success: false, error: "Project ID required." };

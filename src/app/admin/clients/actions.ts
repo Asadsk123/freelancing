@@ -2,6 +2,7 @@
 
 import { hasDatabase } from "@/db";
 import { userRepository } from "@/lib/repositories/user";
+import { requireAdmin } from "@/lib/auth/guards";
 import { revalidatePath } from "next/cache";
 
 type ActionResult = {
@@ -10,6 +11,9 @@ type ActionResult = {
 };
 
 export async function toggleClientActive(formData: FormData): Promise<ActionResult> {
+  const auth = await requireAdmin();
+  if (!auth.ok) return { success: false, error: auth.error };
+
   const clientId = (formData.get("clientId") ?? "") as string;
   if (!clientId) {
     return { success: false, error: "Client ID required." };

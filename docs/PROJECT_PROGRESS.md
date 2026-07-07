@@ -3,8 +3,8 @@
 > **Single source of truth for project progress.** Updated after every completed module and committed together with the module. If chat history is lost, resume from this file.
 
 **Last updated:** 2026-07-07
-**Current module completed:** Module 27 — Transactional Email Delivery
-**Latest commit:** committed with this file (see `git log -1`); previous: `f140a30`
+**Current module completed:** Module 28 — Admin Management & Security Hardening
+**Latest commit:** committed with this file (see `git log -1`); previous: `6b17cb0`
 
 ---
 
@@ -46,7 +46,8 @@
 | 26.2 | Production audit: no TODO/debug/mock; timer-cleanup fix (guide-nav setTimeout tracked + cleared on unmount); regression sweep | `b1c9ae1` |
 | 26 handoff | Docs finalized, conventions verified, developer handoff summary | `c13b469` |
 | 26 final verify | 8/8 pre-approval checks passed; keyboard-activation fix (Enter/Space on mascot) | `f140a30` |
-| 27 | Transactional Email Delivery (provider abstraction, templates, queue, wired flows) | this commit |
+| 27 | Transactional Email Delivery (provider abstraction, templates, queue, wired flows) | `6b17cb0` |
+| 28 | Admin Management & Security Hardening (Team page, promote/demote/activate, shared `requireAdmin` on all admin actions) | this commit |
 
 ## Remaining Modules (planned)
 
@@ -124,12 +125,12 @@
 - `jose` build warning about CompressionStream in Edge Runtime — harmless (JWE unused; only JWT sign/verify)
 - Dev server on Windows: after `npm run build`, `.next` must be deleted before `npm run dev` (stale cache causes ENOENT)
 
-## Technical Debt (must be implemented in Admin Management / Security Hardening module — do not defer past production hardening)
+## Technical Debt — RESOLVED in Module 28 ✅
 
-1. Prevent admin from deactivating own account (server-side check `targetUserId !== session.userId`)
-2. Ensure at least one active admin remains (count check in same transaction as update)
-3. Perform these checks inside server action/repository layer
-4. Add explicit `session.role === "admin"` check inside every admin server action (defense in depth beyond middleware)
+1. ✅ Admin cannot deactivate/demote their own account (`userId === session.userId` guard in `setAdminActive`/`demoteToClient`).
+2. ✅ At least one active admin always remains (`countActiveAdmins() <= 1` guard before deactivate/demote).
+3. ✅ All checks live in the server action + repository layer.
+4. ✅ Explicit `requireAdmin()` (`session.role === "admin"`) inside **every** admin server action (clients, services, reviews, blog, projects, milestones, team) — defense in depth beyond middleware. Shared helper `src/lib/auth/guards.ts` (no duplication).
 
 ## AI Assistant / Website Mascot — IMPLEMENTED (text; voice deferred)
 
@@ -147,6 +148,14 @@ Movable "Aria" helper, mounted once from the root layout (after `I18nProvider`).
 - **Accessibility**: mascot is keyboard-operable — **Enter/Space** toggle the panel (via `onKeyDown`, since keyboard fires `click` not pointer events); opening moves focus into the panel; **Escape closes** and returns focus to the mascot; all controls are labelled buttons; Tab cycles panel controls/guides; reduced-motion disables the bob (JS gate + global CSS rule).
 - **E2E verification pass (fixes applied)**: (1) drag now persists the *current* position via refs — fixed a stale-closure bug that saved the old position; (2) added Escape-to-close + focus management (were missing); (3) panel is measured and **clamped fully within the viewport** via a layout effect — fixed an overflow bug that also clipped the 6th guide. Verified in-browser: draggable + persistence-across-reload, hide/show, pause/resume, tap-open, Escape-close, **real post-OTP welcome** (email → auto-send → paste OTP → verified → `/dashboard` → welcome shown once), lazy-load (First Load JS unchanged at 102 kB), no console/hydration errors.
 - **Missing translations (to add later)**: the `assistant.*` namespace exists only in `en.json`; in the other 13 languages the assistant currently falls back to English (architecture is ready — it renders via `t()`, so adding `assistant` keys to each dictionary makes it multilingual with no code change). RTL container still applies correctly (verified in Arabic: `dir=rtl`).
+
+## Module 28 — Admin Management & Security Hardening
+
+- **Shared guard** `src/lib/auth/guards.ts` — `requireAdmin()` returns `{ ok, session }`; added to **every** admin server action as defense in depth (the duplicated local copy in milestone actions was removed).
+- **Admin Team page** `/admin/team` (new nav item, sidebar + mobile): lists administrators; promote an existing user to admin by email; activate/deactivate; demote to client. Real DB data, no mock.
+- **Security guards** (server-enforced, `src/app/admin/team/actions.ts`): cannot deactivate/demote **your own** account; the **last active administrator** cannot be deactivated/demoted; all validated with Zod; UI also disables the blocked buttons with an explanatory tooltip (reduce confusion) + confirmation dialogs for destructive actions.
+- **Repository** additions: `findAllAdmins`, `countActiveAdmins`, `setActive`, `setRole` (single queries, no N+1).
+- **Verified in browser (real DB)**: promote client→admin, deactivate/reactivate a non-self admin, demote admin→client, self-actions disabled, last-admin protection reflected in UI; other admin pages + hardened actions unaffected; no console errors. Test admin removed afterward.
 
 ## Module 27 — Transactional Email Delivery
 
@@ -261,9 +270,9 @@ Target: excellent Lighthouse scores. Roadmap, in the Next.js App Router idioms a
 ## Recommended Next Phase (post-26, by business impact then dependency)
 
 1. ~~Transactional Email Delivery~~ — **DONE (Module 27).**
-2. **File Upload & Delivery Pipeline — RECOMMENDED NEXT.** Core product value — the portal's headline is file previews with watermark protection + revision requests. Schema (`files`) and display exist; actual upload/storage/download/watermark are missing. Needs a storage backend (R2 env vars already scaffolded) + signed URLs. The `fileUploaded` email template is already wired to fire once uploads exist.
-3. **Admin Management + Security Hardening.** Implement the recorded technical debt (prevent admin self-deactivation, guarantee ≥1 active admin, server-side role checks as defense-in-depth). Trust/security; required before real multi-admin production.
-4. **SEO / Open Graph / structured data (25D).** Conversion + discoverability for the public marketing site; hreflang is now feasible with the i18n locales.
-5. **Email background worker** — a cron/route that processes `emailQueueRepository.findRetryable()` to retry failed/queued emails (architecture is ready; inline delivery is single-attempt today).
+2. ~~Admin Management + Security Hardening~~ — **DONE (Module 28).**
+3. **File Upload & Delivery Pipeline — RECOMMENDED NEXT** (needs a storage backend decision). Core product value — portal file previews with watermark protection + revision requests. Schema (`files`) + display exist; actual upload/storage/download/watermark are missing. Needs a storage backend (R2 env vars scaffolded) + signed URLs; watermarking needs an image lib (e.g. `sharp`). Best delivered with a storage-provider abstraction (dev provider + R2) mirroring the email module. `fileUploaded` email template already wired to fire once uploads exist.
+4. **SEO / Open Graph / structured data (25D).** Conversion + discoverability for the public marketing site; hreflang now feasible with the i18n locales. Fully deliverable now with no external deps.
+5. **Email background worker** — a cron/route that processes `emailQueueRepository.findRetryable()` to retry failed/queued emails (architecture ready; inline delivery is single-attempt today).
 
 Other open items (lower priority): 25C accessibility/perf pass; blog editor UI; client review submission; settings persistence (`userRepository.updateProfile`); audit logging; session-timeout warning; theme packs; price comparison; portfolio-trust section; admin analytics; incremental i18n string-coverage (drop-in via `t()`).

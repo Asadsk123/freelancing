@@ -2,6 +2,7 @@
 
 import { hasDatabase } from "@/db";
 import { reviewRepository } from "@/lib/repositories/review";
+import { requireAdmin } from "@/lib/auth/guards";
 import { revalidatePath } from "next/cache";
 
 type ActionResult = {
@@ -10,6 +11,9 @@ type ActionResult = {
 };
 
 export async function toggleReviewPublished(formData: FormData): Promise<ActionResult> {
+  const auth = await requireAdmin();
+  if (!auth.ok) return { success: false, error: auth.error };
+
   const reviewId = (formData.get("reviewId") ?? "") as string;
   if (!reviewId) {
     return { success: false, error: "Review ID required." };
@@ -35,6 +39,9 @@ export async function toggleReviewPublished(formData: FormData): Promise<ActionR
 }
 
 export async function deleteReview(formData: FormData): Promise<ActionResult> {
+  const auth = await requireAdmin();
+  if (!auth.ok) return { success: false, error: auth.error };
+
   const reviewId = (formData.get("reviewId") ?? "") as string;
   if (!reviewId) {
     return { success: false, error: "Review ID required." };

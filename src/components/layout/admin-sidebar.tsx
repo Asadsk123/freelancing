@@ -11,6 +11,7 @@ import {
   Inbox,
   Star,
   Settings,
+  ShieldCheck,
   Home,
 } from "lucide-react";
 import { Logo } from "./logo";
@@ -26,6 +27,7 @@ const iconMap: Record<string, LucideIcon> = {
   inbox: Inbox,
   star: Star,
   settings: Settings,
+  "shield-check": ShieldCheck,
 };
 
 const navItems = [
@@ -36,6 +38,7 @@ const navItems = [
   { label: "Blog", href: "/admin/blog", icon: "file-text" },
   { label: "Inquiries", href: "/admin/inquiries", icon: "inbox" },
   { label: "Reviews", href: "/admin/reviews", icon: "star" },
+  { label: "Team", href: "/admin/team", icon: "shield-check" },
   { label: "Settings", href: "/admin/settings", icon: "settings" },
 ] as const;
 

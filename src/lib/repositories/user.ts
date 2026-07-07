@@ -1,8 +1,9 @@
-import { eq, desc, sql } from "drizzle-orm";
+import { eq, and, desc, sql } from "drizzle-orm";
 import { BaseRepository } from "@/db/repository";
 import { users, projects } from "@/db/schema";
 
 type UserRow = typeof users.$inferSelect;
+type UserRole = UserRow["role"];
 
 export type ClientWithProjectCount = UserRow & {
   projectCount: number;
@@ -95,6 +96,42 @@ export class UserRepository extends BaseRepository {
     const [row] = await this.db
       .update(users)
       .set({ isActive: !existing.isActive, updatedAt: new Date() })
+      .where(eq(users.id, id))
+      .returning();
+    return row;
+  }
+
+  /** All administrators, newest first. */
+  async findAllAdmins(): Promise<UserRow[]> {
+    return this.db
+      .select()
+      .from(users)
+      .where(eq(users.role, "admin"))
+      .orderBy(desc(users.createdAt));
+  }
+
+  /** Count of administrators whose account is active. */
+  async countActiveAdmins(): Promise<number> {
+    const [result] = await this.db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(users)
+      .where(and(eq(users.role, "admin"), eq(users.isActive, true)));
+    return result?.count ?? 0;
+  }
+
+  async setActive(id: string, isActive: boolean): Promise<UserRow | undefined> {
+    const [row] = await this.db
+      .update(users)
+      .set({ isActive, updatedAt: new Date() })
+      .where(eq(users.id, id))
+      .returning();
+    return row;
+  }
+
+  async setRole(id: string, role: UserRole): Promise<UserRow | undefined> {
+    const [row] = await this.db
+      .update(users)
+      .set({ role, updatedAt: new Date() })
       .where(eq(users.id, id))
       .returning();
     return row;

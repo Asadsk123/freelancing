@@ -8,7 +8,7 @@ import {
 import { hasDatabase } from "@/db";
 import { milestoneRepository } from "@/lib/repositories/milestone";
 import { projectRepository } from "@/lib/repositories/project";
-import { getSession } from "@/lib/auth/session";
+import { requireAdmin } from "@/lib/auth/guards";
 import { email as mailer } from "@/lib/email";
 import { revalidatePath } from "next/cache";
 
@@ -16,15 +16,6 @@ type ActionResult = {
   success: boolean;
   error?: string;
 };
-
-async function requireAdmin(): Promise<
-  { ok: true } | { ok: false; error: string }
-> {
-  const session = await getSession();
-  if (!session) return { ok: false, error: "Not authenticated." };
-  if (session.role !== "admin") return { ok: false, error: "Not authorized." };
-  return { ok: true };
-}
 
 function parseDueDate(raw: string | undefined): Date | null {
   if (!raw) return null;
