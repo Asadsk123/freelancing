@@ -171,6 +171,24 @@ export function Assistant() {
     mascotRef.current?.focus();
   }, []);
 
+  // Navigate shortly after showing the guide message. The pending timer is
+  // tracked so it is cleared on unmount and never stacks on rapid clicks.
+  const navTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      if (navTimerRef.current) clearTimeout(navTimerRef.current);
+    },
+    [],
+  );
+  const guideTo = useCallback(
+    (info: string, path: string) => {
+      setMessage(info);
+      if (navTimerRef.current) clearTimeout(navTimerRef.current);
+      navTimerRef.current = setTimeout(() => router.push(path), 700);
+    },
+    [router],
+  );
+
   // Accessibility: when the panel opens, move focus into it; Escape closes it
   // and returns focus to the mascot trigger.
   useEffect(() => {
@@ -215,9 +233,9 @@ export function Assistant() {
   }, [open, pos, message]);
 
   const guides = [
-    { key: "assistant.guideServices", run: () => { setMessage(t("assistant.servicesInfo")); setTimeout(() => router.push("/services"), 700); } },
-    { key: "assistant.guideContact", run: () => { setMessage(t("assistant.contactInfo")); setTimeout(() => router.push("/contact?form=quote"), 700); } },
-    { key: "assistant.guideDashboard", run: () => { setMessage(t("assistant.dashboardInfo")); setTimeout(() => router.push("/dashboard"), 700); } },
+    { key: "assistant.guideServices", run: () => guideTo(t("assistant.servicesInfo"), "/services") },
+    { key: "assistant.guideContact", run: () => guideTo(t("assistant.contactInfo"), "/contact?form=quote") },
+    { key: "assistant.guideDashboard", run: () => guideTo(t("assistant.dashboardInfo"), "/dashboard") },
     { key: "assistant.explainMilestones", run: () => setMessage(t("assistant.milestonesInfo")) },
     { key: "assistant.explainUploads", run: () => setMessage(t("assistant.uploadsInfo")) },
     { key: "assistant.explainPage", run: () => setMessage(t("assistant.pageInfo")) },

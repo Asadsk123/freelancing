@@ -3,8 +3,8 @@
 > **Single source of truth for project progress.** Updated after every completed module and committed together with the module. If chat history is lost, resume from this file.
 
 **Last updated:** 2026-07-07
-**Current module completed:** Phase 26.1 — AI Helper end-to-end verification + fixes
-**Latest commit:** committed with this file (see `git log -1`); previous: `280b10e`
+**Current module completed:** Phase 26.2 — Production audit (AI Helper) + timer-cleanup fix
+**Latest commit:** committed with this file (see `git log -1`); previous: `a06f085`
 
 ---
 
@@ -42,7 +42,8 @@
 | 25B | Internationalization (14 languages) + globe language switcher, RTL, auto-detect, persist | `847a6f9` |
 | 25 UX+ | Inline email autocomplete, network quality indicator, unsaved-changes warning, auto-scroll to first error | `4d1af5b` |
 | 26 | AI Helper (movable, i18n, lazy, reduced-motion, post-OTP welcome) + architecture docs | `280b10e` |
-| 26.1 | AI Helper E2E verification + fixes (drag persistence, Escape/focus a11y, viewport clamping) | this commit |
+| 26.1 | AI Helper E2E verification + fixes (drag persistence, Escape/focus a11y, viewport clamping) | `a06f085` |
+| 26.2 | Production audit: no TODO/debug/mock; timer-cleanup fix (guide-nav setTimeout tracked + cleared on unmount); regression sweep | this commit |
 
 ## Remaining Modules (planned)
 
