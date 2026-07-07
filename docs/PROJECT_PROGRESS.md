@@ -3,8 +3,10 @@
 > **Single source of truth for project progress.** Updated after every completed module and committed together with the module. If chat history is lost, resume from this file.
 
 **Last updated:** 2026-07-07
-**Current module completed:** Phase 26.2 — Production audit (AI Helper) + timer-cleanup fix
-**Latest commit:** committed with this file (see `git log -1`); previous: `a06f085`
+**Current module completed:** Phase 26 — AI Helper (approved & closed) + handoff
+**Latest commit:** committed with this file (see `git log -1`); previous: `b1c9ae1`
+
+> **Phase 26 status: APPROVED & CLOSED.** AI Helper is production-ready (audit passed, confidence 93%). Documentation below is the single source of truth for handoff.
 
 ---
 
@@ -43,7 +45,8 @@
 | 25 UX+ | Inline email autocomplete, network quality indicator, unsaved-changes warning, auto-scroll to first error | `4d1af5b` |
 | 26 | AI Helper (movable, i18n, lazy, reduced-motion, post-OTP welcome) + architecture docs | `280b10e` |
 | 26.1 | AI Helper E2E verification + fixes (drag persistence, Escape/focus a11y, viewport clamping) | `a06f085` |
-| 26.2 | Production audit: no TODO/debug/mock; timer-cleanup fix (guide-nav setTimeout tracked + cleared on unmount); regression sweep | this commit |
+| 26.2 | Production audit: no TODO/debug/mock; timer-cleanup fix (guide-nav setTimeout tracked + cleared on unmount); regression sweep | `b1c9ae1` |
+| 26 handoff | Docs finalized, conventions verified, developer handoff summary | this commit |
 
 ## Remaining Modules (planned)
 
@@ -58,7 +61,6 @@
 - **Admin Management / Security Hardening module** — see Technical Debt below
 - **Audit logging** — write to `audit_log` on sensitive mutations (schema exists)
 - **Revenue tracking** — deferred (stat removed from dashboard until real data exists)
-- **i18n** — `messages/` directory scaffolded, not yet wired
 
 ## Database Status
 
@@ -147,6 +149,34 @@ Movable "Aria" helper, mounted once from the root layout (after `I18nProvider`).
 - **E2E verification pass (fixes applied)**: (1) drag now persists the *current* position via refs — fixed a stale-closure bug that saved the old position; (2) added Escape-to-close + focus management (were missing); (3) panel is measured and **clamped fully within the viewport** via a layout effect — fixed an overflow bug that also clipped the 6th guide. Verified in-browser: draggable + persistence-across-reload, hide/show, pause/resume, tap-open, Escape-close, **real post-OTP welcome** (email → auto-send → paste OTP → verified → `/dashboard` → welcome shown once), lazy-load (First Load JS unchanged at 102 kB), no console/hydration errors.
 - **Missing translations (to add later)**: the `assistant.*` namespace exists only in `en.json`; in the other 13 languages the assistant currently falls back to English (architecture is ready — it renders via `t()`, so adding `assistant` keys to each dictionary makes it multilingual with no code change). RTL container still applies correctly (verified in Arabic: `dir=rtl`).
 
+## Phase 26 — Developer Handoff (AI Helper)
+
+**Files added**
+- `src/components/assistant/assistant.tsx` — the assistant (draggable mascot + panel + guides).
+- `src/components/assistant/assistant-mount.tsx` — lazy loader (`next/dynamic`, `ssr:false`).
+- `src/components/assistant/voice.ts` — voice types + `ASSISTANT_VOICE_ENABLED=false` (deferred; imported by nothing → zero bundle cost).
+
+**Files modified**
+- `src/app/layout.tsx` — mounts `<AssistantMount />` inside `I18nProvider`/`TooltipProvider`.
+- `src/app/(auth)/login/verify/verify-form.tsx` — sets `ra_assistant_welcome` on OTP success.
+- `src/app/globals.css` — `ra-assistant-bob` idle keyframe (disabled by the reduced-motion rule).
+- `src/lib/i18n/dictionaries/en.json` — `assistant.*` namespace (English only; other locales fall back).
+
+**Public API / components introduced**
+- `<AssistantMount />` — drop-in, self-contained; no props; mounted once globally.
+- Persistence keys (localStorage): `ra_assistant_pos`, `ra_assistant_hidden`, `ra_assistant_paused`, `ra_assistant_welcome` (one-shot).
+- To make the assistant open with a welcome after any flow: set `localStorage.ra_assistant_welcome = "1"` before navigating.
+
+**Architectural decisions**
+- Cookie/DB-free, purely client-local (no tracking) → mounted client-only via `ssr:false` so it never touches SSR or the initial bundle.
+- Drag math lives entirely in refs (not `pos` state) to avoid stale-closure persistence/tap bugs.
+- Panel position is measured in `useLayoutEffect` and clamped to the viewport (content-height-aware, responsive).
+- All copy flows through the existing i18n `t()` so the assistant is multilingual by construction.
+
+**Risks**: low. Root layout is dynamic (cookie/header locale reads) — a perf-pass consideration, not an assistant issue. Assistant copy is English-only until `assistant.*` is translated per locale.
+
+**Commits**: `280b10e` (build) → `a06f085` (E2E fixes: drag/Escape/clamp) → `b1c9ae1` (audit + timer cleanup).
+
 ## Future Architecture — Theme Packs (documentation only, NOT implemented)
 
 The current theme system (Light / Dark / System via `data-theme` + premium via `data-premium`, all token-based in `globals.css`) is designed to extend to named theme packs **without breaking existing behavior**:
@@ -201,12 +231,11 @@ Target: excellent Lighthouse scores. Roadmap, in the Next.js App Router idioms a
 - Do not modify completed modules unless absolutely necessary
 - Update this file after every module and commit it with the module
 
-## Next Module to Implement
+## Recommended Next Phase (post-26, by business impact then dependency)
 
-**Module 25D — SEO/trust/micro-interactions** (or the 25C accessibility/performance follow-up, Product Owner's choice): SEO metadata, Open Graph, structured data, hreflang (now feasible with the i18n locales), trust indicators, notification badge, unsaved-changes warning, session-expiry warning, better skeletons/loading, micro-interactions. Also open: incremental i18n string-coverage expansion across remaining pages (drop-in via `t()`).
+1. **Transactional Email Delivery — RECOMMENDED NEXT.** Highest impact and a hard **production blocker**: OTP codes are only `console.log`ged in dev, so no real user can sign in without it, and it's the dependency for auth **and** notifications. Wire an email provider (e.g. Resend/SES) to process the existing `email_queue` table; send OTP + inquiry/notification emails. Unblocks real deployment.
+2. **File Upload & Delivery Pipeline.** Core product value — the portal's headline is file previews with watermark protection + revision requests. Schema (`files`) and display exist; actual upload/storage/download/watermark are missing. Needs a storage backend (e.g. S3/R2) + signed URLs.
+3. **Admin Management + Security Hardening.** Implement the recorded technical debt (prevent admin self-deactivation, guarantee ≥1 active admin, server-side role checks as defense-in-depth). Trust/security; required before real multi-admin production.
+4. **SEO / Open Graph / structured data (25D).** Conversion + discoverability for the public marketing site; hreflang is now feasible with the i18n locales.
 
-Deferred (outside Module 25, revisit after 25 completes):
-- Blog editor UI (admin forms; server actions exist)
-- Client review submission flow
-- Real settings persistence (wire portal settings form to `userRepository.updateProfile`)
-- Admin Management / Security Hardening (implement the technical-debt items below with real server-side enforcement)
+Other open items (lower priority): 25C accessibility/perf pass; blog editor UI; client review submission; settings persistence (`userRepository.updateProfile`); audit logging; session-timeout warning; theme packs; price comparison; portfolio-trust section; admin analytics; incremental i18n string-coverage (drop-in via `t()`).
