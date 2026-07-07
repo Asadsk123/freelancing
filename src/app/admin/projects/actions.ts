@@ -3,8 +3,10 @@
 import { createProjectSchema, updateProjectStatusSchema } from "@/lib/validations/project";
 import { hasDatabase } from "@/db";
 import { projectRepository } from "@/lib/repositories/project";
+import { userRepository } from "@/lib/repositories/user";
 import { formatTrackingId } from "@/lib/utils/formatting";
 import { brand } from "@/config/brand";
+import { email as mailer } from "@/lib/email";
 import { revalidatePath } from "next/cache";
 
 type ActionResult = {
@@ -51,6 +53,12 @@ export async function createProject(formData: FormData): Promise<ActionResult> {
       targetDate: result.data.targetDate ? new Date(result.data.targetDate) : null,
     });
 
+    // Best-effort notification to the client.
+    const client = await userRepository.findById(result.data.clientId);
+    if (client) {
+      await mailer.projectCreated(client.email, client.name, result.data.title, trackingId);
+    }
+
     revalidatePath("/admin/projects");
     revalidatePath("/admin/dashboard");
     revalidatePath("/projects");
@@ -82,6 +90,12 @@ export async function updateProjectStatus(formData: FormData): Promise<ActionRes
     const updated = await projectRepository.updateStatus(result.data.projectId, result.data.status);
     if (!updated) {
       return { success: false, error: "Project not found." };
+    }
+
+    // Best-effort notification to the client.
+    const client = await userRepository.findById(updated.clientId);
+    if (client) {
+      await mailer.projectStatusChanged(client.email, client.name, updated.title, updated.status);
     }
 
     revalidatePath("/admin/projects");

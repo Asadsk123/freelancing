@@ -5,8 +5,9 @@ import { loginSchema, otpSchema } from "@/lib/validations/auth";
 import { createSession, getSession, destroySession, SESSION_DURATION_MS } from "./session";
 import { hasDatabase } from "@/db";
 import { userRepository } from "@/lib/repositories/user";
-import { otpRepository } from "@/lib/repositories/otp";
+import { otpRepository, OTP_EXPIRY_MINUTES } from "@/lib/repositories/otp";
 import { sessionRepository } from "@/lib/repositories/session";
+import { email as mailer } from "@/lib/email";
 
 type ActionResult = {
   success: boolean;
@@ -52,9 +53,10 @@ export async function requestOtp(formData: FormData): Promise<ActionResult> {
     await userRepository.findOrCreate(result.data.email);
     const code = await otpRepository.create(result.data.email);
 
-    if (isDev) {
-      console.log(`[DEV OTP] ${result.data.email}: ${code}`);
-    }
+    // Best-effort delivery — never blocks or fails the sign-in request.
+    // In development (no provider / EMAIL_MODE!=production) the email is only
+    // logged; use the dev fallback code below to sign in.
+    await mailer.otp(result.data.email, code, OTP_EXPIRY_MINUTES);
 
     return { success: true };
   } catch (err) {

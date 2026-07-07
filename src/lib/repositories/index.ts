@@ -19,3 +19,4 @@ export type { FileWithUploader } from "./file";
 export { ConversationRepository, conversationRepository } from "./conversation";
 export type { MessageWithSender } from "./conversation";
 export { MilestoneRepository, milestoneRepository } from "./milestone";
+export { EmailQueueRepository, emailQueueRepository } from "./email-queue";

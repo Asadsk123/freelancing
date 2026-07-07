@@ -9,6 +9,7 @@ import { hasDatabase } from "@/db";
 import { milestoneRepository } from "@/lib/repositories/milestone";
 import { projectRepository } from "@/lib/repositories/project";
 import { getSession } from "@/lib/auth/session";
+import { email as mailer } from "@/lib/email";
 import { revalidatePath } from "next/cache";
 
 type ActionResult = {
@@ -79,6 +80,13 @@ export async function createMilestone(formData: FormData): Promise<ActionResult>
       dueDate: parseDueDate(result.data.dueDate),
     });
 
+    // Best-effort notification to the client.
+    if (result.data.status === "completed") {
+      await mailer.milestoneCompleted(project.clientEmail, project.clientName, project.title, result.data.title);
+    } else {
+      await mailer.milestoneCreated(project.clientEmail, project.clientName, project.title, result.data.title);
+    }
+
     revalidateProject(result.data.projectId);
     return { success: true };
   } catch (err) {
@@ -125,6 +133,14 @@ export async function updateMilestone(formData: FormData): Promise<ActionResult>
       dueDate: parseDueDate(result.data.dueDate),
     });
 
+    // Notify the client only when the milestone transitions into "completed".
+    if (result.data.status === "completed" && existing.status !== "completed") {
+      const project = await projectRepository.findByIdWithDetails(existing.projectId);
+      if (project) {
+        await mailer.milestoneCompleted(project.clientEmail, project.clientName, project.title, result.data.title);
+      }
+    }
+
     revalidateProject(existing.projectId);
     return { success: true };
   } catch (err) {
@@ -160,6 +176,14 @@ export async function updateMilestoneStatus(formData: FormData): Promise<ActionR
     await milestoneRepository.update(result.data.milestoneId, {
       status: result.data.status,
     });
+
+    // Notify the client only when the milestone transitions into "completed".
+    if (result.data.status === "completed" && existing.status !== "completed") {
+      const project = await projectRepository.findByIdWithDetails(existing.projectId);
+      if (project) {
+        await mailer.milestoneCompleted(project.clientEmail, project.clientName, project.title, existing.title);
+      }
+    }
 
     revalidateProject(existing.projectId);
     return { success: true };

@@ -5,6 +5,8 @@ import { hasDatabase } from "@/db";
 import { projectRepository } from "@/lib/repositories/project";
 import { conversationRepository } from "@/lib/repositories/conversation";
 import { getSession } from "@/lib/auth/session";
+import { email as mailer } from "@/lib/email";
+import { brand } from "@/config/brand";
 import { revalidatePath } from "next/cache";
 
 export type MessageActionState = {
@@ -55,6 +57,15 @@ export async function sendProjectMessage(
       senderId: session.userId,
       content: result.data.content,
     });
+
+    // Best-effort notification to the other party.
+    if (session.userId === project.clientId) {
+      // Client → notify the team.
+      await mailer.newMessage(brand.contact.email, "Team", project.title, session.name);
+    } else {
+      // Team/admin → notify the client.
+      await mailer.newMessage(project.clientEmail, project.clientName, project.title, session.name);
+    }
 
     revalidatePath(`/projects/${result.data.projectId}`);
     return { success: true };

@@ -3,10 +3,8 @@
 > **Single source of truth for project progress.** Updated after every completed module and committed together with the module. If chat history is lost, resume from this file.
 
 **Last updated:** 2026-07-07
-**Current module completed:** Phase 26 — AI Helper (final verification passed) + keyboard fix
-**Latest commit:** committed with this file (see `git log -1`); previous: `c13b469`
-
-> **Phase 26 status: verification passed (8/8), production-ready.** Final pre-approval verification found + fixed one real bug: the mascot was not operable via keyboard (Enter/Space fire `click`, not pointer events) — added an `onKeyDown` handler so Enter/Space toggle the panel. All other checks passed.
+**Current module completed:** Module 27 — Transactional Email Delivery
+**Latest commit:** committed with this file (see `git log -1`); previous: `f140a30`
 
 ---
 
@@ -47,7 +45,8 @@
 | 26.1 | AI Helper E2E verification + fixes (drag persistence, Escape/focus a11y, viewport clamping) | `a06f085` |
 | 26.2 | Production audit: no TODO/debug/mock; timer-cleanup fix (guide-nav setTimeout tracked + cleared on unmount); regression sweep | `b1c9ae1` |
 | 26 handoff | Docs finalized, conventions verified, developer handoff summary | `c13b469` |
-| 26 final verify | 8/8 pre-approval checks passed; keyboard-activation fix (Enter/Space on mascot) | this commit |
+| 26 final verify | 8/8 pre-approval checks passed; keyboard-activation fix (Enter/Space on mascot) | `f140a30` |
+| 27 | Transactional Email Delivery (provider abstraction, templates, queue, wired flows) | this commit |
 
 ## Remaining Modules (planned)
 
@@ -58,7 +57,6 @@
 - **File upload pipeline** — actual upload with storage backend, watermarking, revision requests (schema exists, display-only implemented)
 - **Client review submission** — client-side flow to submit a review after project completion
 - **Blog post editor UI** — admin form to create/edit posts (server actions exist; UI forms pending)
-- **Email delivery** — process `email_queue` (OTP currently logged in dev; queue schema exists)
 - **Admin Management / Security Hardening module** — see Technical Debt below
 - **Audit logging** — write to `audit_log` on sensitive mutations (schema exists)
 - **Revenue tracking** — deferred (stat removed from dashboard until real data exists)
@@ -70,11 +68,11 @@
 - **Connection:** `DATABASE_URL` in `.env.local` (gitignored). `hasDatabase()` guard gives graceful degradation on every page when unset.
 - **Schema:** 19 tables, 8 enums, 20 FKs — users, sessions, otp_codes, inquiries, service_categories, services, projects, milestones, project_conversations, conversation_messages, files, reviews, blog_categories, blog_tags, blog_posts, blog_post_tags, notifications, email_queue, audit_log
 - **Delete rules:** cascade for child records (milestones, conversations, messages, files, reviews, post_tags, notifications); restrict for users referenced by projects/files/posts; set null for optional refs (service on project, category on post/file milestone)
-- **Repositories implemented:** inquiry, user, otp, session, project, service, service-category, review, blog-post, blog-category, notification, file, conversation, milestone (all extend `BaseRepository` with lazy `db` getter; barrel export in `src/lib/repositories/index.ts`)
+- **Repositories implemented:** inquiry, user, otp, session, project, service, service-category, review, blog-post, blog-category, notification, file, conversation, milestone, email-queue (all extend `BaseRepository` with lazy `db` getter; barrel export in `src/lib/repositories/index.ts`)
 
 ## Authentication Status
 
-- **Flow:** Email + OTP (passwordless). OTP stored hashed in DB; previous OTPs invalidated on new request.
+- **Flow:** Email + OTP (passwordless). OTP stored in DB; previous OTPs invalidated on new request; delivered via the transactional email system (Module 27) — real email in production, log-only in dev (fallback code `123456`).
 - **Session:** JWT (HS256 via `jose`) in httpOnly cookie `ra_session`, 30-day expiry. DB session records cleaned on login/logout.
 - **Secret:** `AUTH_SECRET` env var (min 32 chars, required in production; dev fallback exists).
 - **Route protection:** `src/middleware.ts` (edge runtime, JWT verify only, no DB) — unauthenticated → `/login`; non-admin on `/admin/*` → `/dashboard`.
@@ -149,6 +147,34 @@ Movable "Aria" helper, mounted once from the root layout (after `I18nProvider`).
 - **Accessibility**: mascot is keyboard-operable — **Enter/Space** toggle the panel (via `onKeyDown`, since keyboard fires `click` not pointer events); opening moves focus into the panel; **Escape closes** and returns focus to the mascot; all controls are labelled buttons; Tab cycles panel controls/guides; reduced-motion disables the bob (JS gate + global CSS rule).
 - **E2E verification pass (fixes applied)**: (1) drag now persists the *current* position via refs — fixed a stale-closure bug that saved the old position; (2) added Escape-to-close + focus management (were missing); (3) panel is measured and **clamped fully within the viewport** via a layout effect — fixed an overflow bug that also clipped the 6th guide. Verified in-browser: draggable + persistence-across-reload, hide/show, pause/resume, tap-open, Escape-close, **real post-OTP welcome** (email → auto-send → paste OTP → verified → `/dashboard` → welcome shown once), lazy-load (First Load JS unchanged at 102 kB), no console/hydration errors.
 - **Missing translations (to add later)**: the `assistant.*` namespace exists only in `en.json`; in the other 13 languages the assistant currently falls back to English (architecture is ready — it renders via `t()`, so adding `assistant` keys to each dictionary makes it multilingual with no code change). RTL container still applies correctly (verified in Arabic: `dir=rtl`).
+
+## Module 27 — Transactional Email Delivery
+
+**Architecture** (`src/lib/email/`):
+- `types.ts` — `EmailProvider`, `EmailMessage`, `RenderedEmail`, `SendOutcome`.
+- `config.ts` — `getEmailMode()` (production | log), `getFromAddress()`, `getSiteUrl()`.
+- `providers/` — `resend.ts` (REST via `fetch`, **no SDK dependency**), `console.ts` (dev log-only), `index.ts` (`getProvider()` selector; add SendGrid/SES/SMTP here).
+- `templates/` — `layout.ts` (branded, responsive, dark-mode-friendly HTML + plain-text builder, HTML-escaped) and `index.ts` (all typed template builders).
+- `send.ts` — `deliverEmail()` records to `email_queue`, delivers, updates status; **never throws**. `sendRendered()` helper.
+- `index.ts` — high-level `email.*` API (otp, inquiryConfirmation, newInquiryNotification, projectCreated, projectStatusChanged, milestoneCreated, milestoneCompleted, fileUploaded, newMessage, welcome*, securityAlert*). *future-ready, not yet triggered.
+- `src/lib/repositories/email-queue.ts` — `enqueue`, `markSending/Sent/Failed`, `findRetryable` (queue-ready for a future worker).
+
+**Wired flows**: OTP (replaces the console log), contact (confirmation + admin notification), project created, project status changed, milestone created/completed, new conversation message. File-uploaded template is ready for when the upload pipeline lands.
+
+**Reliability / security**:
+- Every send is best-effort and awaited but **never fails the main action** (`deliverEmail` catches all errors).
+- **Dev safety**: without `EMAIL_MODE=production`, development never sends real email — it logs a sanitized one-liner (recipient + subject only). Dev sign-in fallback code `123456` still works.
+- **Production never accepts the dev OTP** (`isDev` is false in production, so the `123456` branch is dead there).
+- Secrets: API key only from env; error messages are sanitized (Bearer tokens redacted) before logging; OTP codes are never logged.
+- **Retries without duplicate OTPs**: the OTP row is created once; email is a separate `email_queue` row. `findRetryable` returns `queued`/`failed` (< 5 attempts) rows for a future background worker — no coupling to the UI action.
+
+**Deliverability — DNS to configure before going live** (for the sending domain):
+- **SPF** — `TXT` `@` → `v=spf1 include:_spf.resend.com ~all`
+- **DKIM** — add the `CNAME` records shown in the Resend dashboard for the domain (enables signing)
+- **DMARC** — `TXT` `_dmarc` → `v=DMARC1; p=quarantine; rua=mailto:dmarc@royalasad.com`
+- Env: `RESEND_API_KEY`, `EMAIL_FROM_DEFAULT`, `EMAIL_FROM_SUPPORT`, optional `EMAIL_MODE` (see `.env.example`).
+
+**Verified in dev** (log mode; emails recorded to `email_queue`): otp, inquiry_confirmation, inquiry_notification, milestone_created, milestone_completed, new_message — each with full HTML + plain-text bodies and `status=sent`. Full OTP login (admin) still works with `123456`.
 
 ## Phase 26 — Developer Handoff (AI Helper)
 
@@ -234,9 +260,10 @@ Target: excellent Lighthouse scores. Roadmap, in the Next.js App Router idioms a
 
 ## Recommended Next Phase (post-26, by business impact then dependency)
 
-1. **Transactional Email Delivery — RECOMMENDED NEXT.** Highest impact and a hard **production blocker**: OTP codes are only `console.log`ged in dev, so no real user can sign in without it, and it's the dependency for auth **and** notifications. Wire an email provider (e.g. Resend/SES) to process the existing `email_queue` table; send OTP + inquiry/notification emails. Unblocks real deployment.
-2. **File Upload & Delivery Pipeline.** Core product value — the portal's headline is file previews with watermark protection + revision requests. Schema (`files`) and display exist; actual upload/storage/download/watermark are missing. Needs a storage backend (e.g. S3/R2) + signed URLs.
+1. ~~Transactional Email Delivery~~ — **DONE (Module 27).**
+2. **File Upload & Delivery Pipeline — RECOMMENDED NEXT.** Core product value — the portal's headline is file previews with watermark protection + revision requests. Schema (`files`) and display exist; actual upload/storage/download/watermark are missing. Needs a storage backend (R2 env vars already scaffolded) + signed URLs. The `fileUploaded` email template is already wired to fire once uploads exist.
 3. **Admin Management + Security Hardening.** Implement the recorded technical debt (prevent admin self-deactivation, guarantee ≥1 active admin, server-side role checks as defense-in-depth). Trust/security; required before real multi-admin production.
 4. **SEO / Open Graph / structured data (25D).** Conversion + discoverability for the public marketing site; hreflang is now feasible with the i18n locales.
+5. **Email background worker** — a cron/route that processes `emailQueueRepository.findRetryable()` to retry failed/queued emails (architecture is ready; inline delivery is single-attempt today).
 
 Other open items (lower priority): 25C accessibility/perf pass; blog editor UI; client review submission; settings persistence (`userRepository.updateProfile`); audit logging; session-timeout warning; theme packs; price comparison; portfolio-trust section; admin analytics; incremental i18n string-coverage (drop-in via `t()`).

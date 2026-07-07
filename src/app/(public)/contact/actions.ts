@@ -5,6 +5,7 @@ import { hasDatabase } from "@/db";
 import { inquiryRepository } from "@/lib/repositories/inquiry";
 import { formatTrackingId } from "@/lib/utils/formatting";
 import { brand } from "@/config/brand";
+import { email as mailer } from "@/lib/email";
 
 type SubmitResult = {
   success: boolean;
@@ -49,6 +50,19 @@ export async function submitInquiry(formData: FormData): Promise<SubmitResult> {
   try {
     const trackingId = generateTrackingId();
     await inquiryRepository.create(result.data, trackingId);
+
+    // Best-effort notifications — never affect the submit result.
+    await Promise.all([
+      mailer.inquiryConfirmation(result.data.email, result.data.name, trackingId),
+      mailer.newInquiryNotification(brand.contact.email, {
+        name: result.data.name,
+        email: result.data.email,
+        service: result.data.service,
+        message: result.data.message,
+        trackingId,
+      }),
+    ]);
+
     return { success: true, trackingId };
   } catch (err) {
     console.error("Failed to save inquiry:", err);

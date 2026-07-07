@@ -2,7 +2,7 @@ import { eq, and, gt, isNull, desc } from "drizzle-orm";
 import { BaseRepository } from "@/db/repository";
 import { otpCodes } from "@/db/schema";
 
-const OTP_EXPIRY_MINUTES = 10;
+export const OTP_EXPIRY_MINUTES = 10;
 /** Minimum seconds between OTP requests for the same email (rate limiting). */
 export const OTP_RESEND_COOLDOWN_SECONDS = 30;
 
