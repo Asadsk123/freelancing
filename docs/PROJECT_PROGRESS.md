@@ -2,9 +2,9 @@
 
 > **Single source of truth for project progress.** Updated after every completed module and committed together with the module. If chat history is lost, resume from this file.
 
-**Last updated:** 2026-07-06
-**Current module completed:** Phase 26 — AI Helper + premium/trust/performance architecture
-**Latest commit:** committed with this file (see `git log -1`); previous: `4d1af5b`
+**Last updated:** 2026-07-07
+**Current module completed:** Phase 26.1 — AI Helper end-to-end verification + fixes
+**Latest commit:** committed with this file (see `git log -1`); previous: `280b10e`
 
 ---
 
@@ -41,7 +41,8 @@
 | 25C | Theme/Appearance: Light/Dark/System + premium visuals, no-FOUC, elevation tokens | `e1336aa` |
 | 25B | Internationalization (14 languages) + globe language switcher, RTL, auto-detect, persist | `847a6f9` |
 | 25 UX+ | Inline email autocomplete, network quality indicator, unsaved-changes warning, auto-scroll to first error | `4d1af5b` |
-| 26 | AI Helper (movable, i18n, lazy, reduced-motion, post-OTP welcome) + architecture docs | this commit |
+| 26 | AI Helper (movable, i18n, lazy, reduced-motion, post-OTP welcome) + architecture docs | `280b10e` |
+| 26.1 | AI Helper E2E verification + fixes (drag persistence, Escape/focus a11y, viewport clamping) | this commit |
 
 ## Remaining Modules (planned)
 
@@ -141,6 +142,9 @@ Movable "Aria" helper, mounted once from the root layout (after `I18nProvider`).
 - **Post-OTP welcome**: verify-form sets `ra_assistant_welcome`; the assistant opens once with a welcome after sign-in, then clears the flag.
 - **No spying**: purely local — no network calls, no analytics, no tracking.
 - **Voice (later)**: `useAssistantVoice()` will add `speechSynthesis` (output) + `SpeechRecognition` (input) keyed to the active locale, mic requested only on explicit tap; text architecture is voice-agnostic so voice is additive.
+- **Accessibility**: opening the panel moves focus into it; **Escape closes** and returns focus to the mascot; all controls are labelled buttons; reduced-motion disables the bob (JS gate + global CSS rule).
+- **E2E verification pass (fixes applied)**: (1) drag now persists the *current* position via refs — fixed a stale-closure bug that saved the old position; (2) added Escape-to-close + focus management (were missing); (3) panel is measured and **clamped fully within the viewport** via a layout effect — fixed an overflow bug that also clipped the 6th guide. Verified in-browser: draggable + persistence-across-reload, hide/show, pause/resume, tap-open, Escape-close, **real post-OTP welcome** (email → auto-send → paste OTP → verified → `/dashboard` → welcome shown once), lazy-load (First Load JS unchanged at 102 kB), no console/hydration errors.
+- **Missing translations (to add later)**: the `assistant.*` namespace exists only in `en.json`; in the other 13 languages the assistant currently falls back to English (architecture is ready — it renders via `t()`, so adding `assistant` keys to each dictionary makes it multilingual with no code change). RTL container still applies correctly (verified in Arabic: `dir=rtl`).
 
 ## Future Architecture — Theme Packs (documentation only, NOT implemented)
 

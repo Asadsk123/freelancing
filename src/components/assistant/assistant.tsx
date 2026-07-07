@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Bot, X, EyeOff, Pause, Play, ArrowLeft, MessageCircle } from "lucide-react";
 import { useTranslations } from "@/lib/i18n/provider";
@@ -37,12 +37,25 @@ export function Assistant() {
   const [paused, setPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [panelPos, setPanelPos] = useState<Point>({ x: 0, y: 0 });
 
-  const dragState = useRef<{ dragging: boolean; moved: boolean; offset: Point }>({
+  // All live-drag math lives in a ref so the pointer handlers never depend on
+  // the (async) `pos` state — this avoids stale-closure bugs where a drag would
+  // persist the old position or be misread as a tap.
+  const dragState = useRef({
     dragging: false,
     moved: false,
-    offset: { x: 0, y: 0 },
+    startPointerX: 0,
+    startPointerY: 0,
+    startX: 0,
+    startY: 0,
+    lastX: 0,
+    lastY: 0,
   });
+  const posRef = useRef<Point>({ x: 0, y: 0 });
+  posRef.current = pos;
+  const mascotRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   // Initialize from storage + defaults (client-only; component is lazy-loaded).
   useEffect(() => {
@@ -89,44 +102,52 @@ export function Assistant() {
     localStorage.setItem(POS_KEY, JSON.stringify(p));
   }, []);
 
-  const onPointerDown = useCallback(
-    (e: React.PointerEvent) => {
-      (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
-      dragState.current = {
-        dragging: true,
-        moved: false,
-        offset: { x: e.clientX - pos.x, y: e.clientY - pos.y },
-      };
-    },
-    [pos],
-  );
+  const onPointerDown = useCallback((e: React.PointerEvent) => {
+    (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
+    const s = dragState.current;
+    s.dragging = true;
+    s.moved = false;
+    s.startPointerX = e.clientX;
+    s.startPointerY = e.clientY;
+    s.startX = posRef.current.x;
+    s.startY = posRef.current.y;
+    s.lastX = posRef.current.x;
+    s.lastY = posRef.current.y;
+  }, []);
 
   const onPointerMove = useCallback((e: React.PointerEvent) => {
     const s = dragState.current;
     if (!s.dragging) return;
     const next = clampToViewport({
-      x: e.clientX - s.offset.x,
-      y: e.clientY - s.offset.y,
+      x: s.startX + (e.clientX - s.startPointerX),
+      y: s.startY + (e.clientY - s.startPointerY),
     });
+    s.lastX = next.x;
+    s.lastY = next.y;
     // Once the pointer travels past the threshold, treat the gesture as a drag
     // (so releasing won't be misread as a tap that opens the panel).
-    if (Math.abs(next.x - pos.x) > DRAG_THRESHOLD || Math.abs(next.y - pos.y) > DRAG_THRESHOLD) {
+    if (
+      Math.abs(next.x - s.startX) > DRAG_THRESHOLD ||
+      Math.abs(next.y - s.startY) > DRAG_THRESHOLD
+    ) {
       s.moved = true;
     }
     setPos(next);
-  }, [pos]);
+  }, []);
 
   const onPointerUp = useCallback(() => {
     const s = dragState.current;
     if (!s.dragging) return;
     s.dragging = false;
     if (s.moved) {
-      persistPos(pos);
+      const finalPos = { x: s.lastX, y: s.lastY };
+      setPos(finalPos);
+      persistPos(finalPos);
     } else {
       // A tap (no drag) toggles the panel.
       setOpen((o) => !o);
     }
-  }, [pos, persistPos]);
+  }, [persistPos]);
 
   const toggleHidden = useCallback(() => {
     setHidden((h) => {
@@ -144,6 +165,54 @@ export function Assistant() {
       return next;
     });
   }, []);
+
+  const closePanel = useCallback(() => {
+    setOpen(false);
+    mascotRef.current?.focus();
+  }, []);
+
+  // Accessibility: when the panel opens, move focus into it; Escape closes it
+  // and returns focus to the mascot trigger.
+  useEffect(() => {
+    if (!open) return;
+    const first = panelRef.current?.querySelector<HTMLElement>(
+      'button, [href], input, [tabindex]:not([tabindex="-1"])',
+    );
+    first?.focus();
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        setOpen(false);
+        mascotRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  // Position the panel near the mascot but always fully within the viewport.
+  // Runs before paint (measures the real panel size, which varies with content).
+  useLayoutEffect(() => {
+    if (!open) return;
+    const panel = panelRef.current;
+    if (!panel) return;
+    const pw = panel.offsetWidth;
+    const ph = panel.offsetHeight;
+    const gap = 12;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    // Prefer above the mascot; drop below if there isn't room above.
+    let top = pos.y - ph - gap;
+    if (top < 8) top = pos.y + MASCOT_SIZE + gap;
+    top = Math.min(Math.max(8, top), Math.max(8, vh - ph - 8));
+
+    let left = pos.x + MASCOT_SIZE / 2 - pw / 2;
+    left = Math.min(Math.max(8, left), Math.max(8, vw - pw - 8));
+
+    setPanelPos({ x: left, y: top });
+  }, [open, pos, message]);
 
   const guides = [
     { key: "assistant.guideServices", run: () => { setMessage(t("assistant.servicesInfo")); setTimeout(() => router.push("/services"), 700); } },
@@ -179,13 +248,12 @@ export function Assistant() {
       {/* Chat panel */}
       {open && (
         <div
+          ref={panelRef}
           role="dialog"
+          aria-modal="false"
           aria-label={t("assistant.name")}
           className="pointer-events-auto fixed w-[min(20rem,calc(100vw-2rem))] rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)] shadow-[var(--shadow-lg)]"
-          style={{
-            left: Math.min(pos.x, (typeof window !== "undefined" ? window.innerWidth : 400) - 340),
-            top: Math.max(8, pos.y - 260),
-          }}
+          style={{ left: panelPos.x, top: panelPos.y }}
         >
           <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-3">
             <div className="flex items-center gap-2">
@@ -201,7 +269,7 @@ export function Assistant() {
               <button type="button" onClick={toggleHidden} aria-label={t("assistant.hide")} className="rounded p-1 text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]">
                 <EyeOff className="h-4 w-4" />
               </button>
-              <button type="button" onClick={() => setOpen(false)} aria-label={t("assistant.close")} className="rounded p-1 text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]">
+              <button type="button" onClick={closePanel} aria-label={t("assistant.close")} className="rounded p-1 text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]">
                 <X className="h-4 w-4" />
               </button>
             </div>
@@ -240,6 +308,7 @@ export function Assistant() {
 
       {/* Draggable mascot */}
       <button
+        ref={mascotRef}
         type="button"
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
