@@ -331,6 +331,14 @@ export function Assistant() {
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
+        onKeyDown={(e) => {
+          // Pointer handlers cover mouse/touch; keyboard activation (Enter/Space)
+          // fires a click, not pointer events, so handle it explicitly here.
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setOpen((o) => !o);
+          }
+        }}
         aria-label={open ? t("assistant.close") : t("assistant.open")}
         aria-haspopup="dialog"
         aria-expanded={open}

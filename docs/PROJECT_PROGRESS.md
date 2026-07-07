@@ -3,10 +3,10 @@
 > **Single source of truth for project progress.** Updated after every completed module and committed together with the module. If chat history is lost, resume from this file.
 
 **Last updated:** 2026-07-07
-**Current module completed:** Phase 26 — AI Helper (approved & closed) + handoff
-**Latest commit:** committed with this file (see `git log -1`); previous: `b1c9ae1`
+**Current module completed:** Phase 26 — AI Helper (final verification passed) + keyboard fix
+**Latest commit:** committed with this file (see `git log -1`); previous: `c13b469`
 
-> **Phase 26 status: APPROVED & CLOSED.** AI Helper is production-ready (audit passed, confidence 93%). Documentation below is the single source of truth for handoff.
+> **Phase 26 status: verification passed (8/8), production-ready.** Final pre-approval verification found + fixed one real bug: the mascot was not operable via keyboard (Enter/Space fire `click`, not pointer events) — added an `onKeyDown` handler so Enter/Space toggle the panel. All other checks passed.
 
 ---
 
@@ -46,7 +46,8 @@
 | 26 | AI Helper (movable, i18n, lazy, reduced-motion, post-OTP welcome) + architecture docs | `280b10e` |
 | 26.1 | AI Helper E2E verification + fixes (drag persistence, Escape/focus a11y, viewport clamping) | `a06f085` |
 | 26.2 | Production audit: no TODO/debug/mock; timer-cleanup fix (guide-nav setTimeout tracked + cleared on unmount); regression sweep | `b1c9ae1` |
-| 26 handoff | Docs finalized, conventions verified, developer handoff summary | this commit |
+| 26 handoff | Docs finalized, conventions verified, developer handoff summary | `c13b469` |
+| 26 final verify | 8/8 pre-approval checks passed; keyboard-activation fix (Enter/Space on mascot) | this commit |
 
 ## Remaining Modules (planned)
 
@@ -145,7 +146,7 @@ Movable "Aria" helper, mounted once from the root layout (after `I18nProvider`).
 - **Post-OTP welcome**: verify-form sets `ra_assistant_welcome`; the assistant opens once with a welcome after sign-in, then clears the flag.
 - **No spying**: purely local — no network calls, no analytics, no tracking.
 - **Voice (later)**: `useAssistantVoice()` will add `speechSynthesis` (output) + `SpeechRecognition` (input) keyed to the active locale, mic requested only on explicit tap; text architecture is voice-agnostic so voice is additive.
-- **Accessibility**: opening the panel moves focus into it; **Escape closes** and returns focus to the mascot; all controls are labelled buttons; reduced-motion disables the bob (JS gate + global CSS rule).
+- **Accessibility**: mascot is keyboard-operable — **Enter/Space** toggle the panel (via `onKeyDown`, since keyboard fires `click` not pointer events); opening moves focus into the panel; **Escape closes** and returns focus to the mascot; all controls are labelled buttons; Tab cycles panel controls/guides; reduced-motion disables the bob (JS gate + global CSS rule).
 - **E2E verification pass (fixes applied)**: (1) drag now persists the *current* position via refs — fixed a stale-closure bug that saved the old position; (2) added Escape-to-close + focus management (were missing); (3) panel is measured and **clamped fully within the viewport** via a layout effect — fixed an overflow bug that also clipped the 6th guide. Verified in-browser: draggable + persistence-across-reload, hide/show, pause/resume, tap-open, Escape-close, **real post-OTP welcome** (email → auto-send → paste OTP → verified → `/dashboard` → welcome shown once), lazy-load (First Load JS unchanged at 102 kB), no console/hydration errors.
 - **Missing translations (to add later)**: the `assistant.*` namespace exists only in `en.json`; in the other 13 languages the assistant currently falls back to English (architecture is ready — it renders via `t()`, so adding `assistant` keys to each dictionary makes it multilingual with no code change). RTL container still applies correctly (verified in Arabic: `dir=rtl`).
 
