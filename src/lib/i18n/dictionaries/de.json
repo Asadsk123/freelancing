@@ -29,5 +29,30 @@
     "privacy": "Datenschutzrichtlinie",
     "security": "Sicherheit",
     "rights": "Alle Rechte vorbehalten."
+  },
+  "assistant": {
+    "name": "Aria",
+    "greeting": "Hallo! Ich bin Aria, Ihre Begleiterin. Wie kann ich helfen?",
+    "prompt": "Wählen Sie unten eine Option oder erkunden Sie selbst.",
+    "open": "Assistent öffnen",
+    "hide": "Assistent ausblenden",
+    "show": "Assistent einblenden",
+    "pause": "Bewegung pausieren",
+    "resume": "Bewegung fortsetzen",
+    "close": "Schließen",
+    "back": "Zurück",
+    "guideServices": "Zeigen Sie mir Ihre Leistungen",
+    "guideContact": "Wie erhalte ich ein Angebot?",
+    "guideDashboard": "Zu meinem Dashboard",
+    "explainPage": "Diese Seite erklären",
+    "explainMilestones": "Was sind Meilensteine?",
+    "explainUploads": "Wie funktionieren Datei-Uploads?",
+    "welcome": "Verifiziert — willkommen! Möchten Sie eine kurze Tour?",
+    "servicesInfo": "Unsere Leistungsseite zeigt unser Angebot. Ich bringe Sie hin.",
+    "contactInfo": "Über die Kontaktseite erhalten Sie ein kostenloses Angebot — Antwort innerhalb von 24 Stunden. Ich bringe Sie hin.",
+    "dashboardInfo": "Ihr Dashboard zeigt alle Projekte auf einen Blick. Ich bringe Sie hin.",
+    "milestonesInfo": "Meilensteine sind die wichtigsten Etappen Ihres Projekts. Jeder zeigt seinen Status — Sie wissen immer, was erledigt ist und was folgt.",
+    "uploadsInfo": "Vom Team geteilte Dateien erscheinen im Dateien-Tab des Projekts. Sie können sie ansehen und Überarbeitungen anfordern — ganz ohne Software.",
+    "pageInfo": "Dies ist Teil Ihres Royal-Asad-Erlebnisses. Fragen Sie mich alles oder nutzen Sie die Anleitungen oben."
   }
 }

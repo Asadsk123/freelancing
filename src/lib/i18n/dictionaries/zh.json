@@ -29,5 +29,30 @@
     "privacy": "隐私政策",
     "security": "安全",
     "rights": "版权所有。"
+  },
+  "assistant": {
+    "name": "Aria",
+    "greeting": "你好！我是 Aria，你的向导。需要什么帮助？",
+    "prompt": "请选择下面的选项，或自行探索。",
+    "open": "打开助手",
+    "hide": "隐藏助手",
+    "show": "显示助手",
+    "pause": "暂停动画",
+    "resume": "恢复动画",
+    "close": "关闭",
+    "back": "返回",
+    "guideServices": "看看你们的服务",
+    "guideContact": "如何获取报价？",
+    "guideDashboard": "前往我的控制台",
+    "explainPage": "解释这个页面",
+    "explainMilestones": "什么是里程碑？",
+    "explainUploads": "文件上传如何运作？",
+    "welcome": "验证成功——欢迎！要快速了解一下吗？",
+    "servicesInfo": "服务页面展示了我们的全部服务。正在带你前往。",
+    "contactInfo": "在联系页面申请免费报价——我们会在 24 小时内回复。正在带你前往。",
+    "dashboardInfo": "控制台可一览你的所有项目。正在带你前往。",
+    "milestonesInfo": "里程碑是项目的关键阶段。每个都显示状态，让你随时了解已完成和接下来的工作。",
+    "uploadsInfo": "团队共享的文件会出现在项目的“文件”标签页。你可以预览并请求修改——无需任何软件。",
+    "pageInfo": "这是你的 Royal Asad 体验的一部分。随时问我，或使用上面的引导。"
   }
 }

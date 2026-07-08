@@ -29,5 +29,30 @@
     "privacy": "Politique de confidentialité",
     "security": "Sécurité",
     "rights": "Tous droits réservés."
+  },
+  "assistant": {
+    "name": "Aria",
+    "greeting": "Bonjour ! Je suis Aria, votre guide. Comment puis-je vous aider ?",
+    "prompt": "Choisissez une option ci-dessous, ou explorez par vous-même.",
+    "open": "Ouvrir l'assistant",
+    "hide": "Masquer l'assistant",
+    "show": "Afficher l'assistant",
+    "pause": "Mettre le mouvement en pause",
+    "resume": "Reprendre le mouvement",
+    "close": "Fermer",
+    "back": "Retour",
+    "guideServices": "Montrez-moi vos services",
+    "guideContact": "Comment obtenir un devis ?",
+    "guideDashboard": "Aller à mon tableau de bord",
+    "explainPage": "Expliquer cette page",
+    "explainMilestones": "Que sont les jalons ?",
+    "explainUploads": "Comment fonctionnent les fichiers ?",
+    "welcome": "Vérification réussie — bienvenue ! Envie d'une visite rapide ?",
+    "servicesInfo": "Notre page Services présente ce que nous proposons. Je vous y emmène.",
+    "contactInfo": "Utilisez la page Contact pour demander un devis gratuit — réponse sous 24 h. Je vous y emmène.",
+    "dashboardInfo": "Votre tableau de bord montre tous vos projets en un coup d'œil. Je vous y emmène.",
+    "milestonesInfo": "Les jalons sont les grandes étapes de votre projet. Chacun affiche son statut, pour savoir ce qui est fait et ce qui suit.",
+    "uploadsInfo": "Les fichiers partagés par l'équipe apparaissent dans l'onglet Fichiers du projet. Vous pouvez les prévisualiser et demander des révisions — sans logiciel.",
+    "pageInfo": "Ceci fait partie de votre expérience Royal Asad. Posez-moi vos questions, ou utilisez les guides ci-dessus."
   }
 }

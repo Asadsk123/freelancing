@@ -29,5 +29,30 @@
     "privacy": "Política de privacidad",
     "security": "Seguridad",
     "rights": "Todos los derechos reservados."
+  },
+  "assistant": {
+    "name": "Aria",
+    "greeting": "¡Hola! Soy Aria, tu guía. ¿En qué puedo ayudarte?",
+    "prompt": "Elige una opción abajo, o explora por tu cuenta.",
+    "open": "Abrir asistente",
+    "hide": "Ocultar asistente",
+    "show": "Mostrar asistente",
+    "pause": "Pausar movimiento",
+    "resume": "Reanudar movimiento",
+    "close": "Cerrar",
+    "back": "Atrás",
+    "guideServices": "Muéstrame vuestros servicios",
+    "guideContact": "¿Cómo pido un presupuesto?",
+    "guideDashboard": "Ir a mi panel",
+    "explainPage": "Explica esta página",
+    "explainMilestones": "¿Qué son los hitos?",
+    "explainUploads": "¿Cómo funcionan los archivos?",
+    "welcome": "Verificado — ¡bienvenido! ¿Quieres un recorrido rápido?",
+    "servicesInfo": "Nuestra página de Servicios muestra lo que ofrecemos. Te llevo allí.",
+    "contactInfo": "Usa la página de Contacto para pedir un presupuesto gratis — respondemos en 24 horas. Te llevo allí.",
+    "dashboardInfo": "Tu panel muestra todos tus proyectos de un vistazo. Te llevo allí.",
+    "milestonesInfo": "Los hitos son las etapas clave de tu proyecto. Cada uno muestra su estado, así siempre sabes qué está hecho y qué sigue.",
+    "uploadsInfo": "Los archivos que comparte el equipo aparecen en la pestaña Archivos del proyecto. Puedes previsualizarlos y pedir revisiones — sin software.",
+    "pageInfo": "Esto es parte de tu experiencia Royal Asad. Pregúntame lo que quieras o usa las guías de arriba."
   }
 }

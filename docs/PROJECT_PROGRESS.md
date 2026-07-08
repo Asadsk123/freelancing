@@ -3,7 +3,7 @@
 > **Single source of truth for project progress.** Updated after every completed module and committed together with the module. If chat history is lost, resume from this file.
 
 **Last updated:** 2026-07-08
-**Current module completed:** Mega Phase B — SEO & Web-Platform (sitemap/robots/JSON-LD, public blog detail, PWA manifest+icon, notification badge, loading skeletons)
+**Current module completed:** Mega Phase C — i18n assistant translations (14 locales), email retry worker, env documentation
 **Latest commit:** committed with this file (see `git log -1`); previous: `cb42245`
 
 ---
@@ -49,7 +49,8 @@
 | 27 | Transactional Email Delivery (provider abstraction, templates, queue, wired flows) | `6b17cb0` |
 | 28 | Admin Management & Security Hardening (Team page, promote/demote/activate, shared `requireAdmin` on all admin actions) | `cb42245` |
 | MP-A | Mega Phase A: settings persistence, client review submission, blog editor UI, admin analytics (real), audit logging, file upload pipeline (local + R2 providers) | `f809741` |
-| MP-B | Mega Phase B: sitemap/robots/Organization+Article JSON-LD, public `/blog/[slug]` page, PWA manifest + app icon, unread notification badge, portal/admin loading skeletons | this commit |
+| MP-B | Mega Phase B: sitemap/robots/Organization+Article JSON-LD, public `/blog/[slug]` page, PWA manifest + app icon, unread notification badge, portal/admin loading skeletons | `c572440` |
+| MP-C | Mega Phase C: assistant.* translated into all 14 locales (key parity verified), email retry worker (`/api/cron/email-retry`, CRON_SECRET-guarded), `.env.example` documents STORAGE_MODE + CRON_SECRET | this commit |
 
 ## Remaining Modules (planned)
 
@@ -147,6 +148,13 @@ Movable "Aria" helper, mounted once from the root layout (after `I18nProvider`).
 - **Accessibility**: mascot is keyboard-operable — **Enter/Space** toggle the panel (via `onKeyDown`, since keyboard fires `click` not pointer events); opening moves focus into the panel; **Escape closes** and returns focus to the mascot; all controls are labelled buttons; Tab cycles panel controls/guides; reduced-motion disables the bob (JS gate + global CSS rule).
 - **E2E verification pass (fixes applied)**: (1) drag now persists the *current* position via refs — fixed a stale-closure bug that saved the old position; (2) added Escape-to-close + focus management (were missing); (3) panel is measured and **clamped fully within the viewport** via a layout effect — fixed an overflow bug that also clipped the 6th guide. Verified in-browser: draggable + persistence-across-reload, hide/show, pause/resume, tap-open, Escape-close, **real post-OTP welcome** (email → auto-send → paste OTP → verified → `/dashboard` → welcome shown once), lazy-load (First Load JS unchanged at 102 kB), no console/hydration errors.
 - **Missing translations (to add later)**: the `assistant.*` namespace exists only in `en.json`; in the other 13 languages the assistant currently falls back to English (architecture is ready — it renders via `t()`, so adding `assistant` keys to each dictionary makes it multilingual with no code change). RTL container still applies correctly (verified in Arabic: `dir=rtl`).
+
+## Mega Phase C — i18n & Background Jobs (2026-07-08)
+
+- **Assistant translations:** `assistant.*` (23 keys) added to all 13 non-English dictionaries (ur, ar, hi, bn, fr, de, es, pt, ru, tr, zh, ja, ko); key parity with `en.json` verified by script; Arabic RTL render smoke-tested (`lang="ar" dir="rtl"`).
+- **Email retry worker:** `POST|GET /api/cron/email-retry` — `Authorization: Bearer $CRON_SECRET` guard (503 unconfigured, 401 wrong secret), processes `emailQueueRepository.findRetryable()` directly through the provider (no re-enqueue), respects log-only mode (no-op outside production email mode). Point Vercel Cron / any scheduler at it in prod.
+- **Env docs:** `.env.example` now documents `STORAGE_MODE` (local/r2 selection) and `CRON_SECRET`.
+- **Still deferred:** session-timeout warning (product decision), theme packs, remaining hardcoded-string i18n migration (incremental by design), watermarking, audit-log UI.
 
 ## Mega Phase B — SEO & Web-Platform (2026-07-08)
 

@@ -29,5 +29,30 @@
     "privacy": "Gizlilik Politikası",
     "security": "Güvenlik",
     "rights": "Tüm hakları saklıdır."
+  },
+  "assistant": {
+    "name": "Aria",
+    "greeting": "Merhaba! Ben Aria, rehberiniz. Nasıl yardımcı olabilirim?",
+    "prompt": "Aşağıdan bir seçenek seçin veya kendiniz keşfedin.",
+    "open": "Asistanı aç",
+    "hide": "Asistanı gizle",
+    "show": "Asistanı göster",
+    "pause": "Hareketi duraklat",
+    "resume": "Harekete devam et",
+    "close": "Kapat",
+    "back": "Geri",
+    "guideServices": "Hizmetlerinizi gösterin",
+    "guideContact": "Nasıl fiyat teklifi alırım?",
+    "guideDashboard": "Panelime git",
+    "explainPage": "Bu sayfayı açıkla",
+    "explainMilestones": "Kilometre taşları nedir?",
+    "explainUploads": "Dosya yükleme nasıl çalışır?",
+    "welcome": "Doğrulandı — hoş geldiniz! Kısa bir tur ister misiniz?",
+    "servicesInfo": "Hizmetler sayfamız neler sunduğumuzu gösterir. Sizi oraya götürüyorum.",
+    "contactInfo": "Ücretsiz teklif için İletişim sayfasını kullanın — 24 saat içinde yanıt veriyoruz. Sizi oraya götürüyorum.",
+    "dashboardInfo": "Panelinizde tüm projeleriniz tek bakışta görünür. Sizi oraya götürüyorum.",
+    "milestonesInfo": "Kilometre taşları projenizin ana aşamalarıdır. Her biri durumunu gösterir; neyin bittiğini ve sıradakini hep bilirsiniz.",
+    "uploadsInfo": "Ekibinizin paylaştığı dosyalar projenin Dosyalar sekmesinde görünür. Önizleyebilir ve revizyon isteyebilirsiniz — yazılım gerekmez.",
+    "pageInfo": "Bu, Royal Asad deneyiminizin bir parçası. Bana her şeyi sorabilir veya yukarıdaki rehberleri kullanabilirsiniz."
   }
 }
