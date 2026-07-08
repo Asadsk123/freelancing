@@ -4,6 +4,7 @@ import { createProjectSchema, updateProjectStatusSchema } from "@/lib/validation
 import { hasDatabase } from "@/db";
 import { projectRepository } from "@/lib/repositories/project";
 import { userRepository } from "@/lib/repositories/user";
+import { auditLogRepository } from "@/lib/repositories/audit-log";
 import { requireAdmin } from "@/lib/auth/guards";
 import { formatTrackingId } from "@/lib/utils/formatting";
 import { brand } from "@/config/brand";
@@ -47,7 +48,7 @@ export async function createProject(formData: FormData): Promise<ActionResult> {
 
   try {
     const trackingId = generateTrackingId();
-    await projectRepository.create({
+    const project = await projectRepository.create({
       trackingId,
       clientId: result.data.clientId,
       title: result.data.title,
@@ -55,6 +56,13 @@ export async function createProject(formData: FormData): Promise<ActionResult> {
       description: result.data.description || null,
       startDate: result.data.startDate ? new Date(result.data.startDate) : null,
       targetDate: result.data.targetDate ? new Date(result.data.targetDate) : null,
+    });
+    await auditLogRepository.record({
+      userId: auth.session.userId,
+      action: "project.created",
+      entityType: "project",
+      entityId: project.id,
+      metadata: { title: project.title, trackingId },
     });
 
     // Best-effort notification to the client.
@@ -98,6 +106,13 @@ export async function updateProjectStatus(formData: FormData): Promise<ActionRes
     if (!updated) {
       return { success: false, error: "Project not found." };
     }
+    await auditLogRepository.record({
+      userId: auth.session.userId,
+      action: "project.status_changed",
+      entityType: "project",
+      entityId: updated.id,
+      metadata: { title: updated.title, status: updated.status },
+    });
 
     // Best-effort notification to the client.
     const client = await userRepository.findById(updated.clientId);
@@ -135,6 +150,12 @@ export async function deleteProject(formData: FormData): Promise<ActionResult> {
     if (!deleted) {
       return { success: false, error: "Project not found." };
     }
+    await auditLogRepository.record({
+      userId: auth.session.userId,
+      action: "project.deleted",
+      entityType: "project",
+      entityId: projectId,
+    });
 
     revalidatePath("/admin/projects");
     revalidatePath("/admin/dashboard");

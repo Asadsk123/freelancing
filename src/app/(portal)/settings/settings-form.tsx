@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,23 +9,94 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { Check } from "lucide-react";
 import { toast, Toaster } from "@/components/ui/toast";
+import { useUnsavedChangesWarning } from "@/lib/hooks/use-unsaved-changes-warning";
+import { updateProfile, updateNotificationPreference } from "./actions";
 
-export function SettingsForm() {
-  const [notificationPref, setNotificationPref] = useState<string>("all");
+type NotificationPref = "all" | "portal_only" | "critical_only";
 
-  function handleProfileSave() {
-    toast.success("Profile updated successfully.");
+type SettingsUser = {
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  notificationPreference: NotificationPref;
+};
+
+const prefOptions: { value: NotificationPref; label: string; description: string }[] = [
+  { value: "all", label: "All notifications", description: "Email + portal notifications for everything" },
+  { value: "portal_only", label: "Portal only", description: "Notifications in the portal only, no emails" },
+  { value: "critical_only", label: "Critical only", description: "Only milestone completions and file deliveries" },
+];
+
+export function SettingsForm({ user, dbAvailable }: { user: SettingsUser; dbAvailable: boolean }) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
+  const [name, setName] = useState(user.name);
+  const [phone, setPhone] = useState(user.phone);
+  const [company, setCompany] = useState(user.company);
+  const [profileDirty, setProfileDirty] = useState(false);
+  const [profileSaved, setProfileSaved] = useState(false);
+
+  const [notificationPref, setNotificationPref] = useState<NotificationPref>(user.notificationPreference);
+
+  useUnsavedChangesWarning(profileDirty && !isPending);
+
+  function markProfile<T>(setter: (v: T) => void) {
+    return (value: T) => {
+      setter(value);
+      setProfileDirty(true);
+      setProfileSaved(false);
+    };
   }
 
-  function handleNotificationSave() {
-    toast.success("Notification preferences saved.");
+  function saveProfile() {
+    const fd = new FormData();
+    fd.set("name", name);
+    fd.set("phone", phone);
+    fd.set("company", company);
+    startTransition(async () => {
+      const res = await updateProfile(fd);
+      if (res.success) {
+        toast.success("Profile updated.");
+        setProfileDirty(false);
+        setProfileSaved(true);
+        router.refresh();
+      } else {
+        toast.error(res.error ?? "Something went wrong.");
+      }
+    });
+  }
+
+  function choosePref(next: NotificationPref) {
+    const previous = notificationPref;
+    setNotificationPref(next);
+    const fd = new FormData();
+    fd.set("preference", next);
+    startTransition(async () => {
+      const res = await updateNotificationPreference(fd);
+      if (res.success) {
+        toast.success("Notification preferences saved.");
+        router.refresh();
+      } else {
+        setNotificationPref(previous); // revert on failure
+        toast.error(res.error ?? "Something went wrong.");
+      }
+    });
   }
 
   return (
     <div className="mx-auto max-w-[1280px]">
       <Toaster />
       <PageHeader title="Settings" description="Manage your account and preferences." />
+
+      {!dbAvailable && (
+        <div className="mt-4 max-w-2xl rounded-[var(--radius-md)] border border-[var(--warning)] bg-[var(--warning)]/10 px-4 py-3">
+          <p className="text-sm text-[var(--foreground)]">Database not connected — changes cannot be saved.</p>
+        </div>
+      )}
 
       <div className="mt-8 space-y-8 max-w-2xl">
         <Card>
@@ -38,19 +110,15 @@ export function SettingsForm() {
                 <Label htmlFor="settings-name">Name</Label>
                 <Input
                   id="settings-name"
-                  defaultValue="Demo User"
+                  value={name}
+                  onChange={(e) => markProfile(setName)(e.target.value)}
                   autoComplete="name"
+                  disabled={isPending}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="settings-email">Email</Label>
-                <Input
-                  id="settings-email"
-                  type="email"
-                  defaultValue="demo@royalasad.com"
-                  autoComplete="email"
-                  disabled
-                />
+                <Input id="settings-email" type="email" value={user.email} autoComplete="email" disabled />
               </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -59,21 +127,34 @@ export function SettingsForm() {
                 <Input
                   id="settings-phone"
                   type="tel"
+                  value={phone}
+                  onChange={(e) => markProfile(setPhone)(e.target.value)}
                   autoComplete="tel"
                   placeholder="+1 (555) 000-0000"
+                  disabled={isPending}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="settings-company">Company</Label>
                 <Input
                   id="settings-company"
+                  value={company}
+                  onChange={(e) => markProfile(setCompany)(e.target.value)}
                   autoComplete="organization"
                   placeholder="Your company name"
+                  disabled={isPending}
                 />
               </div>
             </div>
-            <div className="flex justify-end">
-              <Button onClick={handleProfileSave}>Save Profile</Button>
+            <div className="flex items-center justify-end gap-3">
+              {profileSaved && !profileDirty && (
+                <span className="flex items-center gap-1 text-xs text-[var(--success,#16a34a)]">
+                  <Check className="h-3.5 w-3.5" /> Saved
+                </span>
+              )}
+              <Button onClick={saveProfile} disabled={isPending || !profileDirty || !dbAvailable}>
+                {isPending ? "Saving..." : "Save Profile"}
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -81,14 +162,10 @@ export function SettingsForm() {
         <Card>
           <CardHeader>
             <CardTitle>Notification Preferences</CardTitle>
-            <CardDescription>Choose how you want to be notified.</CardDescription>
+            <CardDescription>Choose how you want to be notified. Saved instantly.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {[
-              { value: "all", label: "All notifications", description: "Email + portal notifications for everything" },
-              { value: "portal_only", label: "Portal only", description: "Notifications in the portal only, no emails" },
-              { value: "critical_only", label: "Critical only", description: "Only milestone completions and file deliveries" },
-            ].map((option) => (
+            {prefOptions.map((option) => (
               <label
                 key={option.value}
                 className="flex cursor-pointer items-start gap-3 rounded-[var(--radius-md)] border border-[var(--border)] p-4 transition-colors hover:bg-[var(--muted)] has-[:checked]:border-[var(--primary)] has-[:checked]:bg-[var(--accent)]"
@@ -98,7 +175,8 @@ export function SettingsForm() {
                   name="notification-pref"
                   value={option.value}
                   checked={notificationPref === option.value}
-                  onChange={() => setNotificationPref(option.value)}
+                  onChange={() => choosePref(option.value)}
+                  disabled={isPending || !dbAvailable}
                   className="mt-1"
                 />
                 <div>
@@ -107,9 +185,6 @@ export function SettingsForm() {
                 </div>
               </label>
             ))}
-            <div className="flex justify-end">
-              <Button onClick={handleNotificationSave}>Save Preferences</Button>
-            </div>
           </CardContent>
         </Card>
 
@@ -134,4 +209,3 @@ export function SettingsForm() {
     </div>
   );
 }
-

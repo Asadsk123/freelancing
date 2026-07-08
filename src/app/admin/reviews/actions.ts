@@ -2,6 +2,7 @@
 
 import { hasDatabase } from "@/db";
 import { reviewRepository } from "@/lib/repositories/review";
+import { auditLogRepository } from "@/lib/repositories/audit-log";
 import { requireAdmin } from "@/lib/auth/guards";
 import { revalidatePath } from "next/cache";
 
@@ -28,6 +29,12 @@ export async function toggleReviewPublished(formData: FormData): Promise<ActionR
     if (!toggled) {
       return { success: false, error: "Review not found." };
     }
+    await auditLogRepository.record({
+      userId: auth.session.userId,
+      action: toggled.isPublished ? "review.published" : "review.unpublished",
+      entityType: "review",
+      entityId: reviewId,
+    });
 
     revalidatePath("/admin/reviews");
     revalidatePath("/");
@@ -56,6 +63,12 @@ export async function deleteReview(formData: FormData): Promise<ActionResult> {
     if (!deleted) {
       return { success: false, error: "Review not found." };
     }
+    await auditLogRepository.record({
+      userId: auth.session.userId,
+      action: "review.deleted",
+      entityType: "review",
+      entityId: reviewId,
+    });
 
     revalidatePath("/admin/reviews");
     revalidatePath("/");

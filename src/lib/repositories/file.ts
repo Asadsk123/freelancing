@@ -1,4 +1,4 @@
-import { eq, desc, sql } from "drizzle-orm";
+import { eq, desc, sql, and } from "drizzle-orm";
 import { BaseRepository } from "@/db/repository";
 import { files, users } from "@/db/schema";
 
@@ -72,6 +72,36 @@ export class FileRepository extends BaseRepository {
         revisionNote: revisionNote ?? null,
         updatedAt: new Date(),
       })
+      .where(eq(files.id, id))
+      .returning();
+    return row;
+  }
+
+  async create(data: {
+    projectId: string;
+    uploadedBy: string;
+    fileName: string;
+    mimeType: string;
+    fileSize: number;
+    originalKey: string;
+    status: FileRow["status"];
+  }): Promise<FileRow> {
+    // Version = 1 + number of earlier uploads with the same name on this project.
+    const [existing] = await this.db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(files)
+      .where(and(eq(files.projectId, data.projectId), eq(files.fileName, data.fileName)));
+
+    const result = await this.db
+      .insert(files)
+      .values({ ...data, version: (existing?.count ?? 0) + 1 })
+      .returning();
+    return result[0]!;
+  }
+
+  async delete(id: string): Promise<FileRow | undefined> {
+    const [row] = await this.db
+      .delete(files)
       .where(eq(files.id, id))
       .returning();
     return row;

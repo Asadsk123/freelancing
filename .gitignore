@@ -35,3 +35,6 @@ next-env.d.ts
 
 # Vercel
 .vercel
+
+# Local file storage (dev storage provider)
+.storage

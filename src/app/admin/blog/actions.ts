@@ -3,6 +3,7 @@
 import { createBlogPostSchema, updateBlogPostSchema } from "@/lib/validations/blog-post";
 import { hasDatabase } from "@/db";
 import { blogPostRepository } from "@/lib/repositories/blog-post";
+import { auditLogRepository } from "@/lib/repositories/audit-log";
 import { requireAdmin } from "@/lib/auth/guards";
 import { revalidatePath } from "next/cache";
 
@@ -24,7 +25,6 @@ export async function createBlogPost(formData: FormData): Promise<ActionResult> 
     coverImageUrl: field("coverImageUrl"),
     categoryId: field("categoryId"),
     status: field("status") || "draft",
-    authorId: field("authorId"),
   };
 
   const result = createBlogPostSchema.safeParse(raw);
@@ -33,24 +33,27 @@ export async function createBlogPost(formData: FormData): Promise<ActionResult> 
     return { success: false, error: firstError?.[0] ?? "Please check your input." };
   }
 
-  if (!raw.authorId) {
-    return { success: false, error: "Author is required." };
-  }
-
   if (!hasDatabase()) {
     return { success: false, error: "Database not connected." };
   }
 
   try {
-    await blogPostRepository.create({
+    const post = await blogPostRepository.create({
       title: result.data.title,
       slug: result.data.slug,
       excerpt: result.data.excerpt || null,
       content: result.data.content,
       coverImageUrl: result.data.coverImageUrl || null,
       categoryId: result.data.categoryId || null,
-      authorId: raw.authorId,
+      authorId: auth.session.userId,
       status: result.data.status,
+    });
+    await auditLogRepository.record({
+      userId: auth.session.userId,
+      action: "blog_post.created",
+      entityType: "blog_post",
+      entityId: post.id,
+      metadata: { title: post.title, status: post.status },
     });
 
     revalidatePath("/admin/blog");
@@ -108,6 +111,13 @@ export async function updateBlogPost(formData: FormData): Promise<ActionResult> 
     if (!updated) {
       return { success: false, error: "Post not found." };
     }
+    await auditLogRepository.record({
+      userId: auth.session.userId,
+      action: "blog_post.updated",
+      entityType: "blog_post",
+      entityId: postId,
+      metadata: { title: updated.title, status: updated.status },
+    });
 
     revalidatePath("/admin/blog");
     revalidatePath("/blog");
@@ -139,6 +149,12 @@ export async function deleteBlogPost(formData: FormData): Promise<ActionResult> 
     if (!deleted) {
       return { success: false, error: "Post not found." };
     }
+    await auditLogRepository.record({
+      userId: auth.session.userId,
+      action: "blog_post.deleted",
+      entityType: "blog_post",
+      entityId: postId,
+    });
 
     revalidatePath("/admin/blog");
     revalidatePath("/blog");

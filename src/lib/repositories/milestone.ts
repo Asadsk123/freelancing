@@ -97,6 +97,17 @@ export class MilestoneRepository extends BaseRepository {
       .where(eq(milestones.projectId, projectId));
     return result?.count ?? 0;
   }
+
+  /** Overall milestone completion stats across all projects. */
+  async completionStats(): Promise<{ total: number; completed: number }> {
+    const [result] = await this.db
+      .select({
+        total: sql<number>`count(*)::int`,
+        completed: sql<number>`count(*) filter (where ${milestones.status} = 'completed')::int`,
+      })
+      .from(milestones);
+    return { total: result?.total ?? 0, completed: result?.completed ?? 0 };
+  }
 }
 
 export const milestoneRepository = new MilestoneRepository();

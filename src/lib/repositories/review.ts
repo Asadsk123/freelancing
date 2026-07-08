@@ -1,4 +1,4 @@
-import { eq, desc, sql } from "drizzle-orm";
+import { eq, and, desc, sql } from "drizzle-orm";
 import { BaseRepository } from "@/db/repository";
 import { reviews, users, projects } from "@/db/schema";
 
@@ -122,6 +122,47 @@ export class ReviewRepository extends BaseRepository {
       .from(reviews)
       .where(eq(reviews.isPublished, true));
     return result?.count ?? 0;
+  }
+
+  /** Average rating across all reviews, or null when there are none. */
+  async averageRating(): Promise<number | null> {
+    const [result] = await this.db
+      .select({ avg: sql<string | null>`round(avg(${reviews.rating}), 1)` })
+      .from(reviews);
+    return result?.avg == null ? null : Number(result.avg);
+  }
+
+  /** The review a client left for a project, if any. */
+  async findByProjectAndClient(
+    projectId: string,
+    clientId: string,
+  ): Promise<ReviewRow | undefined> {
+    const [row] = await this.db
+      .select()
+      .from(reviews)
+      .where(and(eq(reviews.projectId, projectId), eq(reviews.clientId, clientId)))
+      .limit(1);
+    return row;
+  }
+
+  /** Client submits a review (unpublished until an admin publishes it). */
+  async create(data: {
+    projectId: string;
+    clientId: string;
+    rating: number;
+    testimonial: string | null;
+  }): Promise<ReviewRow> {
+    const result = await this.db
+      .insert(reviews)
+      .values({
+        projectId: data.projectId,
+        clientId: data.clientId,
+        rating: data.rating,
+        testimonial: data.testimonial,
+        isPublished: false,
+      })
+      .returning();
+    return result[0]!;
   }
 }
 

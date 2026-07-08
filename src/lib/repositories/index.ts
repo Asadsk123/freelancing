@@ -20,3 +20,5 @@ export { ConversationRepository, conversationRepository } from "./conversation";
 export type { MessageWithSender } from "./conversation";
 export { MilestoneRepository, milestoneRepository } from "./milestone";
 export { EmailQueueRepository, emailQueueRepository } from "./email-queue";
+export { AuditLogRepository, auditLogRepository } from "./audit-log";
+export type { AuditEntry, AuditLogWithActor } from "./audit-log";

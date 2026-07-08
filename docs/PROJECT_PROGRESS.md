@@ -2,9 +2,9 @@
 
 > **Single source of truth for project progress.** Updated after every completed module and committed together with the module. If chat history is lost, resume from this file.
 
-**Last updated:** 2026-07-07
-**Current module completed:** Module 28 — Admin Management & Security Hardening
-**Latest commit:** committed with this file (see `git log -1`); previous: `6b17cb0`
+**Last updated:** 2026-07-08
+**Current module completed:** Mega Phase A — Management & Real Data (settings persistence, client reviews, blog editor UI, admin analytics, audit logging, file upload pipeline)
+**Latest commit:** committed with this file (see `git log -1`); previous: `cb42245`
 
 ---
 
@@ -47,7 +47,8 @@
 | 26 handoff | Docs finalized, conventions verified, developer handoff summary | `c13b469` |
 | 26 final verify | 8/8 pre-approval checks passed; keyboard-activation fix (Enter/Space on mascot) | `f140a30` |
 | 27 | Transactional Email Delivery (provider abstraction, templates, queue, wired flows) | `6b17cb0` |
-| 28 | Admin Management & Security Hardening (Team page, promote/demote/activate, shared `requireAdmin` on all admin actions) | this commit |
+| 28 | Admin Management & Security Hardening (Team page, promote/demote/activate, shared `requireAdmin` on all admin actions) | `cb42245` |
+| MP-A | Mega Phase A: settings persistence, client review submission, blog editor UI, admin analytics (real), audit logging, file upload pipeline (local + R2 providers) | this commit |
 
 ## Remaining Modules (planned)
 
@@ -55,11 +56,10 @@
   - **String-coverage expansion for i18n** — architecture is complete and wired into the public header, mobile nav, footer, and home hero; remaining hardcoded strings across the rest of the app migrate incrementally by wrapping them in `t()` + adding keys to `en.json` (English fallback until translated). Drop-in, no architecture changes.
   - **25C accessibility/performance follow-up** — theme done; app-wide accessibility audit + performance pass (memoization, lazy loading, code splitting) remain. Note: the root layout now reads cookies/headers for locale, so all routes are dynamic (`ƒ`) — revisit static/ISR strategy during the perf pass if needed.
   - **25D** — SEO metadata, Open Graph, structured data, hreflang (now feasible with locales), trust indicators, notification badge, unsaved-changes warning, session-expiry warning, micro-interactions, skeletons
-- **File upload pipeline** — actual upload with storage backend, watermarking, revision requests (schema exists, display-only implemented)
-- **Client review submission** — client-side flow to submit a review after project completion
-- **Blog post editor UI** — admin form to create/edit posts (server actions exist; UI forms pending)
-- **Admin Management / Security Hardening module** — see Technical Debt below
-- **Audit logging** — write to `audit_log` on sensitive mutations (schema exists)
+- ~~File upload pipeline~~ — **DONE (Mega Phase A)**; watermarking still deferred (needs `sharp`)
+- ~~Client review submission~~ — **DONE (Mega Phase A)**
+- ~~Blog post editor UI~~ — **DONE (Mega Phase A)**
+- ~~Audit logging~~ — **DONE (Mega Phase A)**; audit-log admin UI still deferred
 - **Revenue tracking** — deferred (stat removed from dashboard until real data exists)
 
 ## Database Status
@@ -69,7 +69,7 @@
 - **Connection:** `DATABASE_URL` in `.env.local` (gitignored). `hasDatabase()` guard gives graceful degradation on every page when unset.
 - **Schema:** 19 tables, 8 enums, 20 FKs — users, sessions, otp_codes, inquiries, service_categories, services, projects, milestones, project_conversations, conversation_messages, files, reviews, blog_categories, blog_tags, blog_posts, blog_post_tags, notifications, email_queue, audit_log
 - **Delete rules:** cascade for child records (milestones, conversations, messages, files, reviews, post_tags, notifications); restrict for users referenced by projects/files/posts; set null for optional refs (service on project, category on post/file milestone)
-- **Repositories implemented:** inquiry, user, otp, session, project, service, service-category, review, blog-post, blog-category, notification, file, conversation, milestone, email-queue (all extend `BaseRepository` with lazy `db` getter; barrel export in `src/lib/repositories/index.ts`)
+- **Repositories implemented:** inquiry, user, otp, session, project, service, service-category, review, blog-post, blog-category, notification, file, conversation, milestone, email-queue, audit-log (all extend `BaseRepository` with lazy `db` getter; barrel export in `src/lib/repositories/index.ts`)
 
 ## Authentication Status
 
@@ -101,13 +101,11 @@
 
 ## Features Still Pending
 
-- File upload/download/watermark pipeline (display done)
-- Client review submission flow
-- Blog editor forms (admin UI)
-- Email sending (queue processing)
-- Admin management + security hardening (see Technical Debt)
-- Audit log writes
-- i18n wiring
+- Watermarking on file previews (needs `sharp`; upload/download/revision pipeline done)
+- Email retry worker (queue processing; inline delivery is single-attempt)
+- Audit-log admin UI (writes implemented)
+- i18n string-coverage expansion
+- SEO/OG/JSON-LD/sitemap (Mega Phase B); PWA; perf pass
 
 ## Environment Setup
 
@@ -148,6 +146,17 @@ Movable "Aria" helper, mounted once from the root layout (after `I18nProvider`).
 - **Accessibility**: mascot is keyboard-operable — **Enter/Space** toggle the panel (via `onKeyDown`, since keyboard fires `click` not pointer events); opening moves focus into the panel; **Escape closes** and returns focus to the mascot; all controls are labelled buttons; Tab cycles panel controls/guides; reduced-motion disables the bob (JS gate + global CSS rule).
 - **E2E verification pass (fixes applied)**: (1) drag now persists the *current* position via refs — fixed a stale-closure bug that saved the old position; (2) added Escape-to-close + focus management (were missing); (3) panel is measured and **clamped fully within the viewport** via a layout effect — fixed an overflow bug that also clipped the 6th guide. Verified in-browser: draggable + persistence-across-reload, hide/show, pause/resume, tap-open, Escape-close, **real post-OTP welcome** (email → auto-send → paste OTP → verified → `/dashboard` → welcome shown once), lazy-load (First Load JS unchanged at 102 kB), no console/hydration errors.
 - **Missing translations (to add later)**: the `assistant.*` namespace exists only in `en.json`; in the other 13 languages the assistant currently falls back to English (architecture is ready — it renders via `t()`, so adding `assistant` keys to each dictionary makes it multilingual with no code change). RTL container still applies correctly (verified in Arabic: `dir=rtl`).
+
+## Mega Phase A — Management & Real Data (2026-07-08)
+
+All lint/tsc/build gates pass; every feature browser-tested against real Neon data; test rows cleaned after verification.
+
+- **Settings persistence (portal):** `/settings` now real — profile (name/phone/company) via `updateProfile`, notification preference (all/portal_only/critical_only) saved instantly via `updateNotificationPreference`; unsaved-changes warning + Saved indicator. Verified: values persist across reload (DB-checked).
+- **Client review submission:** review section on completed projects (`/projects/[id]`) — 5-star + optional testimonial; server guards: session ownership, completed-only, no double review; created unpublished (`isPublished=false`) until admin approves. Verified end-to-end incl. guard behaviors.
+- **Blog editor UI:** `/admin/blog/new` + `/admin/blog/[id]` sharing `BlogPostForm` (title with auto-slug, excerpt, content, cover URL, category, status), delete with confirm dialog; list page gets New-post button + row links. Fixed `createBlogPost` to derive `authorId` from the session (was client input). Verified: create → publish (live on public `/blog`) → delete.
+- **Admin analytics (real data only):** dashboard Analytics section — inquiries last-30-days with delta vs previous 30, average review rating, milestone completion rate (+projects delivered), 6-month inquiry trend bar chart (`date_trunc` group-by, zero-filled). New repo methods: `inquiry.countSince/monthlyCounts`, `review.averageRating`, `milestone.completionStats`. Graceful "—" empty states.
+- **Audit logging:** `auditLogRepository` (`record()` best-effort — never throws/blocks; `findRecent()` ready for a future UI). Wired into 16 mutations: team promote/demote/activate, blog create/update/delete, project create/status/delete, milestone create/update/status/delete, review publish-toggle/delete/submit, file upload/status/delete/revision-request. UI deferred.
+- **File upload pipeline:** `src/lib/storage/` provider abstraction mirroring email — local FS provider (`.storage/`, gitignored, path-traversal-safe) + Cloudflare R2 provider (S3 SigV4 via fetch, no SDK; auto-selected when `R2_*` env present, `STORAGE_MODE` override). Upload route `POST /api/projects/[id]/files` (admin-only, 50 MB cap, XHR progress) fires the `fileUploaded` email; serve route `GET /api/files/[id]` (admin or owner client; drafts hidden from clients; probe-safe 404s; inline/attachment by mime). Admin `FilesManager` on `/admin/projects/[id]`: drag&drop + progress, status select (draft/preview/revision_requested/approved/final), download, delete (confirm + best-effort object removal). Portal: download + request-revision (note, guards: owner, not draft/final/already-requested); revision note surfaces to admin. `fileRepository.create` auto-versions per (project, fileName). Verified end-to-end both roles. Watermarking deferred (`sharp`).
 
 ## Module 28 — Admin Management & Security Hardening
 
@@ -271,8 +280,9 @@ Target: excellent Lighthouse scores. Roadmap, in the Next.js App Router idioms a
 
 1. ~~Transactional Email Delivery~~ — **DONE (Module 27).**
 2. ~~Admin Management + Security Hardening~~ — **DONE (Module 28).**
-3. **File Upload & Delivery Pipeline — RECOMMENDED NEXT** (needs a storage backend decision). Core product value — portal file previews with watermark protection + revision requests. Schema (`files`) + display exist; actual upload/storage/download/watermark are missing. Needs a storage backend (R2 env vars scaffolded) + signed URLs; watermarking needs an image lib (e.g. `sharp`). Best delivered with a storage-provider abstraction (dev provider + R2) mirroring the email module. `fileUploaded` email template already wired to fire once uploads exist.
+3. ~~File Upload & Delivery Pipeline~~ — **DONE (Mega Phase A)** except watermarking (needs `sharp`).
+   Original scope note: Core product value — portal file previews with watermark protection + revision requests. Schema (`files`) + display exist; actual upload/storage/download/watermark are missing. Needs a storage backend (R2 env vars scaffolded) + signed URLs; watermarking needs an image lib (e.g. `sharp`). Best delivered with a storage-provider abstraction (dev provider + R2) mirroring the email module. `fileUploaded` email template already wired to fire once uploads exist.
 4. **SEO / Open Graph / structured data (25D).** Conversion + discoverability for the public marketing site; hreflang now feasible with the i18n locales. Fully deliverable now with no external deps.
 5. **Email background worker** — a cron/route that processes `emailQueueRepository.findRetryable()` to retry failed/queued emails (architecture ready; inline delivery is single-attempt today).
 
-Other open items (lower priority): 25C accessibility/perf pass; blog editor UI; client review submission; settings persistence (`userRepository.updateProfile`); audit logging; session-timeout warning; theme packs; price comparison; portfolio-trust section; admin analytics; incremental i18n string-coverage (drop-in via `t()`).
+Other open items (lower priority): 25C accessibility/perf pass; session-timeout warning; theme packs; price comparison; portfolio-trust section; audit-log admin UI; watermarking; incremental i18n string-coverage (drop-in via `t()`).

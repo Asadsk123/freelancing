@@ -2,6 +2,7 @@
 
 import { hasDatabase } from "@/db";
 import { userRepository } from "@/lib/repositories/user";
+import { auditLogRepository } from "@/lib/repositories/audit-log";
 import { requireAdmin } from "@/lib/auth/guards";
 import {
   setAdminActiveSchema,
@@ -59,6 +60,13 @@ export async function setAdminActive(formData: FormData): Promise<ActionResult> 
     }
 
     await userRepository.setActive(userId, nextActive);
+    await auditLogRepository.record({
+      userId: auth.session.userId,
+      action: nextActive ? "team.activated" : "team.deactivated",
+      entityType: "user",
+      entityId: userId,
+      metadata: { targetEmail: target.email },
+    });
     revalidateTeam();
     return { success: true };
   } catch (err) {
@@ -92,6 +100,13 @@ export async function promoteToAdmin(formData: FormData): Promise<ActionResult> 
     }
 
     await userRepository.setRole(user.id, "admin");
+    await auditLogRepository.record({
+      userId: auth.session.userId,
+      action: "team.promoted",
+      entityType: "user",
+      entityId: user.id,
+      metadata: { targetEmail: user.email },
+    });
     revalidateTeam();
     revalidatePath("/admin/clients");
     return { success: true };
@@ -137,6 +152,13 @@ export async function demoteToClient(formData: FormData): Promise<ActionResult> 
     }
 
     await userRepository.setRole(userId, "client");
+    await auditLogRepository.record({
+      userId: auth.session.userId,
+      action: "team.demoted",
+      entityType: "user",
+      entityId: userId,
+      metadata: { targetEmail: target.email },
+    });
     revalidateTeam();
     revalidatePath("/admin/clients");
     return { success: true };

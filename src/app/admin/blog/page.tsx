@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { PageHeader } from "@/components/shared/page-header";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/shared/empty-state";
-import { FileText } from "lucide-react";
+import { FileText, Plus } from "lucide-react";
 import { hasDatabase } from "@/db";
 import { blogPostRepository } from "@/lib/repositories/blog-post";
 import { formatDate } from "@/lib/utils/formatting";
@@ -25,7 +27,16 @@ export default async function AdminBlogPage() {
 
   return (
     <div className="mx-auto max-w-[1280px]">
-      <PageHeader title="Blog" description="Create and manage blog posts." />
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <PageHeader title="Blog" description="Create and manage blog posts." />
+        {dbAvailable && (
+          <Button asChild>
+            <Link href="/admin/blog/new">
+              <Plus className="h-4 w-4" /> New post
+            </Link>
+          </Button>
+        )}
+      </div>
 
       {!dbAvailable && (
         <div className="mt-4 rounded-[var(--radius-md)] border border-[var(--warning)] bg-[var(--warning)]/10 px-4 py-3">
@@ -42,7 +53,7 @@ export default async function AdminBlogPage() {
               <EmptyState
                 icon={FileText}
                 title="No blog posts yet"
-                description="Blog posts will appear here once created."
+                description="Create your first post with the New post button above."
               />
             </CardContent>
           </Card>
@@ -66,7 +77,12 @@ export default async function AdminBlogPage() {
                   return (
                     <tr key={post.id} className="border-b border-[var(--border)] last:border-0">
                       <td className="px-4 py-3">
-                        <p className="font-medium text-[var(--foreground)]">{post.title}</p>
+                        <Link
+                          href={`/admin/blog/${post.id}`}
+                          className="font-medium text-[var(--foreground)] transition-colors hover:text-[var(--primary)]"
+                        >
+                          {post.title}
+                        </Link>
                         <p className="text-xs text-[var(--muted-foreground)]">/{post.slug}</p>
                       </td>
                       <td className="px-4 py-3 text-[var(--muted-foreground)]">

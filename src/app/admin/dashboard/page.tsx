@@ -13,6 +13,10 @@ import {
   FileText,
   Layers,
   ArrowRight,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  CheckCircle2,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { hasDatabase } from "@/db";
@@ -22,6 +26,7 @@ import { projectRepository } from "@/lib/repositories/project";
 import { reviewRepository } from "@/lib/repositories/review";
 import { blogPostRepository } from "@/lib/repositories/blog-post";
 import { serviceRepository } from "@/lib/repositories/service";
+import { milestoneRepository } from "@/lib/repositories/milestone";
 import { formatRelativeTime } from "@/lib/utils/formatting";
 
 export const metadata: Metadata = {
@@ -42,6 +47,11 @@ const projectStatusBadge: Record<string, { label: string; variant: "success" | "
   completed: { label: "Completed", variant: "success" },
   on_hold: { label: "On Hold", variant: "default" },
 };
+
+function monthLabel(month: string): string {
+  const [year = "2000", m = "1"] = month.split("-");
+  return new Date(Number(year), Number(m) - 1, 1).toLocaleString("en", { month: "short" });
+}
 
 export default async function AdminDashboardPage() {
   const dbAvailable = hasDatabase();
@@ -87,6 +97,29 @@ export default async function AdminDashboardPage() {
     ? await serviceRepository.count()
     : 0;
 
+  const now = Date.now();
+  const days30Ago = new Date(now - 30 * 24 * 60 * 60 * 1000);
+  const days60Ago = new Date(now - 60 * 24 * 60 * 60 * 1000);
+
+  const [inquiries30, inquiries60, averageRating, milestoneStats, completedProjectCount, inquiryTrend] =
+    dbAvailable
+      ? await Promise.all([
+          inquiryRepository.countSince(days30Ago),
+          inquiryRepository.countSince(days60Ago),
+          reviewRepository.averageRating(),
+          milestoneRepository.completionStats(),
+          projectRepository.countByStatus("completed"),
+          inquiryRepository.monthlyCounts(6),
+        ])
+      : [0, 0, null, { total: 0, completed: 0 }, 0, []];
+  const inquiriesPrevious30 = inquiries60 - inquiries30;
+  const inquiryDelta = inquiries30 - inquiriesPrevious30;
+  const milestoneRate =
+    milestoneStats.total > 0
+      ? Math.round((milestoneStats.completed / milestoneStats.total) * 100)
+      : null;
+  const trendMax = Math.max(1, ...inquiryTrend.map((point) => point.count));
+
   const noDb = "Connect database to track";
 
   const stats: { label: string; value: string; icon: LucideIcon; change: string }[] = [
@@ -120,6 +153,95 @@ export default async function AdminDashboardPage() {
           </Card>
         ))}
       </div>
+
+      {dbAvailable && (
+        <div className="mt-8">
+          <h2 className="text-lg font-semibold text-[var(--foreground)]">Analytics</h2>
+          <div className="mt-4 grid gap-4 lg:grid-cols-3">
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-sm text-[var(--muted-foreground)]">Inquiries — last 30 days</p>
+                <div className="mt-1 flex items-baseline gap-2">
+                  <p className="text-2xl font-bold text-[var(--foreground)]">{inquiries30}</p>
+                  <span className="flex items-center gap-1 text-xs text-[var(--muted-foreground)]">
+                    {inquiryDelta > 0 ? (
+                      <TrendingUp className="h-3.5 w-3.5 text-[var(--success,#16a34a)]" />
+                    ) : inquiryDelta < 0 ? (
+                      <TrendingDown className="h-3.5 w-3.5 text-[var(--destructive)]" />
+                    ) : (
+                      <Minus className="h-3.5 w-3.5" />
+                    )}
+                    {inquiryDelta > 0 ? `+${inquiryDelta}` : inquiryDelta} vs previous 30 days
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-sm text-[var(--muted-foreground)]">Average review rating</p>
+                <div className="mt-1 flex items-baseline gap-2">
+                  {averageRating === null ? (
+                    <p className="text-2xl font-bold text-[var(--foreground)]">—</p>
+                  ) : (
+                    <>
+                      <p className="flex items-center gap-1.5 text-2xl font-bold text-[var(--foreground)]">
+                        {averageRating.toFixed(1)}
+                        <Star className="h-5 w-5 fill-[var(--warning,#d97706)] text-[var(--warning,#d97706)]" />
+                      </p>
+                      <span className="text-xs text-[var(--muted-foreground)]">from {totalReviewCount} review{totalReviewCount === 1 ? "" : "s"}</span>
+                    </>
+                  )}
+                </div>
+                {averageRating === null && (
+                  <p className="mt-1 text-xs text-[var(--muted-foreground)]">No reviews yet</p>
+                )}
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-sm text-[var(--muted-foreground)]">Milestone completion</p>
+                <div className="mt-1 flex items-baseline gap-2">
+                  {milestoneRate === null ? (
+                    <p className="text-2xl font-bold text-[var(--foreground)]">—</p>
+                  ) : (
+                    <>
+                      <p className="flex items-center gap-1.5 text-2xl font-bold text-[var(--foreground)]">
+                        {milestoneRate}%
+                        <CheckCircle2 className="h-5 w-5 text-[var(--success,#16a34a)]" />
+                      </p>
+                      <span className="text-xs text-[var(--muted-foreground)]">
+                        {milestoneStats.completed} of {milestoneStats.total} · {completedProjectCount} project{completedProjectCount === 1 ? "" : "s"} delivered
+                      </span>
+                    </>
+                  )}
+                </div>
+                {milestoneRate === null && (
+                  <p className="mt-1 text-xs text-[var(--muted-foreground)]">No milestones yet</p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card className="mt-4">
+            <CardContent className="pt-6">
+              <p className="text-sm text-[var(--muted-foreground)]">Inquiries — last 6 months</p>
+              <div className="mt-4 flex h-32 items-end gap-3">
+                {inquiryTrend.map((point) => (
+                  <div key={point.month} className="flex flex-1 flex-col items-center gap-1.5">
+                    <span className="text-xs font-medium text-[var(--foreground)]">{point.count}</span>
+                    <div
+                      className="w-full max-w-12 rounded-t-[var(--radius-sm,4px)] bg-[var(--primary)]/80"
+                      style={{ height: `${Math.max(4, Math.round((point.count / trendMax) * 88))}px` }}
+                      aria-hidden
+                    />
+                    <span className="text-xs text-[var(--muted-foreground)]">{monthLabel(point.month)}</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       <div className="mt-8 grid gap-8 lg:grid-cols-2">
         <div>

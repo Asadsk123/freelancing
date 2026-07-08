@@ -10,8 +10,10 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { ArrowLeft, FolderOpen } from "lucide-react";
 import { hasDatabase } from "@/db";
 import { projectRepository } from "@/lib/repositories/project";
+import { fileRepository } from "@/lib/repositories/file";
 import { formatDate } from "@/lib/utils/formatting";
 import { MilestonesManager } from "./milestones-manager";
+import { FilesManager } from "./files-manager";
 
 export const metadata: Metadata = {
   title: "Project Details",
@@ -52,6 +54,8 @@ export default async function AdminProjectDetailPage({
   const project = await projectRepository.findByIdWithDetails(id);
   if (!project) notFound();
 
+  const projectFiles = await fileRepository.findByProjectId(id);
+
   const badge = statusBadge[project.status] ?? { label: "Pending", variant: "secondary" as const };
 
   return (
@@ -82,6 +86,22 @@ export default async function AdminProjectDetailPage({
 
       <div className="mt-8">
         <MilestonesManager projectId={project.id} milestones={project.milestones} />
+      </div>
+
+      <div className="mt-8">
+        <FilesManager
+          projectId={project.id}
+          files={projectFiles.map((file) => ({
+            id: file.id,
+            fileName: file.fileName,
+            fileSize: file.fileSize,
+            version: file.version,
+            status: file.status,
+            revisionNote: file.revisionNote,
+            uploaderName: file.uploaderName,
+            createdAt: file.createdAt,
+          }))}
+        />
       </div>
     </div>
   );

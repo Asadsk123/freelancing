@@ -8,14 +8,17 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { TrackingId } from "@/components/shared/tracking-id";
 import { EmptyState } from "@/components/shared/empty-state";
-import { ArrowLeft, FileText, MessageSquare, FolderOpen } from "lucide-react";
+import { ArrowLeft, FileText, MessageSquare, FolderOpen, Star } from "lucide-react";
 import { getSession } from "@/lib/auth/session";
 import { hasDatabase } from "@/db";
 import { projectRepository } from "@/lib/repositories/project";
 import { fileRepository } from "@/lib/repositories/file";
 import { conversationRepository } from "@/lib/repositories/conversation";
+import { reviewRepository } from "@/lib/repositories/review";
 import { formatDate, formatFileSize, formatRelativeTime } from "@/lib/utils/formatting";
 import { MessageForm } from "./message-form";
+import { ReviewForm } from "./review-form";
+import { FileCardActions } from "./file-card-actions";
 
 export const metadata: Metadata = {
   title: "Project Details",
@@ -77,8 +80,17 @@ export default async function ProjectDetailPage({
     notFound();
   }
 
-  const projectFiles = await fileRepository.findByProjectId(id);
+  // Internal drafts are only visible to admins.
+  const allFiles = await fileRepository.findByProjectId(id);
+  const projectFiles =
+    session.role === "admin" ? allFiles : allFiles.filter((file) => file.status !== "draft");
   const messages = await conversationRepository.findMessagesByProjectId(id);
+
+  const isOwnerClient = session.role === "client" && project.clientId === session.userId;
+  const existingReview = isOwnerClient
+    ? await reviewRepository.findByProjectAndClient(id, session.userId)
+    : undefined;
+  const showReviewSection = isOwnerClient && project.status === "completed";
 
   const badge = statusBadge[project.status] ?? { label: "Pending", variant: "secondary" as const };
   const completedMilestones = project.milestones.filter((m) => m.status === "completed").length;
@@ -173,21 +185,29 @@ export default async function ProjectDetailPage({
                   const fBadge = fileStatusBadge[file.status] ?? { label: "Draft", variant: "secondary" as const };
                   return (
                     <Card key={file.id}>
-                      <CardContent className="flex items-center justify-between py-4">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--accent)]">
-                            <FileText className="h-4 w-4 text-[var(--primary)]" />
+                      <CardContent className="py-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--accent)]">
+                              <FileText className="h-4 w-4 text-[var(--primary)]" />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-sm font-medium text-[var(--foreground)] truncate">
+                                {file.fileName}
+                              </p>
+                              <p className="text-xs text-[var(--muted-foreground)]">
+                                {formatFileSize(file.fileSize)} · v{file.version} · {file.uploaderName} · {formatDate(file.createdAt)}
+                              </p>
+                            </div>
                           </div>
-                          <div className="min-w-0">
-                            <p className="text-sm font-medium text-[var(--foreground)] truncate">
-                              {file.fileName}
-                            </p>
-                            <p className="text-xs text-[var(--muted-foreground)]">
-                              {formatFileSize(file.fileSize)} · v{file.version} · {file.uploaderName} · {formatDate(file.createdAt)}
-                            </p>
-                          </div>
+                          <Badge variant={fBadge.variant} className="shrink-0 ml-2">{fBadge.label}</Badge>
                         </div>
-                        <Badge variant={fBadge.variant} className="shrink-0 ml-2">{fBadge.label}</Badge>
+                        {file.status === "revision_requested" && file.revisionNote && (
+                          <p className="mt-3 rounded-[var(--radius-md)] bg-[var(--muted)] px-3 py-2 text-xs text-[var(--muted-foreground)]">
+                            Revision requested: {file.revisionNote}
+                          </p>
+                        )}
+                        {isOwnerClient && <FileCardActions fileId={file.id} status={file.status} />}
                       </CardContent>
                     </Card>
                   );
@@ -247,6 +267,50 @@ export default async function ProjectDetailPage({
           </TabsContent>
         </Tabs>
       </div>
+
+      {showReviewSection && (
+        <div className="mt-8">
+          <h2 className="text-lg font-semibold text-[var(--foreground)]">Your review</h2>
+          <Card className="mt-3">
+            <CardContent className="py-5">
+              {existingReview ? (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-0.5" aria-label={`${existingReview.rating} out of 5 stars`}>
+                      {Array.from({ length: 5 }, (_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-4 w-4 ${
+                            i < existingReview.rating
+                              ? "fill-[var(--warning)] text-[var(--warning)]"
+                              : "text-[var(--muted-foreground)]"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <Badge variant={existingReview.isPublished ? "success" : "warning"}>
+                      {existingReview.isPublished ? "Published" : "Pending review"}
+                    </Badge>
+                  </div>
+                  {existingReview.testimonial && (
+                    <p className="text-sm text-[var(--muted-foreground)]">{existingReview.testimonial}</p>
+                  )}
+                  <p className="text-xs text-[var(--muted-foreground)]">
+                    Thank you for your feedback. It appears publicly once our team approves it.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <p className="mb-4 text-sm text-[var(--muted-foreground)]">
+                    This project is complete — we&apos;d love to hear how it went.
+                  </p>
+                  <ReviewForm projectId={project.id} />
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

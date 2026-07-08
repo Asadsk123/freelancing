@@ -136,6 +136,18 @@ export class UserRepository extends BaseRepository {
       .returning();
     return row;
   }
+
+  async updateNotificationPreference(
+    id: string,
+    preference: UserRow["notificationPreference"],
+  ): Promise<UserRow | undefined> {
+    const [row] = await this.db
+      .update(users)
+      .set({ notificationPreference: preference, updatedAt: new Date() })
+      .where(eq(users.id, id))
+      .returning();
+    return row;
+  }
 }
 
 function deriveNameFromEmail(email: string): string {
