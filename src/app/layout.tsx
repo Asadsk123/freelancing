@@ -26,6 +26,15 @@ export const metadata: Metadata = {
   },
 };
 
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: brand.name,
+  description: brand.description,
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  email: brand.contact.email,
+};
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -41,6 +50,10 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem('theme'),d=document.documentElement;if(t==='dark'||t==='light'){d.setAttribute('data-theme',t);}else{d.removeAttribute('data-theme');}if(localStorage.getItem('ra_premium')==='on'){d.setAttribute('data-premium','on');}}catch(e){}})();`,
           }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
       </head>
       <body>

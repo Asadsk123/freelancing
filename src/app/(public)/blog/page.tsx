@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Card, CardContent } from "@/components/ui/card";
@@ -45,7 +46,12 @@ export default async function BlogPage() {
                   <Badge variant="secondary" className="mb-3">{post.categoryName}</Badge>
                 )}
                 <h2 className="text-lg font-semibold text-[var(--foreground)]">
-                  {post.title}
+                  <Link
+                    href={`/blog/${post.slug}`}
+                    className="transition-colors hover:text-[var(--primary)]"
+                  >
+                    {post.title}
+                  </Link>
                 </h2>
                 {post.excerpt && (
                   <p className="mt-2 text-sm text-[var(--muted-foreground)] line-clamp-3">

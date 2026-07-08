@@ -28,9 +28,10 @@ const mobileNavItems = [
 type PortalHeaderProps = {
   userName: string;
   userInitials: string;
+  unreadCount?: number;
 };
 
-export function PortalHeader({ userName, userInitials }: PortalHeaderProps) {
+export function PortalHeader({ userName, userInitials, unreadCount = 0 }: PortalHeaderProps) {
   const pathname = usePathname();
 
   return (
@@ -50,8 +51,23 @@ export function PortalHeader({ userName, userInitials }: PortalHeaderProps) {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button asChild variant="ghost" size="icon" className="relative">
-                  <Link href="/notifications" aria-label="Notifications">
+                  <Link
+                    href="/notifications"
+                    aria-label={
+                      unreadCount > 0
+                        ? `Notifications (${unreadCount} unread)`
+                        : "Notifications"
+                    }
+                  >
                     <Bell className="h-5 w-5" />
+                    {unreadCount > 0 && (
+                      <span
+                        aria-hidden
+                        className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--primary)] px-1 text-[10px] font-semibold leading-none text-[var(--primary-foreground,#fff)]"
+                      >
+                        {unreadCount > 9 ? "9+" : unreadCount}
+                      </span>
+                    )}
                   </Link>
                 </Button>
               </TooltipTrigger>

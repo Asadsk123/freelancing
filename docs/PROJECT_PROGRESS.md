@@ -3,7 +3,7 @@
 > **Single source of truth for project progress.** Updated after every completed module and committed together with the module. If chat history is lost, resume from this file.
 
 **Last updated:** 2026-07-08
-**Current module completed:** Mega Phase A — Management & Real Data (settings persistence, client reviews, blog editor UI, admin analytics, audit logging, file upload pipeline)
+**Current module completed:** Mega Phase B — SEO & Web-Platform (sitemap/robots/JSON-LD, public blog detail, PWA manifest+icon, notification badge, loading skeletons)
 **Latest commit:** committed with this file (see `git log -1`); previous: `cb42245`
 
 ---
@@ -48,7 +48,8 @@
 | 26 final verify | 8/8 pre-approval checks passed; keyboard-activation fix (Enter/Space on mascot) | `f140a30` |
 | 27 | Transactional Email Delivery (provider abstraction, templates, queue, wired flows) | `6b17cb0` |
 | 28 | Admin Management & Security Hardening (Team page, promote/demote/activate, shared `requireAdmin` on all admin actions) | `cb42245` |
-| MP-A | Mega Phase A: settings persistence, client review submission, blog editor UI, admin analytics (real), audit logging, file upload pipeline (local + R2 providers) | this commit |
+| MP-A | Mega Phase A: settings persistence, client review submission, blog editor UI, admin analytics (real), audit logging, file upload pipeline (local + R2 providers) | `f809741` |
+| MP-B | Mega Phase B: sitemap/robots/Organization+Article JSON-LD, public `/blog/[slug]` page, PWA manifest + app icon, unread notification badge, portal/admin loading skeletons | this commit |
 
 ## Remaining Modules (planned)
 
@@ -146,6 +147,17 @@ Movable "Aria" helper, mounted once from the root layout (after `I18nProvider`).
 - **Accessibility**: mascot is keyboard-operable — **Enter/Space** toggle the panel (via `onKeyDown`, since keyboard fires `click` not pointer events); opening moves focus into the panel; **Escape closes** and returns focus to the mascot; all controls are labelled buttons; Tab cycles panel controls/guides; reduced-motion disables the bob (JS gate + global CSS rule).
 - **E2E verification pass (fixes applied)**: (1) drag now persists the *current* position via refs — fixed a stale-closure bug that saved the old position; (2) added Escape-to-close + focus management (were missing); (3) panel is measured and **clamped fully within the viewport** via a layout effect — fixed an overflow bug that also clipped the 6th guide. Verified in-browser: draggable + persistence-across-reload, hide/show, pause/resume, tap-open, Escape-close, **real post-OTP welcome** (email → auto-send → paste OTP → verified → `/dashboard` → welcome shown once), lazy-load (First Load JS unchanged at 102 kB), no console/hydration errors.
 - **Missing translations (to add later)**: the `assistant.*` namespace exists only in `en.json`; in the other 13 languages the assistant currently falls back to English (architecture is ready — it renders via `t()`, so adding `assistant` keys to each dictionary makes it multilingual with no code change). RTL container still applies correctly (verified in Arabic: `dir=rtl`).
+
+## Mega Phase B — SEO & Web-Platform (2026-07-08)
+
+Gates pass (lint/tsc/build); routes smoke-tested on dev (`robots.txt`, `sitemap.xml`, `manifest.webmanifest` all 200; unknown blog slug 404s).
+
+- **SEO:** `src/app/robots.ts` (allow public, disallow portal/admin/api), `src/app/sitemap.ts` (static routes + published blog slugs, graceful without DB), Organization JSON-LD in the root layout, Article JSON-LD + OpenGraph `article` metadata on the new post page.
+- **Public blog detail:** `/blog/[slug]` — published-only (drafts/archived 404), excerpt + content rendering, category badge, back link; list cards now link to it.
+- **PWA-lite:** `src/app/manifest.ts` + `src/app/icon.svg` (RA letter-mark, brand #4c6ef5). Offline service worker deferred.
+- **Notification badge:** portal layout fetches `notificationRepository.countUnread` → bell badge (9+ cap, aria-label includes count).
+- **Skeletons:** `loading.tsx` for portal + admin route groups.
+- **Deferred with reasons:** `next/font` (Inter isn't actually loaded today — system fallback in use; adding Google-font download makes builds network-dependent; self-host later), `next/image` (no raster images in the app yet), hreflang (locale is cookie-based, no per-locale URLs), OG image generation, offline SW.
 
 ## Mega Phase A — Management & Real Data (2026-07-08)
 
