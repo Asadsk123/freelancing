@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu } from "lucide-react";
+import { Menu, LayoutDashboard } from "lucide-react";
 import { publicNavigation } from "@/config/navigation";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
@@ -20,9 +20,10 @@ import { cn } from "@/lib/utils/cn";
 
 type HeaderProps = {
   onMobileMenuOpen: () => void;
+  dashboardHref?: string;
 };
 
-export function Header({ onMobileMenuOpen }: HeaderProps) {
+export function Header({ onMobileMenuOpen, dashboardHref = "/login" }: HeaderProps) {
   const pathname = usePathname();
   const t = useTranslations();
 
@@ -52,6 +53,12 @@ export function Header({ onMobileMenuOpen }: HeaderProps) {
           <NetworkStatus />
           <LanguageSwitcher />
           <ThemeToggle />
+          <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex">
+            <Link href={dashboardHref}>
+              <LayoutDashboard className="h-4 w-4" />
+              {dashboardHref === "/login" ? "Client Portal" : "Dashboard"}
+            </Link>
+          </Button>
           <Button asChild size="sm" className="hidden sm:inline-flex">
             <Link href={publicNavigation.cta.href}>
               {t("nav.getQuote")}

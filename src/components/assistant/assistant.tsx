@@ -37,6 +37,7 @@ export function Assistant() {
   const [paused, setPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
   const [panelPos, setPanelPos] = useState<Point>({ x: 0, y: 0 });
 
   // All live-drag math lives in a ref so the pointer handlers never depend on
@@ -236,10 +237,19 @@ export function Assistant() {
     { key: "assistant.guideServices", run: () => guideTo(t("assistant.servicesInfo"), "/services") },
     { key: "assistant.guideContact", run: () => guideTo(t("assistant.contactInfo"), "/contact?form=quote") },
     { key: "assistant.guideDashboard", run: () => guideTo(t("assistant.dashboardInfo"), "/dashboard") },
+    { key: "assistant.quickPortfolio", run: () => guideTo(t("assistant.portfolioInfo"), "/portfolio") },
+    { key: "assistant.quickBlog", run: () => guideTo(t("assistant.blogInfo"), "/blog") },
+    { key: "assistant.quickNotifications", run: () => guideTo(t("assistant.notificationsInfo"), "/notifications") },
+    { key: "assistant.quickSettings", run: () => guideTo(t("assistant.settingsInfo"), "/settings") },
     { key: "assistant.explainMilestones", run: () => setMessage(t("assistant.milestonesInfo")) },
     { key: "assistant.explainUploads", run: () => setMessage(t("assistant.uploadsInfo")) },
     { key: "assistant.explainPage", run: () => setMessage(t("assistant.pageInfo")) },
   ];
+
+  const normalizedQuery = query.trim().toLowerCase();
+  const visibleGuides = normalizedQuery
+    ? guides.filter((g) => t(g.key).toLowerCase().includes(normalizedQuery))
+    : guides.slice(0, 6);
 
   if (!ready) return null;
 
@@ -306,17 +316,32 @@ export function Assistant() {
               <>
                 <p className="text-sm text-[var(--foreground)]">{t("assistant.greeting")}</p>
                 <p className="mt-1 text-xs text-[var(--muted-foreground)]">{t("assistant.prompt")}</p>
-                <div className="mt-3 flex flex-col gap-1.5">
-                  {guides.map((g) => (
-                    <button
-                      key={g.key}
-                      type="button"
-                      onClick={g.run}
-                      className="rounded-[var(--radius-md)] border border-[var(--border)] px-3 py-2 text-left text-sm text-[var(--foreground)] transition-colors hover:border-[var(--primary)] hover:bg-[var(--accent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ring)]"
-                    >
-                      {t(g.key)}
-                    </button>
-                  ))}
+                <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder={t("assistant.searchPlaceholder")}
+                  aria-label={t("assistant.searchPlaceholder")}
+                  className="mt-3 w-full rounded-[var(--radius-md)] border border-[var(--input)] bg-[var(--background)] px-3 py-2 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ring)]"
+                />
+                <div className="mt-3 flex max-h-64 flex-col gap-1.5 overflow-y-auto">
+                  {visibleGuides.length === 0 ? (
+                    <p className="px-1 py-2 text-xs text-[var(--muted-foreground)]">{t("assistant.noResults")}</p>
+                  ) : (
+                    visibleGuides.map((g) => (
+                      <button
+                        key={g.key}
+                        type="button"
+                        onClick={() => {
+                          setQuery("");
+                          g.run();
+                        }}
+                        className="rounded-[var(--radius-md)] border border-[var(--border)] px-3 py-2 text-left text-sm text-[var(--foreground)] transition-colors hover:border-[var(--primary)] hover:bg-[var(--accent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ring)]"
+                      >
+                        {t(g.key)}
+                      </button>
+                    ))
+                  )}
                 </div>
               </>
             )}

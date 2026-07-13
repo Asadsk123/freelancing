@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { ContactForm } from "@/components/sections/contact-form";
 import { Card, CardContent } from "@/components/ui/card";
 import { brand } from "@/config/brand";
-import { Mail, Clock } from "lucide-react";
+import { Mail, Clock, MapPin, Phone, ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -49,6 +49,50 @@ export default function ContactPage() {
                   <h3 className="font-semibold text-[var(--foreground)]">Response time</h3>
                   <p className="mt-1 text-sm text-[var(--muted-foreground)]">
                     We respond to all inquiries within 24 business hours.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-3">
+                <Phone className="mt-0.5 h-5 w-5 text-[var(--primary)]" />
+                <div>
+                  <h3 className="font-semibold text-[var(--foreground)]">Phone / WhatsApp</h3>
+                  {/* Placeholder — replace with the real number before launch. */}
+                  <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+                    Shared after your first inquiry — every client gets a direct line.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-3">
+                <MapPin className="mt-0.5 h-5 w-5 text-[var(--primary)]" />
+                <div>
+                  <h3 className="font-semibold text-[var(--foreground)]">Where we work</h3>
+                  {/* Placeholder — replace with the registered office address before launch. */}
+                  <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+                    Remote-first team serving clients worldwide across all time zones.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-3">
+                <ShieldCheck className="mt-0.5 h-5 w-5 text-[var(--primary)]" />
+                <div>
+                  <h3 className="font-semibold text-[var(--foreground)]">Confidentiality</h3>
+                  <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+                    NDA-friendly. Your idea and project details stay private — always.
                   </p>
                 </div>
               </div>

@@ -3,7 +3,7 @@
 > **Single source of truth for project progress.** Updated after every completed module and committed together with the module. If chat history is lost, resume from this file.
 
 **Last updated:** 2026-07-08
-**Current module completed:** Mega Phase C — i18n assistant translations (14 locales), email retry worker, env documentation
+**Current module completed:** Production Polish — contact placeholders, project-create UI, dashboard header buttons, assistant search + quick actions, curated AI/software services, enterprise trust section
 **Latest commit:** committed with this file (see `git log -1`); previous: `cb42245`
 
 ---
@@ -50,7 +50,8 @@
 | 28 | Admin Management & Security Hardening (Team page, promote/demote/activate, shared `requireAdmin` on all admin actions) | `cb42245` |
 | MP-A | Mega Phase A: settings persistence, client review submission, blog editor UI, admin analytics (real), audit logging, file upload pipeline (local + R2 providers) | `f809741` |
 | MP-B | Mega Phase B: sitemap/robots/Organization+Article JSON-LD, public `/blog/[slug]` page, PWA manifest + app icon, unread notification badge, portal/admin loading skeletons | `c572440` |
-| MP-C | Mega Phase C: assistant.* translated into all 14 locales (key parity verified), email retry worker (`/api/cron/email-retry`, CRON_SECRET-guarded), `.env.example` documents STORAGE_MODE + CRON_SECRET | this commit |
+| MP-C | Mega Phase C: assistant.* translated into all 14 locales (key parity verified), email retry worker (`/api/cron/email-retry`, CRON_SECRET-guarded), `.env.example` documents STORAGE_MODE + CRON_SECRET | `783483f` |
+| Polish | Production Polish: contact info cards (placeholders), `/admin/projects/new` create UI (project-create gap closed), session-aware Dashboard/Client-Portal header button, assistant search + 4 quick actions (new en keys, EN fallback for other locales), services curated to 4 high-value AI/software offerings in DB (mobile-apps removed), enterprise `TrustStrip` on home (capability statements only, no fabricated stats) | this commit |
 
 ## Remaining Modules (planned)
 

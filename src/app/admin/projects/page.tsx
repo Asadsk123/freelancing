@@ -5,7 +5,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { TrackingId } from "@/components/shared/tracking-id";
-import { FolderOpen } from "lucide-react";
+import { FolderOpen, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { hasDatabase } from "@/db";
 import { projectRepository } from "@/lib/repositories/project";
 import { formatDate } from "@/lib/utils/formatting";
@@ -29,7 +30,16 @@ export default async function AdminProjectsPage() {
 
   return (
     <div className="mx-auto max-w-[1280px]">
-      <PageHeader title="Projects" description="Manage all client projects." />
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <PageHeader title="Projects" description="Manage all client projects." />
+        {dbAvailable && (
+          <Button asChild>
+            <Link href="/admin/projects/new">
+              <Plus className="h-4 w-4" /> New project
+            </Link>
+          </Button>
+        )}
+      </div>
 
       {!dbAvailable && (
         <div className="mt-4 rounded-[var(--radius-md)] border border-[var(--warning)] bg-[var(--warning)]/10 px-4 py-3">

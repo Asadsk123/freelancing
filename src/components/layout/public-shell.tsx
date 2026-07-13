@@ -4,7 +4,13 @@ import { useState, useCallback } from "react";
 import { Header } from "./header";
 import { MobileNav } from "./mobile-nav";
 
-export function PublicShell({ children }: { children: React.ReactNode }) {
+export function PublicShell({
+  children,
+  dashboardHref = "/login",
+}: {
+  children: React.ReactNode;
+  dashboardHref?: string;
+}) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const handleMobileMenuOpen = useCallback(() => {
@@ -17,7 +23,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <Header onMobileMenuOpen={handleMobileMenuOpen} />
+      <Header onMobileMenuOpen={handleMobileMenuOpen} dashboardHref={dashboardHref} />
       <MobileNav open={mobileNavOpen} onClose={handleMobileMenuClose} />
       {children}
     </>

@@ -53,6 +53,16 @@
     "dashboardInfo": "Your dashboard shows every project at a glance. Taking you there.",
     "milestonesInfo": "Milestones are the key stages of your project. Each shows its status, so you always know what's done and what's next.",
     "uploadsInfo": "Files your team shares appear under a project's Files tab. You can preview them and request revisions — no software needed.",
-    "pageInfo": "This is part of your Royal Asad experience. Ask me anything, or use the guides above."
+    "pageInfo": "This is part of your Royal Asad experience. Ask me anything, or use the guides above.",
+    "searchPlaceholder": "Search help & pages...",
+    "noResults": "No matches — try a different word.",
+    "quickPortfolio": "View our portfolio",
+    "quickBlog": "Read the blog",
+    "quickNotifications": "My notifications",
+    "quickSettings": "My settings",
+    "portfolioInfo": "Our portfolio shows completed client projects. Taking you there now.",
+    "blogInfo": "Insights and guides from our team. Taking you there now.",
+    "notificationsInfo": "All your project updates in one place. Taking you there.",
+    "settingsInfo": "Manage your profile and notification preferences. Taking you there."
   }
 }
