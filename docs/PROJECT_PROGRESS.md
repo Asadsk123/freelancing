@@ -51,6 +51,7 @@
 | MP-A | Mega Phase A: settings persistence, client review submission, blog editor UI, admin analytics (real), audit logging, file upload pipeline (local + R2 providers) | `f809741` |
 | MP-B | Mega Phase B: sitemap/robots/Organization+Article JSON-LD, public `/blog/[slug]` page, PWA manifest + app icon, unread notification badge, portal/admin loading skeletons | `c572440` |
 | MP-C | Mega Phase C: assistant.* translated into all 14 locales (key parity verified), email retry worker (`/api/cron/email-retry`, CRON_SECRET-guarded), `.env.example` documents STORAGE_MODE + CRON_SECRET | `783483f` |
+| Polish2 | Final Polish verification: link crawl across all public pages found footer `/privacy` + `/security` 404s → both pages created (honest practice summaries, legal-copy note); heading/skip-nav/viewport checks pass; re-crawl clean | this commit |
 | Polish | Production Polish: contact info cards (placeholders), `/admin/projects/new` create UI (project-create gap closed), session-aware Dashboard/Client-Portal header button, assistant search + 4 quick actions (new en keys, EN fallback for other locales), services curated to 4 high-value AI/software offerings in DB (mobile-apps removed), enterprise `TrustStrip` on home (capability statements only, no fabricated stats) | this commit |
 
 ## Remaining Modules (planned)
