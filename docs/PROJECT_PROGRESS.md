@@ -314,3 +314,7 @@ Other open items (lower priority): 25C accessibility/perf pass; session-timeout 
 
 ## Browser Polish Pass (2026-07-14)
 - Live browser regression: home/services/contact clean (console error-free), header Dashboard button role-aware, contact real data renders, assistant search filters correctly. Fixed: assistant panel initial focus now lands on the search input (was Pause button). Mobile visual test still limited by automation viewport (responsive classes + mobile nav verified in code).
+
+## Audit Log UI + OG Image (2026-07-14)
+- /admin/audit page: recent 100 entries table (action badge by type, actor, metadata summary, relative time), empty state, DB-guard; added to admin sidebar + mobile nav. Route middleware-protected (307 unauth verified).
+- Dynamic OG image (/opengraph-image, next/og edge ImageResponse) - brand gradient + RA mark + tagline; 200 verified. Deferred list shrinks: audit-log UI and OG image done.

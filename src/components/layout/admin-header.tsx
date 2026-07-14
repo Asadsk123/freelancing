@@ -13,6 +13,7 @@ import {
   Star,
   Settings,
   ShieldCheck,
+  History,
   Home,
   Menu,
   X,
@@ -44,6 +45,7 @@ const iconMap: Record<string, LucideIcon> = {
   star: Star,
   settings: Settings,
   "shield-check": ShieldCheck,
+  history: History,
 };
 
 const mobileNavItems = [
@@ -55,6 +57,7 @@ const mobileNavItems = [
   { label: "Inquiries", href: "/admin/inquiries", icon: "inbox" },
   { label: "Reviews", href: "/admin/reviews", icon: "star" },
   { label: "Team", href: "/admin/team", icon: "shield-check" },
+  { label: "Audit Log", href: "/admin/audit", icon: "history" },
   { label: "Settings", href: "/admin/settings", icon: "settings" },
 ] as const;
 
