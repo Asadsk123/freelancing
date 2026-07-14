@@ -308,3 +308,6 @@ Target: excellent Lighthouse scores. Roadmap, in the Next.js App Router idioms a
 5. **Email background worker** — a cron/route that processes `emailQueueRepository.findRetryable()` to retry failed/queued emails (architecture ready; inline delivery is single-attempt today).
 
 Other open items (lower priority): 25C accessibility/perf pass; session-timeout warning; theme packs; price comparison; portfolio-trust section; audit-log admin UI; watermarking; incremental i18n string-coverage (drop-in via `t()`).
+
+## Contact Data Final (2026-07-14)
+- Real contact details wired via brand config: fahadasadmuz@gmail.com, +91 9135430422, One BKC Bandra Kurla Complex Mumbai 400051, 7AM-9PM IST. Contact page renders all four (verified live). Services already enterprise AI/software-only (4). AI Helper unchanged (already upgraded).

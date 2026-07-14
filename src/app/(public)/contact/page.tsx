@@ -46,9 +46,9 @@ export default function ContactPage() {
               <div className="flex items-start gap-3">
                 <Clock className="mt-0.5 h-5 w-5 text-[var(--primary)]" />
                 <div>
-                  <h3 className="font-semibold text-[var(--foreground)]">Response time</h3>
+                  <h3 className="font-semibold text-[var(--foreground)]">Hours &amp; response time</h3>
                   <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-                    We respond to all inquiries within 24 business hours.
+                    {brand.contact.hours}. We respond to all inquiries within 24 business hours.
                   </p>
                 </div>
               </div>
@@ -61,10 +61,12 @@ export default function ContactPage() {
                 <Phone className="mt-0.5 h-5 w-5 text-[var(--primary)]" />
                 <div>
                   <h3 className="font-semibold text-[var(--foreground)]">Phone / WhatsApp</h3>
-                  {/* Placeholder — replace with the real number before launch. */}
-                  <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-                    Shared after your first inquiry — every client gets a direct line.
-                  </p>
+                  <a
+                    href={`tel:${brand.contact.phone.replace(/\s/g, "")}`}
+                    className="mt-1 block text-sm text-[var(--primary)] hover:underline"
+                  >
+                    {brand.contact.phone}
+                  </a>
                 </div>
               </div>
             </CardContent>
@@ -75,10 +77,9 @@ export default function ContactPage() {
               <div className="flex items-start gap-3">
                 <MapPin className="mt-0.5 h-5 w-5 text-[var(--primary)]" />
                 <div>
-                  <h3 className="font-semibold text-[var(--foreground)]">Where we work</h3>
-                  {/* Placeholder — replace with the registered office address before launch. */}
+                  <h3 className="font-semibold text-[var(--foreground)]">Office</h3>
                   <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-                    Remote-first team serving clients worldwide across all time zones.
+                    {brand.contact.address}
                   </p>
                 </div>
               </div>

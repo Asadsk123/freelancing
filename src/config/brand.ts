@@ -5,8 +5,11 @@ export const brand = {
     "Royal Asad is a premium international digital agency delivering web development, design, and digital marketing solutions for businesses worldwide.",
 
   contact: {
-    email: "hello@royalasad.com",
-    supportEmail: "support@royalasad.com",
+    email: "fahadasadmuz@gmail.com",
+    supportEmail: "fahadasadmuz@gmail.com",
+    phone: "+91 9135430422",
+    address: "One BKC, Bandra Kurla Complex, Mumbai 400051",
+    hours: "7 AM – 9 PM IST, every day",
   },
 
   social: {
