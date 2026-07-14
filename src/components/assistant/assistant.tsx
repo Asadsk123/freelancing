@@ -194,9 +194,13 @@ export function Assistant() {
   // and returns focus to the mascot trigger.
   useEffect(() => {
     if (!open) return;
-    const first = panelRef.current?.querySelector<HTMLElement>(
-      'button, [href], input, [tabindex]:not([tabindex="-1"])',
-    );
+    // Prefer the search input so users can type immediately; fall back to the
+    // first focusable control (e.g. on the message view, which has no input).
+    const first =
+      panelRef.current?.querySelector<HTMLElement>("input") ??
+      panelRef.current?.querySelector<HTMLElement>(
+        'button, [href], [tabindex]:not([tabindex="-1"])',
+      );
     first?.focus();
 
     const onKey = (e: KeyboardEvent) => {

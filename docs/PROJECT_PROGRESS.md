@@ -311,3 +311,6 @@ Other open items (lower priority): 25C accessibility/perf pass; session-timeout 
 
 ## Contact Data Final (2026-07-14)
 - Real contact details wired via brand config: fahadasadmuz@gmail.com, +91 9135430422, One BKC Bandra Kurla Complex Mumbai 400051, 7AM-9PM IST. Contact page renders all four (verified live). Services already enterprise AI/software-only (4). AI Helper unchanged (already upgraded).
+
+## Browser Polish Pass (2026-07-14)
+- Live browser regression: home/services/contact clean (console error-free), header Dashboard button role-aware, contact real data renders, assistant search filters correctly. Fixed: assistant panel initial focus now lands on the search input (was Pause button). Mobile visual test still limited by automation viewport (responsive classes + mobile nav verified in code).
