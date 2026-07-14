@@ -29,6 +29,9 @@ export default async function DashboardPage() {
   const session = await getSession();
   if (!session) redirect("/login");
 
+  // Admins land on their own dashboard; other portal pages stay accessible.
+  if (session.role === "admin") redirect("/admin/dashboard");
+
   const dbAvailable = hasDatabase();
 
   const projects = dbAvailable
