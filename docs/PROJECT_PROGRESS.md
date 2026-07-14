@@ -318,3 +318,6 @@ Other open items (lower priority): 25C accessibility/perf pass; session-timeout 
 ## Audit Log UI + OG Image (2026-07-14)
 - /admin/audit page: recent 100 entries table (action badge by type, actor, metadata summary, relative time), empty state, DB-guard; added to admin sidebar + mobile nav. Route middleware-protected (307 unauth verified).
 - Dynamic OG image (/opengraph-image, next/og edge ImageResponse) - brand gradient + RA mark + tagline; 200 verified. Deferred list shrinks: audit-log UI and OG image done.
+
+## Admin Settings Real (2026-07-14)
+- Fixed: admin settings was cosmetic (fake success toasts, stale hardcoded values). Admin Profile now loads the real session user and saves via updateProfile (name/phone; company preserved; unsaved-warning + Saved indicator; DB-verified). Agency Information is now honest read-only from brand config with a code pointer - no fake save button.
