@@ -1,0 +1,127 @@
+SALES PIPELINE - JULY 15, 2026
+
+=== A-TIER PROSPECTS (CONTACT TODAY) ===
+
+1. TWELVELABS (Video AI Intelligence)
+   Website: twelvelabs.io
+   Founder/CEO: Jae Lee
+   Funding: $100M Series B (July 1, 2026)
+   Why A-Tier: Just raised $100M, expanding to NY/London, needs engineering capacity
+   Win Probability: HIGH (85%)
+   Est. Project Value: $15,000-$50,000
+   Status: NEW
+
+   EMAIL DRAFT:
+   Subject: Engineering support for TwelveLabs' NY/London expansion
+
+   Hi Jae,
+
+   Caught your announcement on the $100M Series B and the NY/London office openings. Scaling video AI while building out new geographies means dev capacity becomes a constraint fast.
+
+   I run ASAD Creatives, a development agency focused on AI/ML integration and scalable systems. We work white-label behind AI companies: backend infrastructure, API optimization, and custom integrations — letting your team focus on model development while we handle the engineering infrastructure.
+
+   Given your expansion timeline, open to a 20-min call to see if overflow engineering capacity makes sense for your roadmap?
+
+   —Asad
+
+---
+
+2. NORM AI (Legal AI Agents)
+   Website: norm.ai
+   Founder/CEO: John Nay
+   Funding: $120M Series C (July 7, 2026) - $1.2B valuation
+   Why A-Tier: Unicorn status + legal AI growth = high execution velocity, needs eng support
+   Win Probability: HIGH (80%)
+   Est. Project Value: $20,000-$75,000
+   Status: NEW
+
+   EMAIL DRAFT:
+   Subject: Development partnership for Norm's legal AI scaling
+
+   Hi John,
+
+   Saw the news on the $120M raise and unicorn status — that's a significant validation of the legal AI agent model. With this capital, the constraint shifts from R&D to execution and infrastructure scaling.
+
+   I run ASAD Creatives. We partner white-label with AI companies on infrastructure, integrations, and backend systems. As you're scaling Norm Law and the platform, we can take on custom integrations and backend work, keeping your engineering team focused on core agent development.
+
+   Curious if overflow engineering capacity aligns with your scaling plans. Open to a quick call?
+
+   —Asad
+
+---
+
+3. REDO (Commerce AI for Retention)
+   Website: redo.com
+   Series B: $81M (Cervin, Pelion VPs)
+   Why A-Tier: Major Series B funding for post-purchase commerce, needs feature development
+   Win Probability: MEDIUM-HIGH (75%)
+   Est. Project Value: $15,000-$40,000
+   Status: NEW
+
+   EMAIL DRAFT:
+   Subject: Custom feature development for Redo's retention AI
+
+   Hi [Redo CEO],
+
+   Your Series B focus on post-purchase retention optimization is smart — most brands leave 30% of AOV on the table there. Custom integrations with payment processors and loyalty systems are complex.
+
+   I run ASAD Creatives. We build ecommerce integrations and custom retention features: dunning, win-back campaigns, post-purchase upsells. We've shipped features that increased LTV 12-18%.
+
+   If you're building custom retention features for brands, open to a 20-min chat on how we could support your engineering roadmap?
+
+   —Asad
+
+---
+
+4. PHIA (AI Sustainable Shopping)
+   Website: phia.ai
+   Series A: $35.5M (Khosla Ventures)
+   Why A-Tier: Early-stage with major backing, likely scaling product fast, needs eng capacity
+   Win Probability: MEDIUM (70%)
+   Est. Project Value: $10,000-$30,000
+   Status: NEW
+
+   EMAIL DRAFT:
+   Subject: Backend engineering for Phia's scaling phase
+
+   Hi [Phia founder],
+
+   The Series A focus on AI-powered sustainable shopping is timely — consumer interest in transparent product sourcing is growing 40%+ year-over-year.
+
+   I run ASAD Creatives. We build backend systems and integrations for AI consumer products: data pipelines, recommendation engines, payment integrations. When you're scaling product velocity, having an external engineering team handle infrastructure frees your core team to iterate on the AI.
+
+   Open to exploring if outsourced engineering could accelerate your roadmap?
+
+   —Asad
+
+---
+
+5. STRIPE (Strategic: AI Commerce Platform)
+   Website: stripe.com
+   Why A-Tier: Building AI commerce features, likely needs external dev capacity for integrations
+   Win Probability: LOW-MEDIUM (40%) - but high deal size potential ($50K-$150K+)
+   Est. Project Value: $50,000-$150,000+
+   Status: NEW
+
+   EMAIL DRAFT:
+   Subject: Custom ecommerce AI integrations
+
+   Hi [Stripe Partnerships],
+
+   Noticed Stripe expanding into AI commerce automation. Brands need custom integrations between Stripe's payment/financial APIs and their AI personalization systems.
+
+   I run ASAD Creatives. We build custom integrations between payment platforms (Stripe, Square) and AI tools (Claude, OpenAI). We can develop reference implementations that Stripe partners could resell.
+
+   Open to discussing partnership opportunities for custom AI × payment integrations?
+
+   —Asad
+
+---
+
+NEXT ACTIONS:
+- Day 1 (Today): Send emails to prospects 1-4
+- Day 3: Follow-up sequence (check for replies)
+- Day 7: Second follow-up (LinkedIn or phone)
+- Ongoing: Track replies in CRM, schedule calls for positive responses
+
+GOAL: Get 1 qualified meeting by end of week.
