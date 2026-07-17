@@ -18,7 +18,9 @@ import { useUnsavedChangesWarning } from "@/lib/hooks/use-unsaved-changes-warnin
 
 type FormState = "idle" | "submitting" | "success" | "error";
 
-export function ContactForm() {
+type ServiceOption = { slug: string; name: string };
+
+export function ContactForm({ services = [] }: { services?: ServiceOption[] }) {
   const [formState, setFormState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [trackingId, setTrackingId] = useState("");
@@ -166,12 +168,11 @@ export function ContactForm() {
             <Label htmlFor="contact-service">Service of interest</Label>
             <Select id="contact-service" name="service" defaultValue="">
               <option value="" disabled>Select a service</option>
-              <option value="web-development">Web Development</option>
-              <option value="graphic-design">Graphic Design</option>
-              <option value="digital-marketing">Digital Marketing</option>
-              <option value="seo">SEO Optimization</option>
-              <option value="mobile-apps">Mobile Apps</option>
-              <option value="maintenance">Maintenance & Support</option>
+              {services.map((service) => (
+                <option key={service.slug} value={service.slug}>
+                  {service.name}
+                </option>
+              ))}
               <option value="other">Other</option>
             </Select>
           </div>

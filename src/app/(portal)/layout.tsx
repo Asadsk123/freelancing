@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
 import { hasDatabase } from "@/db";
 import { notificationRepository } from "@/lib/repositories/notification";
+import { userRepository } from "@/lib/repositories/user";
 import { PortalShell } from "@/components/layout/portal-shell";
 
 export default async function PortalLayout({
@@ -15,19 +16,25 @@ export default async function PortalLayout({
     redirect("/login");
   }
 
-  const initials = session.name
+  // Fetch fresh alongside the unread count — the JWT name goes stale after a
+  // profile rename (payload is fixed for the session's 30-day life).
+  const [user, unreadCount] = hasDatabase()
+    ? await Promise.all([
+        userRepository.findById(session.userId),
+        notificationRepository.countUnread(session.userId),
+      ])
+    : [undefined, 0];
+  const displayName = user?.name ?? session.name;
+
+  const initials = displayName
     .split(" ")
     .map((w) => w[0])
     .join("")
     .toUpperCase()
     .slice(0, 2);
 
-  const unreadCount = hasDatabase()
-    ? await notificationRepository.countUnread(session.userId)
-    : 0;
-
   return (
-    <PortalShell userName={session.name} userInitials={initials} unreadCount={unreadCount}>
+    <PortalShell userName={displayName} userInitials={initials} unreadCount={unreadCount}>
       {children}
     </PortalShell>
   );

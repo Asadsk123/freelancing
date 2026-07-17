@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -23,6 +23,9 @@ function isValidEmail(value: string): boolean {
 
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  // Deep-link return path set by the middleware; forwarded through the OTP step.
+  const from = searchParams.get("from") ?? "";
   const [formState, setFormState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [email, setEmail] = useState("");
@@ -67,6 +70,7 @@ export function LoginForm() {
     if (response.success || response.retryAfter) {
       localStorage.setItem(LAST_EMAIL_KEY, result.data.email);
       const params = new URLSearchParams({ email: result.data.email });
+      if (from) params.set("from", from);
       router.push(`/login/verify?${params.toString()}`);
       return;
     }
@@ -75,7 +79,7 @@ export function LoginForm() {
     sentRef.current = false;
     setErrorMessage(response.error ?? "Something went wrong.");
     setFormState("error");
-  }, [email, router]);
+  }, [email, from, router]);
 
   // Auto-send: once the email is valid and the user has stopped typing for a
   // few seconds, send the code automatically. Any keystroke resets the timer

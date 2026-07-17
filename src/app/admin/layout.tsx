@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
+import { hasDatabase } from "@/db";
+import { userRepository } from "@/lib/repositories/user";
 import { AdminShell } from "@/components/layout/admin-shell";
 
 export default async function AdminLayout({
@@ -17,7 +19,11 @@ export default async function AdminLayout({
     redirect("/dashboard");
   }
 
-  const initials = session.name
+  // Fresh name from the DB — the JWT payload goes stale after a profile rename.
+  const user = hasDatabase() ? await userRepository.findById(session.userId) : undefined;
+  const displayName = user?.name ?? session.name;
+
+  const initials = displayName
     .split(" ")
     .map((w) => w[0])
     .join("")
@@ -25,7 +31,7 @@ export default async function AdminLayout({
     .slice(0, 2);
 
   return (
-    <AdminShell userName={session.name} userInitials={initials}>
+    <AdminShell userName={displayName} userInitials={initials}>
       {children}
     </AdminShell>
   );

@@ -19,6 +19,10 @@ export function VerifyForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email") ?? "";
+  // Deep-link return path set by the middleware (?from=...). Only same-origin
+  // absolute paths are honored, so a crafted link can't cause an open redirect.
+  const rawFrom = searchParams.get("from") ?? "";
+  const from = rawFrom.startsWith("/") && !rawFrom.startsWith("//") ? rawFrom : null;
 
   const [code, setCode] = useState("");
   const [formState, setFormState] = useState<FormState>("idle");
@@ -60,14 +64,14 @@ export function VerifyForm() {
       } catch {
         // localStorage may be unavailable; the welcome cue is non-essential.
       }
-      router.push(response.redirectTo ?? "/dashboard");
+      router.push(from ?? response.redirectTo ?? "/dashboard");
       router.refresh();
     } else {
       setErrorMessage(response.error ?? "Verification failed.");
       setFormState("error");
       setCode("");
     }
-  }, [code, email, router]);
+  }, [code, email, from, router]);
 
   useEffect(() => {
     if (code.length === 6) {

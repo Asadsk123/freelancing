@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/shared/page-header";
 import { ContactForm } from "@/components/sections/contact-form";
+import { hasDatabase } from "@/db";
+import { serviceRepository } from "@/lib/repositories/service";
 import { Card, CardContent } from "@/components/ui/card";
 import { brand } from "@/config/brand";
 import { Mail, Clock, MapPin, Phone, ShieldCheck } from "lucide-react";
@@ -10,7 +12,9 @@ export const metadata: Metadata = {
   description: "Get in touch with Royal Asad — we'd love to hear about your project.",
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const services = hasDatabase() ? await serviceRepository.findActive() : [];
+
   return (
     <div className="mx-auto max-w-[1280px] px-4 py-12 sm:px-6 lg:px-8">
       <PageHeader
@@ -20,7 +24,7 @@ export default function ContactPage() {
 
       <div className="mt-10 grid gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <ContactForm />
+          <ContactForm services={services.map((s) => ({ slug: s.slug, name: s.name }))} />
         </div>
 
         <div className="space-y-6">

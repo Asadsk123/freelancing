@@ -321,3 +321,11 @@ Other open items (lower priority): 25C accessibility/perf pass; session-timeout 
 
 ## Admin Settings Real (2026-07-14)
 - Fixed: admin settings was cosmetic (fake success toasts, stale hardcoded values). Admin Profile now loads the real session user and saves via updateProfile (name/phone; company preserved; unsaved-warning + Saved indicator; DB-verified). Agency Information is now honest read-only from brand config with a code pointer - no fake save button.
+
+## Engineering Polish Final (2026-07-14)
+- Contact form services now DB-driven (active services + Other) - removed stale hardcoded list (graphic-design/seo/etc.) that mismatched curated offerings; inquiry schema already permissive.
+- Header username freshness: portal + admin layouts fetch the user from DB so a profile rename shows immediately (JWT payload was stale for up to 30 days).
+- Deep-link login: middleware ?from= now honored after OTP verify (login form forwards it; open-redirect guarded - only same-origin paths starting with / accepted).
+- Twitter card upgraded to summary_large_image (1200x630 OG image exists).
+- Assistant pageInfo copy made accurate in all 14 locales (removed 'Ask me anything' overpromise - it is a guided assistant with search).
+Gates pass; verified live: DB-driven service options render, old slugs gone, twitter meta present, from-param pages 200.
