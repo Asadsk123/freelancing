@@ -334,3 +334,6 @@ Gates pass; verified live: DB-driven service options render, old slugs gone, twi
 - favicon.ico fallback generated in pure Node (32x32 PNG-in-ICO, brand rounded square + RA pixel monogram; ICO header + embedded PNG validated byte-level; /favicon.ico 200) - Safari/legacy fallback for the SVG icon.
 - i18n consistency: the 10 newer assistant keys (search, quick actions, info strings) translated into all 13 non-English locales - assistant panel no longer mixes languages; key parity re-verified by script.
 - Link crawl clean (12 internal links incl. favicon). Not possible in this environment (documented): physical-device QA, non-Chromium cross-browser runs, Lighthouse, post-deploy verification.
+
+## Final Branding Pass (2026-07-14)
+- Visible brand unified to exactly 'ROYAL-ASAD AI & Digital Solutions' everywhere: brand config (name/description/companyName), email From lines, page meta descriptions (login/about/blog/contact), About body copy, all 14 dictionaries (Latin + transliterated mentions replaced), OG image (two-line lockup), manifest (full name + short_name ROYAL-ASAD per spec), Logo made responsive for the longer name. No renames of folders/repo/DB/routes/env/identifiers. Verified live: title, og:site_name, manifest, OG image 200; zero old-brand strings left in src.

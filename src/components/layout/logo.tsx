@@ -15,10 +15,13 @@ export function Logo({ className }: LogoProps) {
         className,
       )}
     >
-      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--primary)] text-sm font-bold text-[var(--primary-foreground)]">
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--primary)] text-sm font-bold text-[var(--primary-foreground)]">
         RA
       </span>
-      <span className="text-lg">{brand.name}</span>
+      {/* Full brand name; wraps to two tight lines where horizontal space is short. */}
+      <span className="max-w-[11rem] text-sm leading-tight sm:max-w-none sm:text-base lg:text-lg">
+        {brand.name}
+      </span>
     </Link>
   );
 }

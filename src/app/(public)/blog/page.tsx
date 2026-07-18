@@ -11,7 +11,7 @@ import { formatDate } from "@/lib/utils/formatting";
 
 export const metadata: Metadata = {
   title: "Blog",
-  description: "Insights, guides, and updates from the Royal Asad team.",
+  description: "Insights, guides, and updates from the ROYAL-ASAD AI & Digital Solutions team.",
 };
 
 export default async function BlogPage() {

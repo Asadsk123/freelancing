@@ -1,7 +1,7 @@
 export const emailConfig = {
   from: {
-    default: "Royal Asad <hello@royalasad.com>",
-    noreply: "Royal Asad <noreply@royalasad.com>",
+    default: "ROYAL-ASAD AI & Digital Solutions <hello@royalasad.com>",
+    noreply: "ROYAL-ASAD AI & Digital Solutions <noreply@royalasad.com>",
   },
 
   throttle: {

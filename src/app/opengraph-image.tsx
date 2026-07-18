@@ -38,8 +38,9 @@ export default function OpenGraphImage() {
         >
           RA
         </div>
-        <div style={{ fontSize: 72, fontWeight: 700, letterSpacing: -2 }}>{brand.name}</div>
-        <div style={{ fontSize: 32, marginTop: 20, opacity: 0.9 }}>{brand.tagline}</div>
+        <div style={{ fontSize: 64, fontWeight: 700, letterSpacing: -2 }}>ROYAL-ASAD</div>
+        <div style={{ fontSize: 40, fontWeight: 600, marginTop: 8 }}>AI &amp; Digital Solutions</div>
+        <div style={{ fontSize: 28, marginTop: 24, opacity: 0.9 }}>{brand.tagline}</div>
       </div>
     ),
     size,

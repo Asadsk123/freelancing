@@ -6,7 +6,7 @@ import { Target, Users, Zap } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "Learn about Royal Asad — our mission, approach, and commitment to your success.",
+  description: "Learn about ROYAL-ASAD AI & Digital Solutions — our mission, approach, and commitment to your success.",
 };
 
 const values = [
@@ -42,9 +42,9 @@ export default function AboutPage() {
         <div className="mt-12 mx-auto max-w-3xl">
           <div className="prose-like space-y-6 text-[var(--muted-foreground)]">
             <p className="text-lg leading-relaxed">
-              Royal Asad is a premium international digital agency. We partner with
-              businesses worldwide to deliver web development, design, and digital
-              marketing solutions that drive real growth.
+              ROYAL-ASAD AI &amp; Digital Solutions is a premium international agency.
+              We partner with businesses worldwide to deliver AI solutions, custom
+              software, and high-performance web platforms that drive real growth.
             </p>
             <p className="leading-relaxed">
               We started with a simple observation: most agencies optimize for their

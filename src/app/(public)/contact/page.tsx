@@ -9,7 +9,7 @@ import { Mail, Clock, MapPin, Phone, ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Get in touch with Royal Asad — we'd love to hear about your project.",
+  description: "Get in touch with ROYAL-ASAD AI & Digital Solutions — we'd love to hear about your project.",
 };
 
 export default async function ContactPage() {

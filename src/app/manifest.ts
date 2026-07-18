@@ -4,7 +4,8 @@ import { brand } from "@/config/brand";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: brand.name,
-    short_name: brand.name,
+    // Home-screen label — spec recommends keeping this short (~12 chars).
+    short_name: "ROYAL-ASAD",
     description: brand.description,
     start_url: "/",
     display: "standalone",

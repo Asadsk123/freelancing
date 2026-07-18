@@ -3,7 +3,7 @@ import { LoginForm } from "./login-form";
 
 export const metadata: Metadata = {
   title: "Sign In",
-  description: "Sign in to your Royal Asad account.",
+  description: "Sign in to your ROYAL-ASAD AI & Digital Solutions account.",
 };
 
 export default function LoginPage() {

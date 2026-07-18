@@ -1,8 +1,8 @@
 export const brand = {
-  name: "Royal Asad",
+  name: "ROYAL-ASAD AI & Digital Solutions",
   tagline: "Digital solutions that grow your business",
   description:
-    "Royal Asad is a premium international digital agency delivering web development, design, and digital marketing solutions for businesses worldwide.",
+    "ROYAL-ASAD AI & Digital Solutions is a premium international agency delivering AI solutions, custom software, and high-performance web platforms for businesses worldwide.",
 
   contact: {
     email: "fahadasadmuz@gmail.com",
@@ -27,7 +27,7 @@ export const brand = {
   },
 
   legal: {
-    companyName: "Royal Asad",
+    companyName: "ROYAL-ASAD AI & Digital Solutions",
     registrationNumber: "",
     registeredAddress: "",
   },
