@@ -53,6 +53,16 @@
     "dashboardInfo": "Ihr Dashboard zeigt alle Projekte auf einen Blick. Ich bringe Sie hin.",
     "milestonesInfo": "Meilensteine sind die wichtigsten Etappen Ihres Projekts. Jeder zeigt seinen Status — Sie wissen immer, was erledigt ist und was folgt.",
     "uploadsInfo": "Vom Team geteilte Dateien erscheinen im Dateien-Tab des Projekts. Sie können sie ansehen und Überarbeitungen anfordern — ganz ohne Software.",
-    "pageInfo": "Dies ist Teil Ihres Royal-Asad-Erlebnisses. Nutzen Sie die Anleitungen oben oder die Suche, um ans Ziel zu kommen."
+    "pageInfo": "Dies ist Teil Ihres Royal-Asad-Erlebnisses. Nutzen Sie die Anleitungen oben oder die Suche, um ans Ziel zu kommen.",
+    "searchPlaceholder": "Hilfe & Seiten durchsuchen...",
+    "noResults": "Keine Treffer — versuchen Sie ein anderes Wort.",
+    "quickPortfolio": "Unser Portfolio ansehen",
+    "quickBlog": "Blog lesen",
+    "quickNotifications": "Meine Benachrichtigungen",
+    "quickSettings": "Meine Einstellungen",
+    "portfolioInfo": "Unser Portfolio zeigt abgeschlossene Kundenprojekte. Ich bringe Sie hin.",
+    "blogInfo": "Beiträge und Anleitungen unseres Teams. Ich bringe Sie hin.",
+    "notificationsInfo": "Alle Projekt-Updates an einem Ort. Ich bringe Sie hin.",
+    "settingsInfo": "Verwalten Sie Ihr Profil und Ihre Benachrichtigungen. Ich bringe Sie hin."
   }
 }

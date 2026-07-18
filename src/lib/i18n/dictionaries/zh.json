@@ -53,6 +53,16 @@
     "dashboardInfo": "控制台可一览你的所有项目。正在带你前往。",
     "milestonesInfo": "里程碑是项目的关键阶段。每个都显示状态，让你随时了解已完成和接下来的工作。",
     "uploadsInfo": "团队共享的文件会出现在项目的“文件”标签页。你可以预览并请求修改——无需任何软件。",
-    "pageInfo": "这是你的 Royal Asad 体验的一部分。使用上面的引导或搜索框即可到达所需页面。"
+    "pageInfo": "这是你的 Royal Asad 体验的一部分。使用上面的引导或搜索框即可到达所需页面。",
+    "searchPlaceholder": "搜索帮助和页面...",
+    "noResults": "没有匹配——换个词试试。",
+    "quickPortfolio": "查看作品集",
+    "quickBlog": "阅读博客",
+    "quickNotifications": "我的通知",
+    "quickSettings": "我的设置",
+    "portfolioInfo": "作品集展示已完成的客户项目。正在带你前往。",
+    "blogInfo": "来自团队的文章与指南。正在带你前往。",
+    "notificationsInfo": "所有项目更新都在这里。正在带你前往。",
+    "settingsInfo": "管理你的资料和通知偏好。正在带你前往。"
   }
 }

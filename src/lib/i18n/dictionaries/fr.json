@@ -53,6 +53,16 @@
     "dashboardInfo": "Votre tableau de bord montre tous vos projets en un coup d'œil. Je vous y emmène.",
     "milestonesInfo": "Les jalons sont les grandes étapes de votre projet. Chacun affiche son statut, pour savoir ce qui est fait et ce qui suit.",
     "uploadsInfo": "Les fichiers partagés par l'équipe apparaissent dans l'onglet Fichiers du projet. Vous pouvez les prévisualiser et demander des révisions — sans logiciel.",
-    "pageInfo": "Ceci fait partie de votre expérience Royal Asad. Utilisez les guides ci-dessus ou la recherche pour vous orienter."
+    "pageInfo": "Ceci fait partie de votre expérience Royal Asad. Utilisez les guides ci-dessus ou la recherche pour vous orienter.",
+    "searchPlaceholder": "Rechercher aide et pages...",
+    "noResults": "Aucun résultat — essayez un autre mot.",
+    "quickPortfolio": "Voir notre portfolio",
+    "quickBlog": "Lire le blog",
+    "quickNotifications": "Mes notifications",
+    "quickSettings": "Mes paramètres",
+    "portfolioInfo": "Notre portfolio présente les projets clients terminés. Je vous y emmène.",
+    "blogInfo": "Articles et guides de notre équipe. Je vous y emmène.",
+    "notificationsInfo": "Toutes vos mises à jour de projet au même endroit. Je vous y emmène.",
+    "settingsInfo": "Gérez votre profil et vos préférences de notification. Je vous y emmène."
   }
 }

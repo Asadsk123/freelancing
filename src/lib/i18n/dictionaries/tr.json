@@ -53,6 +53,16 @@
     "dashboardInfo": "Panelinizde tüm projeleriniz tek bakışta görünür. Sizi oraya götürüyorum.",
     "milestonesInfo": "Kilometre taşları projenizin ana aşamalarıdır. Her biri durumunu gösterir; neyin bittiğini ve sıradakini hep bilirsiniz.",
     "uploadsInfo": "Ekibinizin paylaştığı dosyalar projenin Dosyalar sekmesinde görünür. Önizleyebilir ve revizyon isteyebilirsiniz — yazılım gerekmez.",
-    "pageInfo": "Bu, Royal Asad deneyiminizin bir parçası. Yukarıdaki rehberleri veya arama kutusunu kullanın."
+    "pageInfo": "Bu, Royal Asad deneyiminizin bir parçası. Yukarıdaki rehberleri veya arama kutusunu kullanın.",
+    "searchPlaceholder": "Yardım ve sayfalarda ara...",
+    "noResults": "Sonuç yok — başka bir kelime deneyin.",
+    "quickPortfolio": "Portföyümüzü görün",
+    "quickBlog": "Blogu okuyun",
+    "quickNotifications": "Bildirimlerim",
+    "quickSettings": "Ayarlarım",
+    "portfolioInfo": "Portföyümüz tamamlanmış müşteri projelerini gösterir. Sizi oraya götürüyorum.",
+    "blogInfo": "Ekibimizden yazılar ve rehberler. Sizi oraya götürüyorum.",
+    "notificationsInfo": "Tüm proje güncellemeleriniz tek yerde. Sizi oraya götürüyorum.",
+    "settingsInfo": "Profilinizi ve bildirim tercihlerinizi yönetin. Sizi oraya götürüyorum."
   }
 }

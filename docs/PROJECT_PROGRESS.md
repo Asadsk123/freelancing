@@ -329,3 +329,8 @@ Other open items (lower priority): 25C accessibility/perf pass; session-timeout 
 - Twitter card upgraded to summary_large_image (1200x630 OG image exists).
 - Assistant pageInfo copy made accurate in all 14 locales (removed 'Ask me anything' overpromise - it is a guided assistant with search).
 Gates pass; verified live: DB-driven service options render, old slugs gone, twitter meta present, from-param pages 200.
+
+## Engineering 10/10 Pass (2026-07-14)
+- favicon.ico fallback generated in pure Node (32x32 PNG-in-ICO, brand rounded square + RA pixel monogram; ICO header + embedded PNG validated byte-level; /favicon.ico 200) - Safari/legacy fallback for the SVG icon.
+- i18n consistency: the 10 newer assistant keys (search, quick actions, info strings) translated into all 13 non-English locales - assistant panel no longer mixes languages; key parity re-verified by script.
+- Link crawl clean (12 internal links incl. favicon). Not possible in this environment (documented): physical-device QA, non-Chromium cross-browser runs, Lighthouse, post-deploy verification.

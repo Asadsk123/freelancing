@@ -53,6 +53,16 @@
     "dashboardInfo": "Seu painel mostra todos os projetos num relance. Levando você até lá.",
     "milestonesInfo": "Marcos são as etapas principais do seu projeto. Cada um mostra seu status, então você sempre sabe o que está pronto e o que vem a seguir.",
     "uploadsInfo": "Arquivos compartilhados pela equipe aparecem na aba Arquivos do projeto. Você pode visualizá-los e pedir revisões — sem precisar de software.",
-    "pageInfo": "Isto faz parte da sua experiência Royal Asad. Use os guias acima ou a busca para chegar aonde precisa."
+    "pageInfo": "Isto faz parte da sua experiência Royal Asad. Use os guias acima ou a busca para chegar aonde precisa.",
+    "searchPlaceholder": "Buscar ajuda e páginas...",
+    "noResults": "Nenhum resultado — tente outra palavra.",
+    "quickPortfolio": "Ver nosso portfólio",
+    "quickBlog": "Ler o blog",
+    "quickNotifications": "Minhas notificações",
+    "quickSettings": "Minhas configurações",
+    "portfolioInfo": "Nosso portfólio mostra projetos de clientes concluídos. Levando você até lá.",
+    "blogInfo": "Artigos e guias da nossa equipe. Levando você até lá.",
+    "notificationsInfo": "Todas as atualizações dos seus projetos em um só lugar. Levando você até lá.",
+    "settingsInfo": "Gerencie seu perfil e preferências de notificação. Levando você até lá."
   }
 }
