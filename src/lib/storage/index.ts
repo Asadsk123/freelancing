@@ -8,6 +8,9 @@ export type { StorageProvider, StoredObject } from "./types";
 export function buildStorageKey(projectId: string, fileName: string): string {
   const safeName = fileName
     .replace(/[^a-zA-Z0-9._-]/g, "_")
+    // Collapse runs of dots so ".." can never appear in a key — providers
+    // also validate, but keys should be safe by construction.
+    .replace(/\.{2,}/g, ".")
     .replace(/_{2,}/g, "_")
     .slice(-120);
   return `projects/${projectId}/${crypto.randomUUID()}-${safeName}`;

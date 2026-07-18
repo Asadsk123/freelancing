@@ -4,6 +4,7 @@ import { getSession } from "@/lib/auth/session";
 import { fileRepository } from "@/lib/repositories/file";
 import { projectRepository } from "@/lib/repositories/project";
 import { storage } from "@/lib/storage";
+import { captureError } from "@/lib/observability/capture";
 
 export const runtime = "nodejs";
 
@@ -59,7 +60,7 @@ export async function GET(
       },
     });
   } catch (err) {
-    console.error("Failed to serve file:", err);
+    await captureError(err, { scope: "file-serve", extra: { fileId: id } });
     return NextResponse.json({ error: "Something went wrong." }, { status: 500 });
   }
 }

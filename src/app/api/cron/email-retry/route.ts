@@ -3,6 +3,8 @@ import { hasDatabase } from "@/db";
 import { emailQueueRepository } from "@/lib/repositories/email-queue";
 import { getProvider } from "@/lib/email/providers";
 import { getEmailMode } from "@/lib/email/config";
+import { logger } from "@/lib/observability/logger";
+import { captureError } from "@/lib/observability/capture";
 
 export const runtime = "nodejs";
 
@@ -48,11 +50,13 @@ export async function POST(request: Request): Promise<NextResponse> {
       const safe = (err instanceof Error ? err.message : String(err))
         .replace(/Bearer\s+[A-Za-z0-9._-]+/g, "Bearer ***")
         .slice(0, 300);
+      await captureError(err, { scope: "email-retry-cron", extra: { queueId: row.id } });
       await emailQueueRepository.markFailed(row.id, safe).catch(() => {});
       failed++;
     }
   }
 
+  logger.info("cron.email_retry.completed", { processed: rows.length, sent, failed });
   return NextResponse.json({ processed: rows.length, sent, failed });
 }
 

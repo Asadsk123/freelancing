@@ -1,5 +1,6 @@
 import { hasDatabase } from "@/db";
 import { emailQueueRepository } from "@/lib/repositories/email-queue";
+import { captureError } from "@/lib/observability/capture";
 import type { EmailMessage, RenderedEmail, SendOutcome } from "./types";
 import { getFromAddress } from "./config";
 import { getProvider } from "./providers";
@@ -44,7 +45,10 @@ export async function deliverEmail(message: EmailMessage): Promise<SendOutcome> 
     return { delivered: true, providerId: id };
   } catch (err) {
     const safe = sanitizeError(err);
-    console.error(`[email] delivery failed for "${message.subject}":`, safe);
+    await captureError(err, {
+      scope: "email-delivery",
+      extra: { subject: message.subject.slice(0, 100), queued: Boolean(queueId) },
+    });
     if (queueId) await emailQueueRepository.markFailed(queueId, safe).catch(() => {});
     return { delivered: false, error: safe };
   }

@@ -337,3 +337,12 @@ Gates pass; verified live: DB-driven service options render, old slugs gone, twi
 
 ## Final Branding Pass (2026-07-14)
 - Visible brand unified to exactly 'ROYAL-ASAD AI & Digital Solutions' everywhere: brand config (name/description/companyName), email From lines, page meta descriptions (login/about/blog/contact), About body copy, all 14 dictionaries (Latin + transliterated mentions replaced), OG image (two-line lockup), manifest (full name + short_name ROYAL-ASAD per spec), Logo made responsive for the longer name. No renames of folders/repo/DB/routes/env/identifiers. Verified live: title, og:site_name, manifest, OG image 200; zero old-brand strings left in src.
+
+## Principal-Engineer Hardening Pass (2026-07-18)
+- Automated testing: Vitest suite - 44 deterministic unit tests across 6 files (all Zod schemas, i18n matcher/translator + 14-locale key-parity guard, storage key sanitization + local provider round-trip + path-escape rejection, email/storage mode env matrices, formatting with fixed clock, logger redaction + Sentry envelope capture). npm test wired; no DB/network needed.
+- CI: .github/workflows/ci.yml - lint, tsc, vitest, production build; fails on any error; build requires no secrets (graceful degradation verified).
+- Observability: src/lib/observability - structured JSON logger with automatic secret redaction (secret-named keys, Bearer tokens, connection strings) + captureError provider abstraction (Sentry envelope HTTP API when SENTRY_DSN set, logs otherwise; never throws). Wired into email delivery, upload, file serve, and cron retry failures.
+- Security headers (next.config): CSP (default-src self, frame-ancestors none, form-action self; dev-only unsafe-eval for react-refresh), X-Frame-Options DENY, nosniff, Referrer-Policy, Permissions-Policy, HSTS. Live-verified; console clean under CSP.
+- Storage key hardening: dots collapsed so '..' cannot appear in keys (defense on top of resolve-time validation).
+- Docs: README.md, docs/DEPLOYMENT.md, docs/SECURITY.md (attack-surface table incl. dev-only npm audit stance), docs/OPERATIONS.md (monitoring, backup, recovery runbook), docs/TESTING.md (layers, determinism rules, Playwright promotion plan).
+- Gates: lint + tsc + 44/44 tests + build all green.

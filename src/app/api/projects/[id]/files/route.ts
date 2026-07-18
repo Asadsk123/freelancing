@@ -6,6 +6,7 @@ import { fileRepository } from "@/lib/repositories/file";
 import { auditLogRepository } from "@/lib/repositories/audit-log";
 import { storage, buildStorageKey, MAX_UPLOAD_BYTES } from "@/lib/storage";
 import { email as mailer } from "@/lib/email";
+import { captureError } from "@/lib/observability/capture";
 import { revalidatePath } from "next/cache";
 
 export const runtime = "nodejs";
@@ -79,7 +80,7 @@ export async function POST(
 
     return NextResponse.json({ success: true, fileId: created.id });
   } catch (err) {
-    console.error("Failed to upload file:", err);
+    await captureError(err, { scope: "file-upload", extra: { projectId } });
     return NextResponse.json(
       { success: false, error: "Something went wrong. Please try again." },
       { status: 500 },
