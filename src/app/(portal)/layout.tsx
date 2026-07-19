@@ -24,6 +24,13 @@ export default async function PortalLayout({
         notificationRepository.countUnread(session.userId),
       ])
     : [undefined, 0];
+
+  // A signed cookie is not enough: if the account was deleted or deactivated
+  // since sign-in, the session must die now — not when the cookie expires.
+  if (hasDatabase() && (!user || !user.isActive)) {
+    redirect("/api/auth/invalid-session");
+  }
+
   const displayName = user?.name ?? session.name;
 
   const initials = displayName

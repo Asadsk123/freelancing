@@ -353,3 +353,9 @@ Gates pass; verified live: DB-driven service options render, old slugs gone, twi
 - Sweeps clean: zero TODO/FIXME/HACK/@ts-ignore/console.log/debugger; no remaining 'as any'; no mock/temporary code.
 - Gates: lint + tsc + 44/44 tests + build green; 8/8 public routes 200 post-change.
 ONLY DEPLOYMENT REMAINS (hosting, env vars, DNS, live email/storage/monitoring, real-device QA, Lighthouse).
+
+## Pre-Deployment Pass: Session Revalidation (2026-07-19)
+- REAL VULNERABILITY FOUND during full regression: validly-signed JWTs remained usable for their 30-day life even after the account was deleted, deactivated, or demoted (discovered live - a deleted test user's cookie still opened the portal).
+- FIX: (1) requireAdmin() now revalidates the actor in the DB (exists + active + still admin) on every admin action; (2) portal and admin layouts revalidate the user (exists + active, admin role for /admin) and bounce dead sessions to new GET /api/auth/invalid-session which destroys the cookie and redirects to /login (RSC render cannot mutate cookies).
+- VERIFIED LIVE: ghost client/admin tokens -> 307 invalid-session on /dashboard, /projects, /admin/audit; invalid-session clears cookie -> /login; deleted-user browser cookie bounced to login; fresh admin OTP login works and honors ?from= (landed on /admin/audit).
+- Full pass otherwise clean: gates green (lint/tsc/44 tests/build), zero visible 'Royal Asad' brand strings in src, all flows regression-tested this session.

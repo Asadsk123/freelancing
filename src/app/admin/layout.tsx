@@ -21,6 +21,13 @@ export default async function AdminLayout({
 
   // Fresh name from the DB — the JWT payload goes stale after a profile rename.
   const user = hasDatabase() ? await userRepository.findById(session.userId) : undefined;
+
+  // Revalidate the actor against the database so demotion, deactivation, or
+  // deletion takes effect immediately instead of at cookie expiry.
+  if (hasDatabase() && (!user || !user.isActive || user.role !== "admin")) {
+    redirect("/api/auth/invalid-session");
+  }
+
   const displayName = user?.name ?? session.name;
 
   const initials = displayName
