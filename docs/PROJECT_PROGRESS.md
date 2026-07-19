@@ -346,3 +346,10 @@ Gates pass; verified live: DB-driven service options render, old slugs gone, twi
 - Storage key hardening: dots collapsed so '..' cannot appear in keys (defense on top of resolve-time validation).
 - Docs: README.md, docs/DEPLOYMENT.md, docs/SECURITY.md (attack-surface table incl. dev-only npm audit stance), docs/OPERATIONS.md (monitoring, backup, recovery runbook), docs/TESTING.md (layers, determinism rules, Playwright promotion plan).
 - Gates: lint + tsc + 44/44 tests + build all green.
+
+## Final Engineering Sweep (2026-07-19)
+- Dead code removed: unrouted design-showcase.tsx (256 lines, Module-2 artifact) + 4 unused components (date-display, relative-time, radio-group, switch - the last only referenced by the showcase).
+- JWT claim-shape validation: middleware + getSession now runtime-validate payload shape (userId/email/name strings, role in admin|client) instead of casting - malformed-but-signed tokens are rejected. Live-verified: good admin token 200, bad-role and shapeless tokens redirect to login.
+- Sweeps clean: zero TODO/FIXME/HACK/@ts-ignore/console.log/debugger; no remaining 'as any'; no mock/temporary code.
+- Gates: lint + tsc + 44/44 tests + build green; 8/8 public routes 200 post-change.
+ONLY DEPLOYMENT REMAINS (hosting, env vars, DNS, live email/storage/monitoring, real-device QA, Lighthouse).

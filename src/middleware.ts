@@ -26,7 +26,15 @@ type TokenPayload = {
 async function verifyToken(token: string): Promise<TokenPayload | null> {
   try {
     const { payload } = await jwtVerify(token, getSecret());
-    return payload as unknown as TokenPayload;
+    // Signature proves the token is ours; still validate the claim shape so a
+    // malformed payload can never flow through role checks untyped.
+    if (
+      typeof payload.email !== "string" ||
+      (payload.role !== "admin" && payload.role !== "client")
+    ) {
+      return null;
+    }
+    return { email: payload.email, role: payload.role };
   } catch {
     return null;
   }

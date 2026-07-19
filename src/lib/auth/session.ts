@@ -50,7 +50,22 @@ export async function getSession(): Promise<SessionPayload | null> {
 
   try {
     const { payload } = await jwtVerify(token, getSecret());
-    return payload as unknown as SessionPayload;
+    // Signature proves the token is ours; still validate the claim shape so a
+    // malformed payload can never reach ownership/role checks untyped.
+    if (
+      typeof payload.userId !== "string" ||
+      typeof payload.email !== "string" ||
+      typeof payload.name !== "string" ||
+      (payload.role !== "admin" && payload.role !== "client")
+    ) {
+      return null;
+    }
+    return {
+      userId: payload.userId,
+      email: payload.email,
+      name: payload.name,
+      role: payload.role,
+    };
   } catch {
     return null;
   }
