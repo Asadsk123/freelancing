@@ -359,3 +359,9 @@ ONLY DEPLOYMENT REMAINS (hosting, env vars, DNS, live email/storage/monitoring, 
 - FIX: (1) requireAdmin() now revalidates the actor in the DB (exists + active + still admin) on every admin action; (2) portal and admin layouts revalidate the user (exists + active, admin role for /admin) and bounce dead sessions to new GET /api/auth/invalid-session which destroys the cookie and redirects to /login (RSC render cannot mutate cookies).
 - VERIFIED LIVE: ghost client/admin tokens -> 307 invalid-session on /dashboard, /projects, /admin/audit; invalid-session clears cookie -> /login; deleted-user browser cookie bounced to login; fresh admin OTP login works and honors ?from= (landed on /admin/audit).
 - Full pass otherwise clean: gates green (lint/tsc/44 tests/build), zero visible 'Royal Asad' brand strings in src, all flows regression-tested this session.
+
+## Code Freeze Audit (2026-07-20)
+- REAL ISSUE FOUND: middleware getSecret() silently fell back to the public dev secret when AUTH_SECRET was missing - in production that would let anyone forge sessions (session.ts already threw; edge did not). FIX: middleware now fails closed in production (throws without a >=32-char AUTH_SECRET), mirroring session.ts. Dev fallback unchanged.
+- Verified: gates green (lint / tsc / 44 tests / build); dev smoke - home 200, unauth admin 307, login 200; real admin session loads /admin/dashboard through the updated middleware.
+- Freeze sweeps: no TODO/FIXME/HACK/debug/mock/dead code (re-checked after last commits); routes/SEO/links/headers previously verified and unchanged.
+CODE FREEZE COMPLETE - remaining work is deployment-only.

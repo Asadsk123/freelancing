@@ -13,6 +13,12 @@ function getSecret(): Uint8Array {
   if (secret && secret.length >= 32) {
     return new TextEncoder().encode(secret);
   }
+  // Fail closed: the dev fallback is a public string in this repo, so accepting
+  // it in production would let anyone forge a session. Mirrors the same guard
+  // in `src/lib/auth/session.ts` so edge and node agree.
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("AUTH_SECRET must be set in production (min 32 chars)");
+  }
   return new TextEncoder().encode(
     "dev-only-secret-do-not-use-in-production!",
   );
