@@ -1,5 +1,44 @@
 # Deployment Guide
 
+## Vercel quickstart (temporary *.vercel.app domain)
+
+One-time, from the project root:
+
+```powershell
+npx vercel login                 # authenticate (browser/email — must be done by a human)
+npx vercel link --yes            # create/link the Vercel project
+
+# Production env vars (repeat with `preview` for preview deploys):
+npx vercel env add DATABASE_URL production          # Neon connection string (from .env.local)
+npx vercel env add AUTH_SECRET production           # 64-hex-char random (node -e "console.log(require('crypto').randomBytes(32).toString('hex'))")
+npx vercel env add CRON_SECRET production           # random string — Vercel Cron automatically sends it as the Bearer token
+npx vercel env add NEXT_PUBLIC_SITE_URL production  # https://<project>.vercel.app (update after first deploy)
+npx vercel env add EMAIL_MODE production            # "production" to send real email, "log" until DNS is ready
+npx vercel env add RESEND_API_KEY production        # from resend.com dashboard
+npx vercel env add EMAIL_FROM_DEFAULT production
+npx vercel env add EMAIL_FROM_SUPPORT production
+npx vercel env add STORAGE_MODE production          # "r2" — see warning below
+npx vercel env add R2_ACCOUNT_ID production
+npx vercel env add R2_ACCESS_KEY_ID production
+npx vercel env add R2_SECRET_ACCESS_KEY production
+npx vercel env add R2_BUCKET_NAME production
+npx vercel env add SENTRY_DSN production            # optional
+
+npx vercel deploy --prod         # build + deploy
+```
+
+**Storage warning (Vercel):** the serverless filesystem is ephemeral —
+`STORAGE_MODE=local` will silently lose uploads between invocations. On Vercel,
+**R2 is required** for the file pipeline to work.
+
+**Cron:** `vercel.json` schedules `GET /api/cron/email-retry` every 10 minutes.
+When a `CRON_SECRET` env var exists, Vercel automatically sends it as
+`Authorization: Bearer <CRON_SECRET>` — which is exactly what the route expects.
+
+**Post-deploy:** set `NEXT_PUBLIC_SITE_URL` to the real deployment URL and
+redeploy, then run the smoke checklist at the bottom of this file against the
+live URL. Custom domain + SPF/DKIM/DMARC come last.
+
 Production deployment for ROYAL-ASAD AI & Digital Solutions (Next.js 15 App Router).
 
 ## Requirements

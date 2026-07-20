@@ -365,3 +365,8 @@ ONLY DEPLOYMENT REMAINS (hosting, env vars, DNS, live email/storage/monitoring, 
 - Verified: gates green (lint / tsc / 44 tests / build); dev smoke - home 200, unauth admin 307, login 200; real admin session loads /admin/dashboard through the updated middleware.
 - Freeze sweeps: no TODO/FIXME/HACK/debug/mock/dead code (re-checked after last commits); routes/SEO/links/headers previously verified and unchanged.
 CODE FREEZE COMPLETE - remaining work is deployment-only.
+
+## Deployment Prep (2026-07-20)
+- vercel.json added: Vercel Cron hits GET /api/cron/email-retry every 10 min (Vercel auto-sends CRON_SECRET as the Bearer token - matches the route's guard).
+- DEPLOYMENT.md: Vercel quickstart (login -> link -> env add list -> deploy --prod), ephemeral-FS warning (R2 required on Vercel; local mode loses uploads), post-deploy checklist pointer.
+- BLOCKED on human-only steps: vercel login (browser/email auth), RESEND_API_KEY (Resend account), R2 credentials (Cloudflare account). Fresh AUTH_SECRET + CRON_SECRET values generated and handed to the owner in-session.
