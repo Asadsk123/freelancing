@@ -1,38 +1,18 @@
 import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Globe, Palette, BarChart3, Search, Smartphone, ShieldCheck } from "lucide-react";
+import { ArrowRight, Globe, Bot } from "lucide-react";
 
 const serviceHighlights = [
   {
     icon: Globe,
-    title: "Web Development",
-    description: "Custom websites and web applications built with modern technology for speed, security, and scalability.",
+    title: "Web Design & Development",
+    description: "Premium business websites and custom web applications — built with Next.js, designed for performance, accessibility, and production-grade security.",
   },
   {
-    icon: Palette,
-    title: "Graphic Design",
-    description: "Brand identity, marketing materials, and visual design that communicates your brand's story.",
-  },
-  {
-    icon: BarChart3,
-    title: "Digital Marketing",
-    description: "Data-driven strategies to reach your audience, grow your traffic, and convert visitors into customers.",
-  },
-  {
-    icon: Search,
-    title: "SEO Optimization",
-    description: "Improve your search rankings and organic visibility with technical and content-driven SEO.",
-  },
-  {
-    icon: Smartphone,
-    title: "Mobile Apps",
-    description: "Cross-platform mobile applications that deliver a seamless experience on every device.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Maintenance & Support",
-    description: "Ongoing updates, security patches, and technical support to keep your digital assets running.",
+    icon: Bot,
+    title: "AI Automation",
+    description: "AI-powered workflows, intelligent agents, and process automation that reduce manual work and scale your operations — custom-built for your business.",
   },
 ];
 
@@ -45,11 +25,11 @@ export function ServicesOverview() {
             What We Do
           </h2>
           <p className="mt-4 text-lg text-[var(--muted-foreground)]">
-            End-to-end digital services designed around your business goals.
+            Focused, high-impact digital services for businesses that want results.
           </p>
         </div>
 
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-12 grid gap-6 sm:grid-cols-2">
           {serviceHighlights.map((service) => (
             <Card key={service.title}>
               <CardHeader>

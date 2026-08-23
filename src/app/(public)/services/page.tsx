@@ -11,7 +11,7 @@ import { serviceRepository } from "@/lib/repositories/service";
 
 export const metadata: Metadata = {
   title: "Services",
-  description: "Explore our digital services — web development, design, marketing, and more.",
+  description: "Web Design & Development and AI Automation services from ROYAL-ASAD AI & Digital Solutions.",
 };
 
 export default async function ServicesPage() {
