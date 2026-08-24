@@ -17,7 +17,7 @@ export function buildStorageKey(projectId: string, fileName: string): string {
 }
 
 export const storage = {
-  put(key: string, body: Uint8Array, contentType: string): Promise<void> {
+  put(key: string, body: Uint8Array, contentType: string): Promise<string> {
     return getProvider().put(key, body, contentType);
   },
 

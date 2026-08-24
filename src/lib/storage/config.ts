@@ -6,12 +6,15 @@
  * Safety: local mode is the default — R2 is only used when explicitly
  * requested via STORAGE_MODE=r2 or when all R2 credentials are present.
  */
-export type StorageMode = "r2" | "local";
+export type StorageMode = "blob" | "r2" | "local";
 
 export function getStorageMode(): StorageMode {
   const explicit = (process.env.STORAGE_MODE ?? "").toLowerCase();
   if (explicit === "local") return "local";
   if (explicit === "r2") return "r2";
+  if (explicit === "blob") return "blob";
+
+  if (process.env.BLOB_READ_WRITE_TOKEN) return "blob";
 
   const hasR2 =
     !!process.env.R2_ACCOUNT_ID &&

@@ -90,12 +90,13 @@ export function createR2Provider(config: R2Config): StorageProvider {
   return {
     name: "r2",
 
-    async put(key, body, contentType) {
+    async put(key, body, contentType): Promise<string> {
       const { url, headers } = signedHeaders(config, "PUT", key, body, contentType);
       const res = await fetch(url, { method: "PUT", headers, body: body as BodyInit });
       if (!res.ok) {
         throw new Error(`R2 upload failed with status ${res.status}`);
       }
+      return key;
     },
 
     async get(key): Promise<StoredObject | null> {

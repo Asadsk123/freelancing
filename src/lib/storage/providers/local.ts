@@ -20,10 +20,11 @@ export function createLocalProvider(): StorageProvider {
   return {
     name: "local",
 
-    async put(key, body) {
+    async put(key, body): Promise<string> {
       const target = resolveSafe(key);
       await fs.mkdir(path.dirname(target), { recursive: true });
       await fs.writeFile(target, body);
+      return key;
     },
 
     async get(key): Promise<StoredObject | null> {

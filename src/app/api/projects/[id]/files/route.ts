@@ -52,7 +52,7 @@ export async function POST(
     const key = buildStorageKey(projectId, fileName);
     const bytes = new Uint8Array(await file.arrayBuffer());
 
-    await storage.put(key, bytes, mimeType);
+    const effectiveKey = await storage.put(key, bytes, mimeType);
 
     const created = await fileRepository.create({
       projectId,
@@ -60,7 +60,7 @@ export async function POST(
       fileName,
       mimeType,
       fileSize: file.size,
-      originalKey: key,
+      originalKey: effectiveKey,
       status: "preview",
     });
 
