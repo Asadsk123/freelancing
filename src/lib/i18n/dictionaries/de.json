@@ -1,21 +1,21 @@
-﻿{
+{
   "nav": {
     "services": "Leistungen",
     "portfolio": "Portfolio",
     "blog": "Blog",
-    "about": "Ãœber uns",
+    "about": "Über uns",
     "contact": "Kontakt",
     "getQuote": "Angebot anfordern"
   },
   "common": {
     "language": "Sprache",
-    "openMenu": "MenÃ¼ Ã¶ffnen",
-    "closeMenu": "MenÃ¼ schlieÃŸen"
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen"
   },
   "home": {
     "hero": {
-      "title": "Digitale LÃ¶sungen, die Ihr Unternehmen wachsen lassen",
-      "subtitle": "ROYAL-ASAD AI & Digital Solutions entwickelt erstklassige Websites und KI-Automatisierungssysteme fÃ¼r Unternehmen, die echte, messbare Ergebnisse wollen.",
+      "title": "Digitale Lösungen, die Ihr Unternehmen wachsen lassen",
+      "subtitle": "ROYAL-ASAD AI & Digital Solutions entwickelt erstklassige Websites und KI-Automatisierungssysteme für Unternehmen, die echte, messbare Ergebnisse wollen.",
       "ctaQuote": "Kostenloses Angebot erhalten",
       "ctaServices": "Unsere Leistungen ansehen"
     }
@@ -23,7 +23,7 @@
   "footer": {
     "companyHeading": "Unternehmen",
     "legalHeading": "Rechtliches",
-    "about": "Ãœber uns",
+    "about": "Über uns",
     "contact": "Kontakt",
     "blog": "Blog",
     "privacy": "Datenschutzrichtlinie",
@@ -33,40 +33,38 @@
   "assistant": {
     "name": "Aria",
     "greeting": "Hallo! Ich bin Aria, Ihre Begleiterin. Wie kann ich helfen?",
-    "prompt": "WÃ¤hlen Sie unten eine Option oder erkunden Sie selbst.",
-    "open": "Assistent Ã¶ffnen",
+    "prompt": "Wählen Sie unten eine Option oder erkunden Sie selbst.",
+    "open": "Assistent öffnen",
     "hide": "Assistent ausblenden",
     "show": "Assistent einblenden",
     "pause": "Bewegung pausieren",
     "resume": "Bewegung fortsetzen",
-    "close": "SchlieÃŸen",
-    "back": "ZurÃ¼ck",
+    "close": "Schließen",
+    "back": "Zurück",
     "guideServices": "Zeigen Sie mir Ihre Leistungen",
     "guideContact": "Wie erhalte ich ein Angebot?",
     "guideDashboard": "Zu meinem Dashboard",
-    "explainPage": "Diese Seite erklÃ¤ren",
+    "explainPage": "Diese Seite erklären",
     "explainMilestones": "Was sind Meilensteine?",
     "explainUploads": "Wie funktionieren Datei-Uploads?",
-    "welcome": "Verifiziert â€” willkommen! MÃ¶chten Sie eine kurze Tour?",
+    "welcome": "Verifiziert — willkommen! Möchten Sie eine kurze Tour?",
     "servicesInfo": "Unsere Leistungsseite zeigt unser Angebot. Ich bringe Sie hin.",
-    "contactInfo": "Ãœber die Kontaktseite erhalten Sie ein kostenloses Angebot â€” Antwort innerhalb von 24 Stunden. Ich bringe Sie hin.",
+    "contactInfo": "Über die Kontaktseite erhalten Sie ein kostenloses Angebot — Antwort innerhalb von 24 Stunden. Ich bringe Sie hin.",
     "dashboardInfo": "Ihr Dashboard zeigt alle Projekte auf einen Blick. Ich bringe Sie hin.",
-    "milestonesInfo": "Meilensteine sind die wichtigsten Etappen Ihres Projekts. Jeder zeigt seinen Status â€” Sie wissen immer, was erledigt ist und was folgt.",
-    "uploadsInfo": "Vom Team geteilte Dateien erscheinen im Dateien-Tab des Projekts. Sie kÃ¶nnen sie ansehen und Ãœberarbeitungen anfordern â€” ganz ohne Software.",
+    "milestonesInfo": "Meilensteine sind die wichtigsten Etappen Ihres Projekts. Jeder zeigt seinen Status — Sie wissen immer, was erledigt ist und was folgt.",
+    "uploadsInfo": "Vom Team geteilte Dateien erscheinen im Dateien-Tab des Projekts. Sie können sie ansehen und Überarbeitungen anfordern — ganz ohne Software.",
     "pageInfo": "Dies ist Teil Ihres Royal-Asad-Erlebnisses. Nutzen Sie die Anleitungen oben oder die Suche, um ans Ziel zu kommen.",
     "searchPlaceholder": "Hilfe & Seiten durchsuchen...",
-    "noResults": "Keine Treffer â€” versuchen Sie ein anderes Wort.",
+    "noResults": "Keine Treffer — versuchen Sie ein anderes Wort.",
     "quickPortfolio": "Unser Portfolio ansehen",
     "quickBlog": "Blog lesen",
     "quickNotifications": "Meine Benachrichtigungen",
     "quickSettings": "Meine Einstellungen",
     "portfolioInfo": "Unser Portfolio zeigt abgeschlossene Kundenprojekte. Ich bringe Sie hin.",
-    "blogInfo": "BeitrÃ¤ge und Anleitungen unseres Teams. Ich bringe Sie hin.",
+    "blogInfo": "Beiträge und Anleitungen unseres Teams. Ich bringe Sie hin.",
     "notificationsInfo": "Alle Projekt-Updates an einem Ort. Ich bringe Sie hin.",
-    ,
-    "guideAdmin": "Admin Panel",
-    "adminInfo": "Opening admin dashboard."
+    "settingsInfo": "Verwalten Sie Ihr Profil und Ihre Benachrichtigungen. Ich bringe Sie hin.",
+    "guideAdmin": "Admin-Panel öffnen",
+    "adminInfo": "Das Admin-Dashboard wird geöffnet. Bitte melden Sie sich per E-Mail-OTP an, falls erforderlich."
   }
-
 }
-

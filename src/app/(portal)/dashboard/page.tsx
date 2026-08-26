@@ -12,6 +12,7 @@ import { getSession } from "@/lib/auth/session";
 import { hasDatabase } from "@/db";
 import { projectRepository } from "@/lib/repositories/project";
 import { formatRelativeTime } from "@/lib/utils/formatting";
+import { AddToDesktop } from "@/components/shared/add-to-desktop";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -50,7 +51,10 @@ export default async function DashboardPage() {
 
   return (
     <div className="mx-auto max-w-[1280px]">
-      <PageHeader title="Dashboard" description={`Welcome back, ${session.name}. Here's an overview of your projects.`} />
+      <div className="flex items-start justify-between gap-4">
+        <PageHeader title="Dashboard" description={`Welcome back, ${session.name}. Here's an overview of your projects.`} />
+        <AddToDesktop page="dashboard" />
+      </div>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-3">
         <Card>

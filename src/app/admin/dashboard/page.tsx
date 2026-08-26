@@ -28,6 +28,7 @@ import { blogPostRepository } from "@/lib/repositories/blog-post";
 import { serviceRepository } from "@/lib/repositories/service";
 import { milestoneRepository } from "@/lib/repositories/milestone";
 import { formatRelativeTime } from "@/lib/utils/formatting";
+import { AddToDesktop } from "@/components/shared/add-to-desktop";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard",
@@ -133,7 +134,10 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="mx-auto max-w-[1280px]">
-      <PageHeader title="Admin Dashboard" description="Overview of your agency." />
+      <div className="flex items-start justify-between gap-4">
+        <PageHeader title="Admin Dashboard" description="Overview of your agency." />
+        <AddToDesktop page="admin" />
+      </div>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {stats.map((stat) => (
