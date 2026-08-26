@@ -71,6 +71,39 @@ export const conversationMessages = pgTable("conversation_messages", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+export const linkTypeEnum = pgEnum("link_type", [
+  "image",
+  "video",
+  "document",
+  "other",
+]);
+
+export const projectLinks = pgTable("project_links", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  projectId: text("project_id")
+    .notNull()
+    .references(() => projects.id, { onDelete: "cascade" }),
+  submittedBy: text("submitted_by")
+    .notNull()
+    .references(() => users.id, { onDelete: "restrict" }),
+  url: text("url").notNull(),
+  label: text("label").notNull(),
+  linkType: linkTypeEnum("link_type").notNull().default("other"),
+  note: text("note"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const projectLinksRelations = relations(projectLinks, ({ one }) => ({
+  project: one(projects, {
+    fields: [projectLinks.projectId],
+    references: [projects.id],
+  }),
+  submitter: one(users, {
+    fields: [projectLinks.submittedBy],
+    references: [users.id],
+  }),
+}));
+
 export const projectsRelations = relations(projects, ({ one, many }) => ({
   client: one(users, {
     fields: [projects.clientId],
@@ -82,6 +115,7 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
   }),
   milestones: many(milestones),
   conversation: one(projectConversations),
+  links: many(projectLinks),
 }));
 
 export const milestonesRelations = relations(milestones, ({ one }) => ({

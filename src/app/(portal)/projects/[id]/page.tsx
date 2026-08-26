@@ -8,17 +8,19 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { TrackingId } from "@/components/shared/tracking-id";
 import { EmptyState } from "@/components/shared/empty-state";
-import { ArrowLeft, FileText, MessageSquare, FolderOpen, Star } from "lucide-react";
+import { ArrowLeft, FileText, MessageSquare, FolderOpen, Star, Link2, ExternalLink } from "lucide-react";
 import { getSession } from "@/lib/auth/session";
 import { hasDatabase } from "@/db";
 import { projectRepository } from "@/lib/repositories/project";
 import { fileRepository } from "@/lib/repositories/file";
 import { conversationRepository } from "@/lib/repositories/conversation";
 import { reviewRepository } from "@/lib/repositories/review";
+import { linkRepository } from "@/lib/repositories/link";
 import { formatDate, formatFileSize, formatRelativeTime } from "@/lib/utils/formatting";
 import { MessageForm } from "./message-form";
 import { ReviewForm } from "./review-form";
 import { FileCardActions } from "./file-card-actions";
+import { LinkForm } from "./link-form";
 
 export const metadata: Metadata = {
   title: "Project Details",
@@ -85,6 +87,7 @@ export default async function ProjectDetailPage({
   const projectFiles =
     session.role === "admin" ? allFiles : allFiles.filter((file) => file.status !== "draft");
   const messages = await conversationRepository.findMessagesByProjectId(id);
+  const links = await linkRepository.findByProjectId(id);
 
   const isOwnerClient = session.role === "client" && project.clientId === session.userId;
   const existingReview = isOwnerClient
@@ -128,6 +131,7 @@ export default async function ProjectDetailPage({
               Milestones{totalMilestones > 0 ? ` (${completedMilestones}/${totalMilestones})` : ""}
             </TabsTrigger>
             <TabsTrigger value="files">Files</TabsTrigger>
+            <TabsTrigger value="links">Links{links.length > 0 ? ` (${links.length})` : ""}</TabsTrigger>
             <TabsTrigger value="conversation">Conversation</TabsTrigger>
           </TabsList>
 
@@ -214,6 +218,59 @@ export default async function ProjectDetailPage({
                 })}
               </div>
             )}
+          </TabsContent>
+
+          <TabsContent value="links" className="mt-4">
+            <div className="space-y-4">
+              <Card>
+                <CardContent className="py-5">
+                  <h3 className="mb-4 text-sm font-medium text-[var(--foreground)]">Add a link or reference</h3>
+                  <LinkForm projectId={project.id} />
+                </CardContent>
+              </Card>
+
+              {links.length === 0 ? (
+                <Card>
+                  <CardContent className="py-12">
+                    <EmptyState
+                      icon={Link2}
+                      title="No links yet"
+                      description="Add image URLs, video links, document links, or any reference you want to share with the team."
+                    />
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="space-y-3">
+                  {links.map((link) => (
+                    <Card key={link.id}>
+                      <CardContent className="py-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="text-sm font-medium text-[var(--foreground)]">{link.label}</span>
+                              <Badge variant="secondary">{link.linkType}</Badge>
+                            </div>
+                            <a
+                              href={link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="mt-1 flex items-center gap-1 text-xs text-[var(--primary)] hover:underline truncate"
+                            >
+                              {link.url.length > 60 ? link.url.slice(0, 60) + "…" : link.url}
+                              <ExternalLink className="h-3 w-3 shrink-0" />
+                            </a>
+                            {link.note && (
+                              <p className="mt-2 text-xs text-[var(--muted-foreground)]">{link.note}</p>
+                            )}
+                          </div>
+                          <span className="shrink-0 text-xs text-[var(--muted-foreground)]">{formatDate(link.createdAt)}</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </div>
           </TabsContent>
 
           <TabsContent value="conversation" className="mt-4">

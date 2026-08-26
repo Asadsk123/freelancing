@@ -7,13 +7,16 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TrackingId } from "@/components/shared/tracking-id";
 import { EmptyState } from "@/components/shared/empty-state";
-import { ArrowLeft, FolderOpen } from "lucide-react";
+import { ArrowLeft, FolderOpen, MessageSquare, Link2, ExternalLink } from "lucide-react";
 import { hasDatabase } from "@/db";
 import { projectRepository } from "@/lib/repositories/project";
 import { fileRepository } from "@/lib/repositories/file";
-import { formatDate } from "@/lib/utils/formatting";
+import { conversationRepository } from "@/lib/repositories/conversation";
+import { linkRepository } from "@/lib/repositories/link";
+import { formatDate, formatRelativeTime } from "@/lib/utils/formatting";
 import { MilestonesManager } from "./milestones-manager";
 import { FilesManager } from "./files-manager";
+import { AdminMessageForm } from "./admin-message-form";
 
 export const metadata: Metadata = {
   title: "Project Details",
@@ -54,7 +57,11 @@ export default async function AdminProjectDetailPage({
   const project = await projectRepository.findByIdWithDetails(id);
   if (!project) notFound();
 
-  const projectFiles = await fileRepository.findByProjectId(id);
+  const [projectFiles, messages, projectLinks] = await Promise.all([
+    fileRepository.findByProjectId(id),
+    conversationRepository.findMessagesByProjectId(id),
+    linkRepository.findByProjectId(id),
+  ]);
 
   const badge = statusBadge[project.status] ?? { label: "Pending", variant: "secondary" as const };
 
@@ -102,6 +109,136 @@ export default async function AdminProjectDetailPage({
             createdAt: file.createdAt,
           }))}
         />
+      </div>
+
+      {/* Client-submitted links */}
+      <div className="mt-8 space-y-4">
+        <h2 className="text-lg font-semibold text-[var(--foreground)]">
+          Client Links &amp; References{projectLinks.length > 0 ? ` (${projectLinks.length})` : ""}
+        </h2>
+        {projectLinks.length === 0 ? (
+          <Card>
+            <CardContent className="py-10">
+              <EmptyState icon={Link2} title="No links yet" description="Links and references submitted by the client will appear here." />
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-3">
+            {projectLinks.map((link) => (
+              <Card key={link.id}>
+                <CardContent className="py-4 space-y-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-sm font-medium text-[var(--foreground)]">{link.label}</span>
+                        <Badge variant="secondary">{link.linkType}</Badge>
+                        <span className="text-xs text-[var(--muted-foreground)]">by {link.submitterName}</span>
+                      </div>
+                      <a
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-1 flex items-center gap-1 text-xs text-[var(--primary)] hover:underline break-all"
+                      >
+                        {link.url} <ExternalLink className="h-3 w-3 shrink-0" />
+                      </a>
+                      {link.note && (
+                        <p className="mt-2 text-xs text-[var(--muted-foreground)] whitespace-pre-wrap">{link.note}</p>
+                      )}
+                    </div>
+                    <span className="shrink-0 text-xs text-[var(--muted-foreground)]">{formatDate(link.createdAt)}</span>
+                  </div>
+
+                  {/* Safe image preview */}
+                  {link.linkType === "image" && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={link.url}
+                      alt={link.label}
+                      className="mt-2 max-h-48 max-w-full rounded-[var(--radius-md)] object-contain border border-[var(--border)]"
+                      loading="lazy"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                    />
+                  )}
+
+                  {/* Safe YouTube/Vimeo embed */}
+                  {link.linkType === "video" && (() => {
+                    const yt = link.url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+                    const vm = link.url.match(/vimeo\.com\/(\d+)/);
+                    if (yt) {
+                      return (
+                        <div className="aspect-video w-full max-w-md overflow-hidden rounded-[var(--radius-md)] border border-[var(--border)]">
+                          <iframe
+                            src={`https://www.youtube-nocookie.com/embed/${yt[1]}`}
+                            className="h-full w-full"
+                            allow="encrypted-media"
+                            allowFullScreen
+                            title={link.label}
+                            sandbox="allow-scripts allow-same-origin allow-presentation"
+                          />
+                        </div>
+                      );
+                    }
+                    if (vm) {
+                      return (
+                        <div className="aspect-video w-full max-w-md overflow-hidden rounded-[var(--radius-md)] border border-[var(--border)]">
+                          <iframe
+                            src={`https://player.vimeo.com/video/${vm[1]}`}
+                            className="h-full w-full"
+                            allow="encrypted-media"
+                            allowFullScreen
+                            title={link.label}
+                            sandbox="allow-scripts allow-same-origin allow-presentation"
+                          />
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Conversation */}
+      <div className="mt-8 space-y-4">
+        <h2 className="text-lg font-semibold text-[var(--foreground)]">
+          Conversation{messages.length > 0 ? ` (${messages.length})` : ""}
+        </h2>
+        {messages.length === 0 ? (
+          <Card>
+            <CardContent className="py-10">
+              <EmptyState icon={MessageSquare} title="No messages yet" description="Messages between you and the client appear here." />
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-3">
+            {messages.map((message) => (
+              <Card key={message.id} className={message.senderRole === "admin" ? "border-[var(--primary)]/30" : ""}>
+                <CardContent className="py-4">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-[var(--foreground)]">{message.senderName}</span>
+                      <Badge variant={message.senderRole === "admin" ? "secondary" : "default"}>
+                        {message.senderRole === "admin" ? "Team" : "Client"}
+                      </Badge>
+                    </div>
+                    <span className="text-xs text-[var(--muted-foreground)]">{formatRelativeTime(message.createdAt)}</span>
+                  </div>
+                  <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--muted-foreground)]">{message.content}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        <Card>
+          <CardContent className="py-5">
+            <AdminMessageForm projectId={project.id} />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
