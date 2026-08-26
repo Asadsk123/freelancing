@@ -19,5 +19,21 @@ export default function manifest(): MetadataRoute.Manifest {
         purpose: "any",
       },
     ],
+    shortcuts: [
+      {
+        name: "Admin Dashboard",
+        short_name: "Admin",
+        description: "Open the admin control panel",
+        url: "/admin/dashboard",
+        icons: [{ src: "/icon.svg", sizes: "any" }],
+      },
+      {
+        name: "Client Dashboard",
+        short_name: "Dashboard",
+        description: "Open your client dashboard",
+        url: "/dashboard",
+        icons: [{ src: "/icon.svg", sizes: "any" }],
+      },
+    ],
   };
 }
