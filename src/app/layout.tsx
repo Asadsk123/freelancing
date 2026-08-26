@@ -48,6 +48,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={dir} suppressHydrationWarning>
       <head>
+        <link rel="manifest" href="/manifest.json" />
         {/* Apply theme + premium visuals before first paint to prevent FOUC. */}
         <script
           dangerouslySetInnerHTML={{

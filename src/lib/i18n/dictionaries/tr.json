@@ -1,68 +1,72 @@
-{
+﻿{
   "nav": {
     "services": "Hizmetler",
-    "portfolio": "Portföy",
+    "portfolio": "PortfÃ¶y",
     "blog": "Blog",
-    "about": "Hakkımızda",
-    "contact": "İletişim",
-    "getQuote": "Teklif alın"
+    "about": "HakkÄ±mÄ±zda",
+    "contact": "Ä°letiÅŸim",
+    "getQuote": "Teklif alÄ±n"
   },
   "common": {
     "language": "Dil",
-    "openMenu": "Menüyü aç",
-    "closeMenu": "Menüyü kapat"
+    "openMenu": "MenÃ¼yÃ¼ aÃ§",
+    "closeMenu": "MenÃ¼yÃ¼ kapat"
   },
   "home": {
     "hero": {
-      "title": "İşletmenizi büyüten dijital çözümler",
-      "subtitle": "ROYAL-ASAD AI & Digital Solutions; web geliştirme, tasarım ve dijital pazarlama sunan, gerçek büyüme sağlayan üst düzey uluslararası bir dijital ajanstır.",
-      "ctaQuote": "Ücretsiz teklif alın",
-      "ctaServices": "Hizmetlerimizi görün"
+      "title": "Ä°ÅŸletmenizi bÃ¼yÃ¼ten dijital Ã§Ã¶zÃ¼mler",
+      "subtitle": "ROYAL-ASAD AI & Digital Solutions; web geliÅŸtirme, tasarÄ±m ve dijital pazarlama sunan, gerÃ§ek bÃ¼yÃ¼me saÄŸlayan Ã¼st dÃ¼zey uluslararasÄ± bir dijital ajanstÄ±r.",
+      "ctaQuote": "Ãœcretsiz teklif alÄ±n",
+      "ctaServices": "Hizmetlerimizi gÃ¶rÃ¼n"
     }
   },
   "footer": {
-    "companyHeading": "Şirket",
+    "companyHeading": "Åžirket",
     "legalHeading": "Yasal",
-    "about": "Hakkımızda",
-    "contact": "İletişim",
+    "about": "HakkÄ±mÄ±zda",
+    "contact": "Ä°letiÅŸim",
     "blog": "Blog",
-    "privacy": "Gizlilik Politikası",
-    "security": "Güvenlik",
-    "rights": "Tüm hakları saklıdır."
+    "privacy": "Gizlilik PolitikasÄ±",
+    "security": "GÃ¼venlik",
+    "rights": "TÃ¼m haklarÄ± saklÄ±dÄ±r."
   },
   "assistant": {
     "name": "Aria",
-    "greeting": "Merhaba! Ben Aria, rehberiniz. Nasıl yardımcı olabilirim?",
-    "prompt": "Aşağıdan bir seçenek seçin veya kendiniz keşfedin.",
-    "open": "Asistanı aç",
-    "hide": "Asistanı gizle",
-    "show": "Asistanı göster",
+    "greeting": "Merhaba! Ben Aria, rehberiniz. NasÄ±l yardÄ±mcÄ± olabilirim?",
+    "prompt": "AÅŸaÄŸÄ±dan bir seÃ§enek seÃ§in veya kendiniz keÅŸfedin.",
+    "open": "AsistanÄ± aÃ§",
+    "hide": "AsistanÄ± gizle",
+    "show": "AsistanÄ± gÃ¶ster",
     "pause": "Hareketi duraklat",
     "resume": "Harekete devam et",
     "close": "Kapat",
     "back": "Geri",
-    "guideServices": "Hizmetlerinizi gösterin",
-    "guideContact": "Nasıl fiyat teklifi alırım?",
+    "guideServices": "Hizmetlerinizi gÃ¶sterin",
+    "guideContact": "NasÄ±l fiyat teklifi alÄ±rÄ±m?",
     "guideDashboard": "Panelime git",
-    "explainPage": "Bu sayfayı açıkla",
-    "explainMilestones": "Kilometre taşları nedir?",
-    "explainUploads": "Dosya yükleme nasıl çalışır?",
-    "welcome": "Doğrulandı — hoş geldiniz! Kısa bir tur ister misiniz?",
-    "servicesInfo": "Hizmetler sayfamız neler sunduğumuzu gösterir. Sizi oraya götürüyorum.",
-    "contactInfo": "Ücretsiz teklif için İletişim sayfasını kullanın — 24 saat içinde yanıt veriyoruz. Sizi oraya götürüyorum.",
-    "dashboardInfo": "Panelinizde tüm projeleriniz tek bakışta görünür. Sizi oraya götürüyorum.",
-    "milestonesInfo": "Kilometre taşları projenizin ana aşamalarıdır. Her biri durumunu gösterir; neyin bittiğini ve sıradakini hep bilirsiniz.",
-    "uploadsInfo": "Ekibinizin paylaştığı dosyalar projenin Dosyalar sekmesinde görünür. Önizleyebilir ve revizyon isteyebilirsiniz — yazılım gerekmez.",
-    "pageInfo": "Bu, ROYAL-ASAD AI & Digital Solutions deneyiminizin bir parçası. Yukarıdaki rehberleri veya arama kutusunu kullanın.",
-    "searchPlaceholder": "Yardım ve sayfalarda ara...",
-    "noResults": "Sonuç yok — başka bir kelime deneyin.",
-    "quickPortfolio": "Portföyümüzü görün",
+    "explainPage": "Bu sayfayÄ± aÃ§Ä±kla",
+    "explainMilestones": "Kilometre taÅŸlarÄ± nedir?",
+    "explainUploads": "Dosya yÃ¼kleme nasÄ±l Ã§alÄ±ÅŸÄ±r?",
+    "welcome": "DoÄŸrulandÄ± â€” hoÅŸ geldiniz! KÄ±sa bir tur ister misiniz?",
+    "servicesInfo": "Hizmetler sayfamÄ±z neler sunduÄŸumuzu gÃ¶sterir. Sizi oraya gÃ¶tÃ¼rÃ¼yorum.",
+    "contactInfo": "Ãœcretsiz teklif iÃ§in Ä°letiÅŸim sayfasÄ±nÄ± kullanÄ±n â€” 24 saat iÃ§inde yanÄ±t veriyoruz. Sizi oraya gÃ¶tÃ¼rÃ¼yorum.",
+    "dashboardInfo": "Panelinizde tÃ¼m projeleriniz tek bakÄ±ÅŸta gÃ¶rÃ¼nÃ¼r. Sizi oraya gÃ¶tÃ¼rÃ¼yorum.",
+    "milestonesInfo": "Kilometre taÅŸlarÄ± projenizin ana aÅŸamalarÄ±dÄ±r. Her biri durumunu gÃ¶sterir; neyin bittiÄŸini ve sÄ±radakini hep bilirsiniz.",
+    "uploadsInfo": "Ekibinizin paylaÅŸtÄ±ÄŸÄ± dosyalar projenin Dosyalar sekmesinde gÃ¶rÃ¼nÃ¼r. Ã–nizleyebilir ve revizyon isteyebilirsiniz â€” yazÄ±lÄ±m gerekmez.",
+    "pageInfo": "Bu, ROYAL-ASAD AI & Digital Solutions deneyiminizin bir parÃ§asÄ±. YukarÄ±daki rehberleri veya arama kutusunu kullanÄ±n.",
+    "searchPlaceholder": "YardÄ±m ve sayfalarda ara...",
+    "noResults": "SonuÃ§ yok â€” baÅŸka bir kelime deneyin.",
+    "quickPortfolio": "PortfÃ¶yÃ¼mÃ¼zÃ¼ gÃ¶rÃ¼n",
     "quickBlog": "Blogu okuyun",
     "quickNotifications": "Bildirimlerim",
-    "quickSettings": "Ayarlarım",
-    "portfolioInfo": "Portföyümüz tamamlanmış müşteri projelerini gösterir. Sizi oraya götürüyorum.",
-    "blogInfo": "Ekibimizden yazılar ve rehberler. Sizi oraya götürüyorum.",
-    "notificationsInfo": "Tüm proje güncellemeleriniz tek yerde. Sizi oraya götürüyorum.",
-    "settingsInfo": "Profilinizi ve bildirim tercihlerinizi yönetin. Sizi oraya götürüyorum."
+    "quickSettings": "AyarlarÄ±m",
+    "portfolioInfo": "PortfÃ¶yÃ¼mÃ¼z tamamlanmÄ±ÅŸ mÃ¼ÅŸteri projelerini gÃ¶sterir. Sizi oraya gÃ¶tÃ¼rÃ¼yorum.",
+    "blogInfo": "Ekibimizden yazÄ±lar ve rehberler. Sizi oraya gÃ¶tÃ¼rÃ¼yorum.",
+    "notificationsInfo": "TÃ¼m proje gÃ¼ncellemeleriniz tek yerde. Sizi oraya gÃ¶tÃ¼rÃ¼yorum.",
+    ,
+    "guideAdmin": "Admin Panel",
+    "adminInfo": "Opening admin dashboard."
   }
+
 }
+

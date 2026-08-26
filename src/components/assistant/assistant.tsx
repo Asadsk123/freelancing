@@ -245,6 +245,7 @@ export function Assistant() {
     { key: "assistant.quickBlog", run: () => guideTo(t("assistant.blogInfo"), "/blog") },
     { key: "assistant.quickNotifications", run: () => guideTo(t("assistant.notificationsInfo"), "/notifications") },
     { key: "assistant.quickSettings", run: () => guideTo(t("assistant.settingsInfo"), "/settings") },
+    { key: "assistant.guideAdmin", run: () => guideTo(t("assistant.adminInfo"), "/admin/dashboard") },
     { key: "assistant.explainMilestones", run: () => setMessage(t("assistant.milestonesInfo")) },
     { key: "assistant.explainUploads", run: () => setMessage(t("assistant.uploadsInfo")) },
     { key: "assistant.explainPage", run: () => setMessage(t("assistant.pageInfo")) },

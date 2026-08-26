@@ -1,9 +1,9 @@
-{
+﻿{
   "nav": {
     "services": "Services",
     "portfolio": "Portfolio",
     "blog": "Blog",
-    "about": "À propos",
+    "about": "Ã€ propos",
     "contact": "Contact",
     "getQuote": "Obtenir un devis"
   },
@@ -14,26 +14,26 @@
   },
   "home": {
     "hero": {
-      "title": "Des solutions numériques qui font grandir votre entreprise",
-      "subtitle": "ROYAL-ASAD AI & Digital Solutions crée des sites web premium et des systèmes d'automatisation IA pour les entreprises qui veulent des résultats réels et mesurables.",
+      "title": "Des solutions numÃ©riques qui font grandir votre entreprise",
+      "subtitle": "ROYAL-ASAD AI & Digital Solutions crÃ©e des sites web premium et des systÃ¨mes d'automatisation IA pour les entreprises qui veulent des rÃ©sultats rÃ©els et mesurables.",
       "ctaQuote": "Obtenir un devis gratuit",
       "ctaServices": "Voir nos services"
     }
   },
   "footer": {
     "companyHeading": "Entreprise",
-    "legalHeading": "Mentions légales",
-    "about": "À propos",
+    "legalHeading": "Mentions lÃ©gales",
+    "about": "Ã€ propos",
     "contact": "Contact",
     "blog": "Blog",
-    "privacy": "Politique de confidentialité",
-    "security": "Sécurité",
-    "rights": "Tous droits réservés."
+    "privacy": "Politique de confidentialitÃ©",
+    "security": "SÃ©curitÃ©",
+    "rights": "Tous droits rÃ©servÃ©s."
   },
   "assistant": {
     "name": "Aria",
     "greeting": "Bonjour ! Je suis Aria, votre guide. Comment puis-je vous aider ?",
-    "prompt": "Choisissez une option ci-dessous, ou explorez par vous-même.",
+    "prompt": "Choisissez une option ci-dessous, ou explorez par vous-mÃªme.",
     "open": "Ouvrir l'assistant",
     "hide": "Masquer l'assistant",
     "show": "Afficher l'assistant",
@@ -43,26 +43,30 @@
     "back": "Retour",
     "guideServices": "Montrez-moi vos services",
     "guideContact": "Comment obtenir un devis ?",
-    "guideDashboard": "Aller à mon tableau de bord",
+    "guideDashboard": "Aller Ã  mon tableau de bord",
     "explainPage": "Expliquer cette page",
     "explainMilestones": "Que sont les jalons ?",
     "explainUploads": "Comment fonctionnent les fichiers ?",
-    "welcome": "Vérification réussie — bienvenue ! Envie d'une visite rapide ?",
-    "servicesInfo": "Notre page Services présente ce que nous proposons. Je vous y emmène.",
-    "contactInfo": "Utilisez la page Contact pour demander un devis gratuit — réponse sous 24 h. Je vous y emmène.",
-    "dashboardInfo": "Votre tableau de bord montre tous vos projets en un coup d'œil. Je vous y emmène.",
-    "milestonesInfo": "Les jalons sont les grandes étapes de votre projet. Chacun affiche son statut, pour savoir ce qui est fait et ce qui suit.",
-    "uploadsInfo": "Les fichiers partagés par l'équipe apparaissent dans l'onglet Fichiers du projet. Vous pouvez les prévisualiser et demander des révisions — sans logiciel.",
-    "pageInfo": "Ceci fait partie de votre expérience ROYAL-ASAD AI & Digital Solutions. Utilisez les guides ci-dessus ou la recherche pour vous orienter.",
+    "welcome": "VÃ©rification rÃ©ussie â€” bienvenue ! Envie d'une visite rapide ?",
+    "servicesInfo": "Notre page Services prÃ©sente ce que nous proposons. Je vous y emmÃ¨ne.",
+    "contactInfo": "Utilisez la page Contact pour demander un devis gratuit â€” rÃ©ponse sous 24 h. Je vous y emmÃ¨ne.",
+    "dashboardInfo": "Votre tableau de bord montre tous vos projets en un coup d'Å“il. Je vous y emmÃ¨ne.",
+    "milestonesInfo": "Les jalons sont les grandes Ã©tapes de votre projet. Chacun affiche son statut, pour savoir ce qui est fait et ce qui suit.",
+    "uploadsInfo": "Les fichiers partagÃ©s par l'Ã©quipe apparaissent dans l'onglet Fichiers du projet. Vous pouvez les prÃ©visualiser et demander des rÃ©visions â€” sans logiciel.",
+    "pageInfo": "Ceci fait partie de votre expÃ©rience ROYAL-ASAD AI & Digital Solutions. Utilisez les guides ci-dessus ou la recherche pour vous orienter.",
     "searchPlaceholder": "Rechercher aide et pages...",
-    "noResults": "Aucun résultat — essayez un autre mot.",
+    "noResults": "Aucun rÃ©sultat â€” essayez un autre mot.",
     "quickPortfolio": "Voir notre portfolio",
     "quickBlog": "Lire le blog",
     "quickNotifications": "Mes notifications",
-    "quickSettings": "Mes paramètres",
-    "portfolioInfo": "Notre portfolio présente les projets clients terminés. Je vous y emmène.",
-    "blogInfo": "Articles et guides de notre équipe. Je vous y emmène.",
-    "notificationsInfo": "Toutes vos mises à jour de projet au même endroit. Je vous y emmène.",
-    "settingsInfo": "Gérez votre profil et vos préférences de notification. Je vous y emmène."
+    "quickSettings": "Mes paramÃ¨tres",
+    "portfolioInfo": "Notre portfolio prÃ©sente les projets clients terminÃ©s. Je vous y emmÃ¨ne.",
+    "blogInfo": "Articles et guides de notre Ã©quipe. Je vous y emmÃ¨ne.",
+    "notificationsInfo": "Toutes vos mises Ã  jour de projet au mÃªme endroit. Je vous y emmÃ¨ne.",
+    ,
+    "guideAdmin": "Admin Panel",
+    "adminInfo": "Opening admin dashboard."
   }
+
 }
+

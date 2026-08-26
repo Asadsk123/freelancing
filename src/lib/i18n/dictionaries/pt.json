@@ -1,11 +1,11 @@
-{
+﻿{
   "nav": {
-    "services": "Serviços",
-    "portfolio": "Portfólio",
+    "services": "ServiÃ§os",
+    "portfolio": "PortfÃ³lio",
     "blog": "Blog",
     "about": "Sobre",
     "contact": "Contato",
-    "getQuote": "Solicitar orçamento"
+    "getQuote": "Solicitar orÃ§amento"
   },
   "common": {
     "language": "Idioma",
@@ -14,26 +14,26 @@
   },
   "home": {
     "hero": {
-      "title": "Soluções digitais que fazem o seu negócio crescer",
-      "subtitle": "A ROYAL-ASAD AI & Digital Solutions cria websites premium e sistemas de automação com IA para empresas que querem resultados reais e mensuráveis.",
-      "ctaQuote": "Obter orçamento gratuito",
-      "ctaServices": "Ver nossos serviços"
+      "title": "SoluÃ§Ãµes digitais que fazem o seu negÃ³cio crescer",
+      "subtitle": "A ROYAL-ASAD AI & Digital Solutions cria websites premium e sistemas de automaÃ§Ã£o com IA para empresas que querem resultados reais e mensurÃ¡veis.",
+      "ctaQuote": "Obter orÃ§amento gratuito",
+      "ctaServices": "Ver nossos serviÃ§os"
     }
   },
   "footer": {
     "companyHeading": "Empresa",
-    "legalHeading": "Jurídico",
+    "legalHeading": "JurÃ­dico",
     "about": "Sobre",
     "contact": "Contato",
     "blog": "Blog",
-    "privacy": "Política de Privacidade",
-    "security": "Segurança",
+    "privacy": "PolÃ­tica de Privacidade",
+    "security": "SeguranÃ§a",
     "rights": "Todos os direitos reservados."
   },
   "assistant": {
     "name": "Aria",
-    "greeting": "Olá! Sou a Aria, sua guia. Como posso ajudar?",
-    "prompt": "Escolha uma opção abaixo, ou explore por conta própria.",
+    "greeting": "OlÃ¡! Sou a Aria, sua guia. Como posso ajudar?",
+    "prompt": "Escolha uma opÃ§Ã£o abaixo, ou explore por conta prÃ³pria.",
     "open": "Abrir assistente",
     "hide": "Ocultar assistente",
     "show": "Mostrar assistente",
@@ -41,28 +41,32 @@
     "resume": "Retomar movimento",
     "close": "Fechar",
     "back": "Voltar",
-    "guideServices": "Mostre-me seus serviços",
-    "guideContact": "Como peço um orçamento?",
+    "guideServices": "Mostre-me seus serviÃ§os",
+    "guideContact": "Como peÃ§o um orÃ§amento?",
     "guideDashboard": "Ir para meu painel",
-    "explainPage": "Explique esta página",
-    "explainMilestones": "O que são marcos?",
+    "explainPage": "Explique esta pÃ¡gina",
+    "explainMilestones": "O que sÃ£o marcos?",
     "explainUploads": "Como funcionam os arquivos?",
-    "welcome": "Verificado — bem-vindo! Quer um tour rápido?",
-    "servicesInfo": "Nossa página de Serviços mostra o que oferecemos. Levando você até lá.",
-    "contactInfo": "Use a página de Contato para pedir um orçamento grátis — respondemos em 24 horas. Levando você até lá.",
-    "dashboardInfo": "Seu painel mostra todos os projetos num relance. Levando você até lá.",
-    "milestonesInfo": "Marcos são as etapas principais do seu projeto. Cada um mostra seu status, então você sempre sabe o que está pronto e o que vem a seguir.",
-    "uploadsInfo": "Arquivos compartilhados pela equipe aparecem na aba Arquivos do projeto. Você pode visualizá-los e pedir revisões — sem precisar de software.",
-    "pageInfo": "Isto faz parte da sua experiência ROYAL-ASAD AI & Digital Solutions. Use os guias acima ou a busca para chegar aonde precisa.",
-    "searchPlaceholder": "Buscar ajuda e páginas...",
-    "noResults": "Nenhum resultado — tente outra palavra.",
-    "quickPortfolio": "Ver nosso portfólio",
+    "welcome": "Verificado â€” bem-vindo! Quer um tour rÃ¡pido?",
+    "servicesInfo": "Nossa pÃ¡gina de ServiÃ§os mostra o que oferecemos. Levando vocÃª atÃ© lÃ¡.",
+    "contactInfo": "Use a pÃ¡gina de Contato para pedir um orÃ§amento grÃ¡tis â€” respondemos em 24 horas. Levando vocÃª atÃ© lÃ¡.",
+    "dashboardInfo": "Seu painel mostra todos os projetos num relance. Levando vocÃª atÃ© lÃ¡.",
+    "milestonesInfo": "Marcos sÃ£o as etapas principais do seu projeto. Cada um mostra seu status, entÃ£o vocÃª sempre sabe o que estÃ¡ pronto e o que vem a seguir.",
+    "uploadsInfo": "Arquivos compartilhados pela equipe aparecem na aba Arquivos do projeto. VocÃª pode visualizÃ¡-los e pedir revisÃµes â€” sem precisar de software.",
+    "pageInfo": "Isto faz parte da sua experiÃªncia ROYAL-ASAD AI & Digital Solutions. Use os guias acima ou a busca para chegar aonde precisa.",
+    "searchPlaceholder": "Buscar ajuda e pÃ¡ginas...",
+    "noResults": "Nenhum resultado â€” tente outra palavra.",
+    "quickPortfolio": "Ver nosso portfÃ³lio",
     "quickBlog": "Ler o blog",
-    "quickNotifications": "Minhas notificações",
-    "quickSettings": "Minhas configurações",
-    "portfolioInfo": "Nosso portfólio mostra projetos de clientes concluídos. Levando você até lá.",
-    "blogInfo": "Artigos e guias da nossa equipe. Levando você até lá.",
-    "notificationsInfo": "Todas as atualizações dos seus projetos em um só lugar. Levando você até lá.",
-    "settingsInfo": "Gerencie seu perfil e preferências de notificação. Levando você até lá."
+    "quickNotifications": "Minhas notificaÃ§Ãµes",
+    "quickSettings": "Minhas configuraÃ§Ãµes",
+    "portfolioInfo": "Nosso portfÃ³lio mostra projetos de clientes concluÃ­dos. Levando vocÃª atÃ© lÃ¡.",
+    "blogInfo": "Artigos e guias da nossa equipe. Levando vocÃª atÃ© lÃ¡.",
+    "notificationsInfo": "Todas as atualizaÃ§Ãµes dos seus projetos em um sÃ³ lugar. Levando vocÃª atÃ© lÃ¡.",
+    ,
+    "guideAdmin": "Admin Panel",
+    "adminInfo": "Opening admin dashboard."
   }
+
 }
+

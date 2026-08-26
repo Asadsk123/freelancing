@@ -63,6 +63,8 @@
     "portfolioInfo": "Our portfolio shows completed client projects. Taking you there now.",
     "blogInfo": "Insights and guides from our team. Taking you there now.",
     "notificationsInfo": "All your project updates in one place. Taking you there.",
-    "settingsInfo": "Manage your profile and notification preferences. Taking you there."
+    "settingsInfo": "Manage your profile and notification preferences. Taking you there.",
+    "guideAdmin": "Open Admin Panel",
+    "adminInfo": "Opening the admin dashboard. Sign in with your email OTP if prompted."
   }
 }
