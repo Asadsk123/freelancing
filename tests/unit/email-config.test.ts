@@ -25,10 +25,25 @@ describe("getEmailMode", () => {
 });
 
 describe("getFromAddress", () => {
-  it("formats Name <address> from env overrides", () => {
+  it("wraps a bare email address with the brand name", () => {
     process.env.EMAIL_FROM_DEFAULT = "hello@example.com";
     process.env.EMAIL_FROM_SUPPORT = "support@example.com";
     expect(getFromAddress()).toMatch(/<hello@example\.com>$/);
     expect(getFromAddress("support")).toMatch(/<support@example\.com>$/);
+  });
+
+  it("passes through a pre-formatted 'Name <email>' value unchanged (no double-wrapping)", () => {
+    process.env.EMAIL_FROM_DEFAULT = "ROYAL-ASAD <onboarding@resend.dev>";
+    const result = getFromAddress();
+    // Must NOT produce "Brand Name <ROYAL-ASAD <onboarding@resend.dev>>"
+    expect(result).toBe("ROYAL-ASAD <onboarding@resend.dev>");
+    expect(result).not.toContain("<<");
+  });
+
+  it("support variant also passes through pre-formatted value", () => {
+    process.env.EMAIL_FROM_SUPPORT = "ROYAL-ASAD Support <support@resend.dev>";
+    const result = getFromAddress("support");
+    expect(result).toBe("ROYAL-ASAD Support <support@resend.dev>");
+    expect(result).not.toContain("<<");
   });
 });

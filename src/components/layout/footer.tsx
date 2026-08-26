@@ -78,9 +78,17 @@ export async function Footer() {
 
         <Separator className="my-8" />
 
-        <p className="text-center text-sm text-[var(--muted-foreground)]">
-          &copy; {currentYear} {brand.legal.companyName}. {t("footer.rights")}
-        </p>
+        <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-between">
+          <p className="text-center text-sm text-[var(--muted-foreground)]">
+            &copy; {currentYear} {brand.legal.companyName}. {t("footer.rights")}
+          </p>
+          <Link
+            href="/admin/dashboard"
+            className="text-xs text-[var(--muted-foreground)]/50 transition-colors hover:text-[var(--muted-foreground)]"
+          >
+            Admin Login
+          </Link>
+        </div>
       </div>
     </footer>
   );
