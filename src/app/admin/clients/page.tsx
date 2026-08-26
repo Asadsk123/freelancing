@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { PageHeader } from "@/components/shared/page-header";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { EmptyState } from "@/components/shared/empty-state";
-import { Users } from "lucide-react";
+import { Users, Plus } from "lucide-react";
 import { hasDatabase } from "@/db";
 import { userRepository } from "@/lib/repositories/user";
 import { formatDate } from "@/lib/utils/formatting";
@@ -30,7 +32,16 @@ export default async function AdminClientsPage() {
 
   return (
     <div className="mx-auto max-w-[1280px]">
-      <PageHeader title="Clients" description="Manage client accounts." />
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <PageHeader title="Clients" description="Manage client accounts." />
+        {dbAvailable && (
+          <Button asChild>
+            <Link href="/admin/clients/new">
+              <Plus className="h-4 w-4" /> New client
+            </Link>
+          </Button>
+        )}
+      </div>
 
       {!dbAvailable && (
         <div className="mt-4 rounded-[var(--radius-md)] border border-[var(--warning)] bg-[var(--warning)]/10 px-4 py-3">

@@ -12,6 +12,22 @@ export type ClientWithProjectCount = UserRow & {
 const ADMIN_EMAIL = "admin@royalasad.com";
 
 export class UserRepository extends BaseRepository {
+  async createClient(data: {
+    email: string;
+    name: string;
+    company?: string | null;
+    phone?: string | null;
+  }): Promise<UserRow> {
+    const existing = await this.findByEmail(data.email);
+    if (existing) return existing;
+    const [row] = await this.db
+      .insert(users)
+      .values({ email: data.email, name: data.name, role: "client", company: data.company ?? null, phone: data.phone ?? null })
+      .returning();
+    if (!row) throw new Error("Failed to create client");
+    return row;
+  }
+
   async findByEmail(email: string): Promise<UserRow | undefined> {
     const [row] = await this.db
       .select()
