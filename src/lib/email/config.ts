@@ -21,13 +21,20 @@ export function getEmailMode(): EmailMode {
   return "log";
 }
 
-/** Builds a `Name <address>` from address from env, with safe defaults. */
+/**
+ * Returns a valid RFC 5322 From address.
+ * Accepts env vars in either format:
+ *   - "user@example.com"           → "Brand Name <user@example.com>"
+ *   - "Brand Name <user@example.com>" → used as-is (already formatted)
+ */
 export function getFromAddress(kind: "default" | "support" = "default"): string {
-  const address =
+  const raw =
     kind === "support"
       ? process.env.EMAIL_FROM_SUPPORT ?? brand.contact.supportEmail
       : process.env.EMAIL_FROM_DEFAULT ?? brand.contact.email;
-  return `${brand.name} <${address}>`;
+  // If the value already contains "<", it is a full From header — use it directly.
+  if (raw.includes("<")) return raw;
+  return `${brand.name} <${raw}>`;
 }
 
 export function getSiteUrl(): string {

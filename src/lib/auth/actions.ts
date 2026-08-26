@@ -53,10 +53,17 @@ export async function requestOtp(formData: FormData): Promise<ActionResult> {
     await userRepository.findOrCreate(result.data.email);
     const code = await otpRepository.create(result.data.email);
 
-    // Best-effort delivery — never blocks or fails the sign-in request.
-    // In development (no provider / EMAIL_MODE!=production) the email is only
-    // logged; use the dev fallback code below to sign in.
-    await mailer.otp(result.data.email, code, OTP_EXPIRY_MINUTES);
+    const outcome = await mailer.otp(result.data.email, code, OTP_EXPIRY_MINUTES);
+
+    // In production with a real provider, surface delivery failures so the user
+    // is not left waiting for an email that was never sent.
+    if (!outcome.delivered && process.env.NODE_ENV === "production") {
+      console.error("[auth] OTP email delivery failed:", outcome.error);
+      return {
+        success: false,
+        error: "We couldn't send your code right now. Please try again in a moment.",
+      };
+    }
 
     return { success: true };
   } catch (err) {
