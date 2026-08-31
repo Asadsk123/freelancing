@@ -9,7 +9,7 @@ export type ClientWithProjectCount = UserRow & {
   projectCount: number;
 };
 
-const ADMIN_EMAIL = "admin@royalasad.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "admin@royalasad.com";
 
 export class UserRepository extends BaseRepository {
   async createClient(data: {

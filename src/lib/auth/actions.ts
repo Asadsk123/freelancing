@@ -36,7 +36,15 @@ export async function requestOtp(formData: FormData): Promise<ActionResult> {
   }
 
   if (!hasDatabase()) {
-    await new Promise((resolve) => setTimeout(resolve, 300));
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    const code = String(array[0]! % 1000000).padStart(6, "0");
+    const expiresAt = Date.now() + 10 * 60 * 1000;
+    const payload = Buffer.from(JSON.stringify({ email: result.data.email, code, expiresAt })).toString("base64");
+    const { cookies } = await import("next/headers");
+    const cookieStore = await cookies();
+    cookieStore.set("ra_otp_pending", payload, { httpOnly: true, sameSite: "lax", path: "/", maxAge: 600 });
+    await mailer.otp(result.data.email, code, 10);
     return { success: true };
   }
 
@@ -88,12 +96,20 @@ export async function verifyOtp(
   }
 
   if (!hasDatabase()) {
-    if (code !== DEV_OTP) {
-      return {
-        success: false,
-        error: "Invalid code. Please try again or request a new one.",
-      };
+    const { cookies } = await import("next/headers");
+    const cookieStore = await cookies();
+    const raw = cookieStore.get("ra_otp_pending")?.value;
+    let valid = false;
+    if (raw) {
+      try {
+        const parsed = JSON.parse(Buffer.from(raw, "base64").toString());
+        valid = parsed.email === email && parsed.code === code && parsed.expiresAt > Date.now();
+      } catch { valid = false; }
     }
+    if (!valid) {
+      return { success: false, error: "Invalid or expired code. Please request a new one." };
+    }
+    cookieStore.delete("ra_otp_pending");
     const isAdmin = email === "admin@royalasad.com";
     await createSession({
       userId: email,
@@ -101,10 +117,7 @@ export async function verifyOtp(
       name: deriveNameFromEmail(email),
       role: isAdmin ? "admin" : "client",
     });
-    return {
-      success: true,
-      redirectTo: isAdmin ? "/admin/dashboard" : "/dashboard",
-    };
+    return { success: true, redirectTo: isAdmin ? "/admin/dashboard" : "/dashboard" };
   }
 
   try {

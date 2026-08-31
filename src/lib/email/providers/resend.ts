@@ -17,6 +17,7 @@ export function createResendProvider(apiKey: string): EmailProvider {
         body: JSON.stringify({
           from: message.from,
           to: [message.to],
+          reply_to: process.env.EMAIL_REPLY_TO ?? undefined,
           subject: message.subject,
           html: message.html,
           text: message.text,
