@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Craving Cake Co | Custom Cakes & Dessert Tables — Tampa Bay</title>
+<meta name="description" content="Custom cakes and dessert tables for Tampa Bay events. One-woman shop, DM or use the form below to order.">
+<style>
+  :root {
+    --primary: #db2777;
+    --primary-dark: #9d174d;
+    --dark: #3f2b2b;
+    --bg: #fff7f9;
+    --card: #ffffff;
+    --muted: #7a5c5c;
+    --border: #fbcfe8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, "Times New Roman", serif; background: var(--bg); color: var(--dark); line-height: 1.6; }
+  .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+
+  header { padding: 20px 0; text-align: center; }
+  .logo { font-size: 1.6rem; font-weight: 700; color: var(--primary-dark); }
+  .logo span { font-style: italic; }
+
+  .hero { text-align: center; padding: 30px 0 50px; }
+  .hero h1 { font-size: 2.3rem; margin-bottom: 14px; }
+  .hero p { font-family: -apple-system, sans-serif; color: var(--muted); font-size: 1.1rem; max-width: 560px; margin: 0 auto 26px; }
+  .badge { display: inline-block; background: var(--primary); color: #fff; font-family: -apple-system, sans-serif; font-size: 0.85rem; font-weight: 700; padding: 6px 16px; border-radius: 999px; margin-bottom: 20px; }
+  .btn { display: inline-block; background: var(--primary); color: #fff; font-family: -apple-system, sans-serif; font-weight: 700; padding: 14px 30px; border-radius: 999px; text-decoration: none; }
+
+  section { padding: 50px 0; }
+  h2 { font-size: 1.7rem; text-align: center; margin-bottom: 34px; color: var(--primary-dark); }
+
+  .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+  .menu-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; text-align: center; }
+  .menu-card .emoji { font-size: 2rem; margin-bottom: 10px; }
+  .menu-card h3 { font-size: 1.1rem; margin-bottom: 6px; }
+  .menu-card p { font-family: -apple-system, sans-serif; color: var(--muted); font-size: 0.9rem; }
+  .menu-card .price { font-family: -apple-system, sans-serif; color: var(--primary-dark); font-weight: 700; margin-top: 8px; }
+
+  .order-section { background: var(--card); border-radius: 20px; margin: 0 20px; }
+  form { max-width: 500px; margin: 0 auto; font-family: -apple-system, sans-serif; display: flex; flex-direction: column; gap: 14px; }
+  label { font-size: 0.9rem; font-weight: 600; color: var(--dark); }
+  input, textarea, select { padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px; font-size: 1rem; font-family: inherit; }
+  textarea { min-height: 90px; resize: vertical; }
+  button[type="submit"] { background: var(--primary); color: #fff; border: none; padding: 14px; border-radius: 999px; font-weight: 700; font-size: 1rem; cursor: pointer; }
+  .form-note { font-size: 0.85rem; color: var(--muted); text-align: center; }
+
+  footer { text-align: center; padding: 30px 0; font-family: -apple-system, sans-serif; color: var(--muted); font-size: 0.9rem; }
+  footer a { color: var(--primary-dark); }
+
+  .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 18px; max-width: 620px; margin: 0 auto; font-family: -apple-system, sans-serif; }
+  .contact-item { text-align: center; padding: 20px; border: 1px solid var(--border); border-radius: 14px; text-decoration: none; color: var(--dark); background: var(--bg); }
+  .contact-item .icon { font-size: 1.6rem; margin-bottom: 8px; }
+  .contact-item .label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .contact-item .value { font-weight: 700; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Craving <span>Cake</span> Co.</div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <span class="badge">Now Booking — Tampa Bay</span>
+    <h1>Custom Cakes & Dessert Tables</h1>
+    <p>Handcrafted for birthdays, weddings, and every celebration in between. Not a storefront — a one-woman shop making every order personal.</p>
+    <a class="btn" href="#order">Request Your Cake</a>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2>What We Make</h2>
+    <div class="menu-grid">
+      <div class="menu-card">
+        <div class="emoji">🎂</div>
+        <h3>Custom Cakes</h3>
+        <p>Fully custom design, flavor, and size for your event.</p>
+        <div class="price">From $65</div>
+      </div>
+      <div class="menu-card">
+        <div class="emoji">🧁</div>
+        <h3>Cupcake Towers</h3>
+        <p>A crowd-pleaser for parties, showers, and office celebrations.</p>
+        <div class="price">From $45/dozen</div>
+      </div>
+      <div class="menu-card">
+        <div class="emoji">🍰</div>
+        <h3>Dessert Tables</h3>
+        <p>Full spread — cake, cupcakes, treats — styled for your event.</p>
+        <div class="price">Custom quote</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="order-section" id="order">
+  <div class="container">
+    <h2>Request an Order</h2>
+    <form>
+      <div>
+        <label>Your Name</label>
+        <input type="text" placeholder="Full name" required>
+      </div>
+      <div>
+        <label>Contact (phone or Instagram)</label>
+        <input type="text" placeholder="Phone number or @instagram" required>
+      </div>
+      <div>
+        <label>Event Date</label>
+        <input type="date">
+      </div>
+      <div>
+        <label>What are you looking for?</label>
+        <select>
+          <option>Custom Cake</option>
+          <option>Cupcake Tower</option>
+          <option>Dessert Table</option>
+          <option>Not sure yet</option>
+        </select>
+      </div>
+      <div>
+        <label>Tell us about your event</label>
+        <textarea placeholder="Number of guests, flavor ideas, theme, inspiration photos, etc."></textarea>
+      </div>
+      <button type="submit">Send Request</button>
+      <p class="form-note">We reply within 24–48 hours. You can also DM us directly on Instagram @cravingcakeco.</p>
+    </form>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2>Connect With Us</h2>
+    <div class="contact-grid">
+      <a class="contact-item" href="https://www.instagram.com/cravingcakeco/" target="_blank">
+        <div class="icon">📷</div>
+        <div class="label">Instagram</div>
+        <div class="value">@cravingcakeco</div>
+      </a>
+      <div class="contact-item">
+        <div class="icon">📍</div>
+        <div class="label">Area</div>
+        <div class="value">Tampa Bay, FL</div>
+      </div>
+      <a class="contact-item" href="#order">
+        <div class="icon">📝</div>
+        <div class="label">Order</div>
+        <div class="value">Use Form Above</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Craving Cake Co. — Tampa Bay, FL &middot; Instagram: <a href="https://www.instagram.com/cravingcakeco/" target="_blank">@cravingcakeco</a>
+</footer>
+
+</body>
+</html>
