@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { Header } from "./header";
 import { MobileNav } from "./mobile-nav";
+import { AnnouncementBanner } from "./announcement-banner";
 
 export function PublicShell({
   children,
@@ -23,6 +24,7 @@ export function PublicShell({
 
   return (
     <>
+      <AnnouncementBanner />
       <Header onMobileMenuOpen={handleMobileMenuOpen} dashboardHref={dashboardHref} />
       <MobileNav open={mobileNavOpen} onClose={handleMobileMenuClose} />
       {children}
