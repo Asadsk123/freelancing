@@ -3,55 +3,63 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>McLean Woodworking | Westfield, PA</title>
-<meta name="description" content="Custom hardwood furniture and cabinets in Westfield, PA.">
+<title>McLean Woodworking | Custom Hardwood Furniture — Westfield, PA</title>
+<meta name="description" content="Custom hardwood furniture and cabinets, handmade in Westfield, PA by Mitch Gruver. Call (607) 377-1158.">
 <style>
-  :root { --primary:#78350f; --dark:#1c1917; --bg:#fdf6ec; --card:#fff; --muted:#57534e; --border:#e7d9c3; --accent:#b45309; }
-  *{box-sizing:border-box;margin:0;padding:0} body{font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--dark);line-height:1.6}
-  a{color:inherit} .container{max-width:1000px;margin:0 auto;padding:0 20px}
-  header{background:var(--dark);color:#fff;padding:16px 0;position:sticky;top:0;z-index:10}
-  header .container{display:flex;justify-content:space-between;align-items:center}
-  .logo{font-weight:800;font-size:1.15rem} .logo span{color:var(--accent)}
-  .call-btn{background:var(--accent);color:var(--dark);padding:10px 18px;border-radius:8px;font-weight:800;text-decoration:none;font-size:0.9rem}
-  .hero{padding:70px 0 60px;text-align:center;background:var(--primary);color:#fff}
-  .badge{display:inline-block;background:var(--accent);color:var(--dark);font-size:0.8rem;font-weight:700;padding:6px 16px;border-radius:999px;margin-bottom:20px}
-  .hero h1{font-size:2.2rem;font-weight:800;margin-bottom:16px} .hero p{font-size:1.1rem;color:rgba(255,255,255,0.85);max-width:600px;margin:0 auto 30px}
-  .btn-primary{background:var(--accent);color:var(--dark);padding:14px 28px;border-radius:10px;font-weight:800;text-decoration:none}
-  section{padding:60px 0} h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:40px;color:var(--dark)}
-  .menu-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px}
-  .menu-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;text-align:center}
-  .menu-card .icon{font-size:1.8rem;margin-bottom:10px} .menu-card h3{font-size:1.05rem;margin-bottom:6px} .menu-card p{color:var(--muted);font-size:0.9rem}
-  .contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;max-width:700px;margin:0 auto}
+  :root { --primary:#92400e; --dark:#292524; --bg:#fdf6ec; --card:#fff; --muted:#57534e; --border:#e7ddce; }
+  *{box-sizing:border-box;margin:0;padding:0} body{font-family:Georgia,"Times New Roman",serif;background:var(--bg);color:var(--dark);line-height:1.6}
+  a{color:inherit} .container{max-width:960px;margin:0 auto;padding:0 20px}
+  header{padding:20px 0;text-align:center} .logo{font-size:1.5rem;font-weight:700;color:var(--primary)}
+  .hero{text-align:center;padding:30px 0 55px}
+  .hero h1{font-size:2.2rem;margin-bottom:16px} .hero p{font-family:-apple-system,sans-serif;color:var(--muted);font-size:1.1rem;max-width:580px;margin:0 auto 28px}
+  .btn{display:inline-block;background:var(--primary);color:#fff;font-family:-apple-system,sans-serif;font-weight:700;padding:14px 30px;border-radius:8px;text-decoration:none}
+  section{padding:50px 0} h2{font-size:1.7rem;text-align:center;margin-bottom:34px;color:var(--primary)}
+  .services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+  .service-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px;font-family:-apple-system,sans-serif}
+  .service-card .icon{font-size:1.8rem;margin-bottom:12px} .service-card h3{font-size:1.1rem;margin-bottom:8px;font-family:Georgia,serif} .service-card p{color:var(--muted);font-size:0.95rem}
+  .contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;max-width:700px;margin:0 auto;font-family:-apple-system,sans-serif}
   .contact-item{text-align:center;padding:20px;border:1px solid var(--border);border-radius:14px;text-decoration:none;color:var(--dark);background:var(--card)}
   .contact-item .icon{font-size:1.6rem;margin-bottom:8px} .contact-item .label{font-size:0.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px} .contact-item .value{font-weight:700;margin-top:4px}
-  .cta{background:var(--accent);color:var(--dark);text-align:center} .cta p{margin-bottom:28px}
-  footer{padding:30px 0;text-align:center;color:var(--muted);font-size:0.9rem;border-top:1px solid var(--border)}
+  .cta{background:var(--dark);color:#fff;text-align:center} .cta h2{color:#fff} .cta p{color:#d6d3d1;margin-bottom:28px;font-family:-apple-system,sans-serif}
+  footer{padding:30px 0;text-align:center;color:var(--muted);font-size:0.9rem;border-top:1px solid var(--border);font-family:-apple-system,sans-serif}
 </style>
 </head>
 <body>
-<header><div class="container">
-  <div class="logo">McLean<span> Woodworking</span></div>
-  <a class="call-btn" href="tel:6073771158">Call (607) 377-1158</a>
-</div></header>
+
+<header><div class="logo">McLean Woodworking</div></header>
+
 <section class="hero"><div class="container">
-  <span class="badge">Custom Hardwood</span>
-  <h1>Handcrafted Hardwood Furniture & Cabinets</h1>
-  <p>Custom furniture and cabinetry, built to order in Westfield, PA.</p>
-  <a class="btn-primary" href="tel:6073771158" target="_blank">Call for a Quote</a>
+  <h1>Custom Hardwood Furniture, Handmade to Last</h1>
+  <p>Solid wood furniture and cabinets, built one piece at a time by Mitch Gruver in Westfield, PA.</p>
+  <a class="btn" href="#contact">Request a Custom Piece</a>
 </div></section>
+
 <section><div class="container">
   <h2>What We Build</h2>
-  <div class="menu-grid"><div class="menu-card"><div class="icon">🪑</div><h3>Custom Furniture</h3><p>Tables, chairs, and more.</p></div><div class="menu-card"><div class="icon">🗄️</div><h3>Cabinets</h3><p>Kitchen and built-in cabinetry.</p></div><div class="menu-card"><div class="icon">🌳</div><h3>Hardwood</h3><p>Quality materials, built to last.</p></div></div>
+  <div class="services-grid">
+    <div class="service-card"><div class="icon">🪵</div><h3>Custom Furniture</h3><p>Tables, chairs, and case pieces built to your space.</p></div>
+    <div class="service-card"><div class="icon">🗄️</div><h3>Cabinets</h3><p>Custom cabinetry for kitchens and built-ins.</p></div>
+    <div class="service-card"><div class="icon">🌳</div><h3>Walnut Slab Tables</h3><p>Live-edge and slab tables from solid hardwood.</p></div>
+    <div class="service-card"><div class="icon">🔨</div><h3>Repairs & Restoration</h3><p>Restoring and repairing existing wood furniture.</p></div>
+  </div>
 </div></section>
-<section><div class="container">
+
+<section id="contact"><div class="container">
   <h2>Get In Touch</h2>
-  <div class="contact-grid"><a class="contact-item" href="tel:6073771158" target="_blank"><div class="icon">📞</div><div class="label">Call</div><div class="value">(607) 377-1158</div></a><a class="contact-item" href="mailto:mitch.gruver@gmail.com" target="_blank"><div class="icon">✉️</div><div class="label">Email</div><div class="value">mitch.gruver@gmail.com</div></a><div class="contact-item"><div class="icon">📍</div><div class="label">Area</div><div class="value">Westfield, PA</div></div></div>
+  <div class="contact-grid">
+    <a class="contact-item" href="tel:6073771158"><div class="icon">📞</div><div class="label">Call</div><div class="value">(607) 377-1158</div></a>
+    <a class="contact-item" href="mailto:mitch.gruver@gmail.com"><div class="icon">✉️</div><div class="label">Email</div><div class="value">mitch.gruver@gmail.com</div></a>
+    <div class="contact-item"><div class="icon">📍</div><div class="label">Location</div><div class="value">Westfield, PA</div></div>
+  </div>
 </div></section>
+
 <section class="cta"><div class="container">
-  <h2>Ready to build something?</h2>
-  <p>Call or email for a custom quote.</p>
-  <a class="btn-primary" href="tel:6073771158" style="background:#fff;color:var(--primary)">📲 (607) 377-1158</a>
+  <h2>Have a piece in mind?</h2>
+  <p>Email or call Mitch directly to talk through your project.</p>
+  <a class="btn" href="mailto:mitch.gruver@gmail.com" style="background:#fff;color:var(--dark)">✉️ mitch.gruver@gmail.com</a>
 </div></section>
-<footer><div class="container">&copy; 2026 McLean Woodworking &middot; Westfield, PA</div></footer>
+
+<footer><div class="container">&copy; 2026 McLean Woodworking — Westfield, PA · Mitch Gruver</div></footer>
+
 </body>
 </html>
