@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { X, Zap } from "lucide-react";
 
 // 48 hours from when this banner was first deployed
-const OFFER_END = new Date("2026-09-05T00:00:00Z").getTime();
+const OFFER_END = new Date("2026-09-14T23:59:00Z").getTime();
 const STORAGE_KEY = "ra_banner_dismissed";
 
 function getTimeLeft() {

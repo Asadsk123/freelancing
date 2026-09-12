@@ -1,5 +1,6 @@
 import { PublicShell } from "@/components/layout/public-shell";
 import { Footer } from "@/components/layout/footer";
+import { WhatsAppFloat } from "@/components/shared/whatsapp-float";
 import { getSession } from "@/lib/auth/session";
 
 export default async function PublicLayout({
@@ -20,6 +21,7 @@ export default async function PublicLayout({
         <main className="min-h-[calc(100vh-64px)]">{children}</main>
       </PublicShell>
       <Footer />
+      <WhatsAppFloat />
     </>
   );
 }
