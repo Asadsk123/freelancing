@@ -9,7 +9,7 @@ import { hasDatabase } from "@/db";
 import { serviceRepository } from "@/lib/repositories/service";
 
 export const metadata: Metadata = {
-  title: "Our Services | ROYAL-ASAD AI & Digital Solutions",
+  title: "Our Services",
   description:
     "Professional websites, AI automation, e-commerce stores, WhatsApp automation and web applications. Custom digital solutions for businesses worldwide.",
 };

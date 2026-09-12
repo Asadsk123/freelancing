@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { hasDatabase } from "@/db";
 import { blogPostRepository } from "@/lib/repositories/blog-post";
+import { serviceRepository } from "@/lib/repositories/service";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -17,14 +18,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (!hasDatabase()) return staticRoutes;
 
   try {
-    const posts = await blogPostRepository.findPublished();
+    const [posts, services] = await Promise.all([
+      blogPostRepository.findPublished(),
+      serviceRepository.findActive(),
+    ]);
+    const serviceRoutes: MetadataRoute.Sitemap = services.map((s) => ({
+      url: `${siteUrl}/services/${s.slug}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.85,
+    }));
     const postRoutes: MetadataRoute.Sitemap = posts.map((post) => ({
       url: `${siteUrl}/blog/${post.slug}`,
       lastModified: post.updatedAt,
-      changeFrequency: "monthly",
+      changeFrequency: "monthly" as const,
       priority: 0.6,
     }));
-    return [...staticRoutes, ...postRoutes];
+    return [...staticRoutes, ...serviceRoutes, ...postRoutes];
   } catch {
     return staticRoutes;
   }

@@ -9,7 +9,7 @@ import { ArrowRight, Globe, Building2, Utensils, Wrench, ShoppingBag } from "luc
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "Portfolio — Our Work | ROYAL-ASAD",
+  title: "Portfolio — Our Work",
   description:
     "See the business websites, booking demos, and digital solutions we have built. Real demo projects built for US small businesses.",
 };
