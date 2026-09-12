@@ -91,6 +91,31 @@ export class ServiceRepository extends BaseRepository {
       .orderBy(services.sortOrder, desc(services.createdAt));
   }
 
+  async findBySlug(slug: string): Promise<ServiceWithCategory | undefined> {
+    const [row] = await this.db
+      .select({
+        id: services.id,
+        categoryId: services.categoryId,
+        name: services.name,
+        slug: services.slug,
+        shortDescription: services.shortDescription,
+        fullDescription: services.fullDescription,
+        icon: services.icon,
+        features: services.features,
+        sortOrder: services.sortOrder,
+        isActive: services.isActive,
+        createdAt: services.createdAt,
+        updatedAt: services.updatedAt,
+        categoryName: serviceCategories.name,
+        categorySlug: serviceCategories.slug,
+      })
+      .from(services)
+      .innerJoin(serviceCategories, eq(services.categoryId, serviceCategories.id))
+      .where(and(eq(services.slug, slug), eq(services.isActive, true)))
+      .limit(1);
+    return row;
+  }
+
   async findById(id: string): Promise<ServiceWithCategory | undefined> {
     const [row] = await this.db
       .select({

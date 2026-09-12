@@ -5,6 +5,7 @@ import { ProblemSection } from "@/components/sections/problem-section";
 import { ServicesOverview } from "@/components/sections/services-overview";
 import { TrustStrip } from "@/components/sections/trust-strip";
 import { ProcessSection } from "@/components/sections/process-section";
+import { PortfolioPreview } from "@/components/sections/portfolio-preview";
 import { Testimonials } from "@/components/sections/testimonials";
 import { FaqSection } from "@/components/sections/faq-section";
 import { WhatsAppCta } from "@/components/sections/whatsapp-cta";
@@ -30,6 +31,7 @@ export default function HomePage() {
       <ServicesOverview />
       <TrustStrip />
       <ProcessSection />
+      <PortfolioPreview />
       <Testimonials />
       <FaqSection />
       <WhatsAppCta />
